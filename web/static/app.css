@@ -677,6 +677,150 @@ body {
 	margin: 0;
 }
 
+.sakurairo-links-layout {
+	margin-top: 32px;
+}
+
+.links-hero {
+	backdrop-filter: blur(14px);
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 248, 252, 0.72)),
+		url("/static/theme/content-image/d-1.jpg") center / cover no-repeat;
+	border: 1px solid rgba(255, 255, 255, 0.84);
+	border-radius: 8px;
+	box-shadow: 0 18px 44px rgba(117, 79, 99, 0.12);
+	box-sizing: border-box;
+	margin-bottom: 24px;
+	padding: 34px 28px;
+	text-align: center;
+}
+
+.links-hero h1 {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: clamp(30px, 4.6vw, 46px);
+	font-weight: 400;
+	letter-spacing: 0;
+	margin: 4px 0 8px;
+}
+
+.links-hero p:last-child {
+	color: var(--sakura-muted);
+	font-size: 14px;
+	line-height: 1.8;
+	margin: 0;
+}
+
+.friend-link-sections {
+	display: grid;
+	gap: 20px;
+}
+
+.friend-link-section {
+	backdrop-filter: blur(12px);
+	background: rgba(255, 255, 255, 0.78);
+	border: 1px solid rgba(255, 255, 255, 0.84);
+	border-radius: 8px;
+	box-shadow: 0 14px 36px rgba(117, 79, 99, 0.1);
+	box-sizing: border-box;
+	padding: 22px;
+}
+
+.friend-link-section header {
+	margin-bottom: 16px;
+}
+
+.friend-link-section h2 {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 25px;
+	font-weight: 400;
+	margin: 0 0 6px;
+}
+
+.friend-link-section header p {
+	color: var(--sakura-muted);
+	line-height: 1.7;
+	margin: 0;
+}
+
+.friend-link-grid {
+	display: grid;
+	gap: 14px;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.friend-link-card {
+	align-items: center;
+	background: rgba(255, 248, 252, 0.7);
+	border: 1px solid rgba(251, 152, 192, 0.14);
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: var(--sakura-ink);
+	display: grid;
+	gap: 12px;
+	grid-template-columns: 58px minmax(0, 1fr);
+	min-height: 92px;
+	padding: 14px;
+	text-decoration: none;
+	transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.friend-link-card:hover {
+	border-color: rgba(251, 152, 192, 0.38);
+	box-shadow: 0 14px 30px rgba(117, 79, 99, 0.12);
+	transform: translateY(-2px);
+}
+
+.friend-link-avatar {
+	align-items: center;
+	background: linear-gradient(135deg, rgba(251, 152, 192, 0.16), rgba(255, 255, 255, 0.72));
+	border: 3px solid rgba(255, 255, 255, 0.92);
+	border-radius: 50%;
+	box-shadow: 0 8px 18px rgba(251, 152, 192, 0.18);
+	color: var(--sakura-rose);
+	display: flex;
+	height: 52px;
+	justify-content: center;
+	overflow: hidden;
+	width: 52px;
+}
+
+.friend-link-avatar img {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+.friend-link-body {
+	display: grid;
+	gap: 5px;
+	min-width: 0;
+}
+
+.friend-link-body strong {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 18px;
+	font-weight: 400;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.friend-link-body small {
+	color: var(--sakura-muted);
+	font-size: 12px;
+	line-height: 1.5;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.empty-links {
+	text-align: center;
+}
+
 .content-area.with-sidebar {
 	align-items: start;
 	box-sizing: border-box;
@@ -1097,6 +1241,10 @@ body {
 	.archive-post-row small {
 		grid-column: 2;
 		white-space: normal;
+	}
+
+	.friend-link-grid {
+		grid-template-columns: 1fr;
 	}
 }
 

@@ -25,30 +25,30 @@ type Controller struct {
 }
 
 type PageData struct {
-	Site          config.Site
-	Title         string
-	Description   string
-	SectionTitle  string
-	Query         string
-	Posts         []models.Post
-	Post          models.Post
-	PreviousPost  models.Post
-	NextPost      models.Post
-	ArchiveGroups []models.ArchiveGroup
+	Site           config.Site
+	Title          string
+	Description    string
+	SectionTitle   string
+	Query          string
+	Posts          []models.Post
+	Post           models.Post
+	PreviousPost   models.Post
+	NextPost       models.Post
+	ArchiveGroups  []models.ArchiveGroup
 	LinkCategories []models.FriendLinkCategory
-	Comments      []models.Comment
-	CommentOK     bool
-	CommentErr    string
-	Category      models.Category
-	Tag           models.Tag
-	RecentPosts   []models.Post
-	Categories    []models.Category
-	Tags          []models.Tag
-	PostTotal     int
-	CommentTotal  int
-	Page          models.PageInfo
-	Notice        string
-	Now           time.Time
+	Comments       []models.Comment
+	CommentOK      bool
+	CommentErr     string
+	Category       models.Category
+	Tag            models.Tag
+	RecentPosts    []models.Post
+	Categories     []models.Category
+	Tags           []models.Tag
+	PostTotal      int
+	CommentTotal   int
+	Page           models.PageInfo
+	Notice         string
+	Now            time.Time
 }
 
 func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, renderer *view.Renderer) *Controller {

@@ -75,6 +75,7 @@ func FromEnv() Config {
 			Navigation: []NavItem{
 				{Label: "Home", URL: "/"},
 				{Label: "Archive", URL: "/archives"},
+				{Label: "Links", URL: "/links"},
 				{Label: "Blog", URL: "/category/blog"},
 				{Label: "Sakurairo", URL: "/tag/sakurairo"},
 				{Label: "Search", URL: "/search"},

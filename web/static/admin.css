@@ -341,6 +341,16 @@ button.primary,
 	margin-top: 4px;
 }
 
+.table-actions {
+	align-items: center;
+	display: flex;
+	gap: 8px;
+}
+
+.table-actions form {
+	margin: 0;
+}
+
 .status {
 	border-radius: 999px;
 	display: inline-block !important;
@@ -394,6 +404,61 @@ button.primary,
 	font-size: 12px;
 	line-height: 1.5;
 	margin: -4px 0 0;
+}
+
+.checkbox-label {
+	align-items: center;
+	display: flex;
+	gap: 10px;
+}
+
+.checkbox-label input {
+	accent-color: var(--sakura);
+	width: auto;
+}
+
+.link-preview {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.6);
+	border: 1px solid rgba(231, 211, 222, 0.72);
+	border-radius: 8px;
+	display: grid;
+	gap: 8px;
+	justify-items: center;
+	padding: 18px;
+	text-align: center;
+}
+
+.link-preview .friend-link-avatar {
+	align-items: center;
+	background: linear-gradient(135deg, rgba(251, 152, 192, 0.18), rgba(255, 255, 255, 0.72));
+	border: 3px solid rgba(255, 255, 255, 0.92);
+	border-radius: 50%;
+	box-shadow: 0 8px 18px rgba(251, 152, 192, 0.18);
+	color: var(--sakura-deep);
+	display: flex;
+	height: 64px;
+	justify-content: center;
+	overflow: hidden;
+	width: 64px;
+}
+
+.link-preview .friend-link-avatar img {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+.link-preview strong {
+	color: var(--ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.link-preview small {
+	color: var(--muted);
+	line-height: 1.6;
 }
 
 input[type="file"] {
@@ -547,5 +612,10 @@ button.danger {
 
 	.comment-admin-actions {
 		margin-top: 14px;
+	}
+
+	.table-actions {
+		align-items: flex-start;
+		display: grid;
 	}
 }

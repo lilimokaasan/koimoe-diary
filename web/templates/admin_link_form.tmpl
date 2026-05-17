@@ -49,7 +49,7 @@
 					<label class="checkbox-label"><input type="checkbox" name="visible" value="1" {{if .FriendLink.Visible}}checked{{end}}> Visible on site</label>
 					<div class="link-preview">
 						<span class="friend-link-avatar">
-							{{if .FriendLink.ImageURL}}<img src="{{.FriendLink.ImageURL}}" alt="{{.FriendLink.Name}}">{{else}}<i class="fa fa-heart-o" aria-hidden="true"></i>{{end}}
+							{{if .FriendLink.ImageURL}}<img src="{{.FriendLink.ImageURL}}" alt="{{.FriendLink.Name}}">{{else}}Link{{end}}
 						</span>
 						<strong>{{if .FriendLink.Name}}{{.FriendLink.Name}}{{else}}Friend Link{{end}}</strong>
 						<small>{{if .FriendLink.Description}}{{.FriendLink.Description}}{{else}}A soft little door around KoiMoe Diary.{{end}}</small>
