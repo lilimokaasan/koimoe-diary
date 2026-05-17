@@ -24,28 +24,29 @@ type Controller struct {
 }
 
 type PageData struct {
-	Site         config.Site
-	Title        string
-	Description  string
-	SectionTitle string
-	Query        string
-	Posts        []models.Post
-	Post         models.Post
-	PreviousPost models.Post
-	NextPost     models.Post
-	Comments     []models.Comment
-	CommentOK    bool
-	CommentErr   string
-	Category     models.Category
-	Tag          models.Tag
-	RecentPosts  []models.Post
-	Categories   []models.Category
-	Tags         []models.Tag
-	PostTotal    int
-	CommentTotal int
-	Page         models.PageInfo
-	Notice       string
-	Now          time.Time
+	Site          config.Site
+	Title         string
+	Description   string
+	SectionTitle  string
+	Query         string
+	Posts         []models.Post
+	Post          models.Post
+	PreviousPost  models.Post
+	NextPost      models.Post
+	ArchiveGroups []models.ArchiveGroup
+	Comments      []models.Comment
+	CommentOK     bool
+	CommentErr    string
+	Category      models.Category
+	Tag           models.Tag
+	RecentPosts   []models.Post
+	Categories    []models.Category
+	Tags          []models.Tag
+	PostTotal     int
+	CommentTotal  int
+	Page          models.PageInfo
+	Notice        string
+	Now           time.Time
 }
 
 func New(cfg *config.Config, posts *store.PostStore, renderer *view.Renderer) *Controller {
@@ -57,6 +58,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/post/{slug}", c.Post)
 	server.BindHandler("POST:/post/{slug}/comments", c.CreateComment)
 	server.BindHandler("GET:/archive", c.Archive)
+	server.BindHandler("GET:/archives", c.Archives)
 	server.BindHandler("GET:/category/{slug}", c.Category)
 	server.BindHandler("GET:/tag/{slug}", c.Tag)
 	server.BindHandler("GET:/search", c.Search)
@@ -202,6 +204,22 @@ func (c *Controller) Archive(r *ghttp.Request) {
 		Posts:        posts,
 		Page:         store.PageInfo(page, pageSize, total, "/archive", ""),
 		Now:          time.Now(),
+	})
+}
+
+func (c *Controller) Archives(r *ghttp.Request) {
+	groups, err := c.posts.ArchiveGroups(r.Context())
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "archives.tmpl", PageData{
+		Site:          c.cfg.GetSite(),
+		Title:         "Archives - " + c.cfg.GetSite().Name,
+		Description:   c.cfg.GetSite().Description,
+		SectionTitle:  "Archives",
+		ArchiveGroups: groups,
+		Now:           time.Now(),
 	})
 }
 

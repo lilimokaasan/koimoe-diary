@@ -333,6 +333,44 @@ JOIN tags t ON t.id = pt.tag_id
 WHERE p.status = 'published' AND t.slug = ?`, slug)
 }
 
+func (s *PostStore) ArchiveGroups(ctx context.Context) ([]models.ArchiveGroup, error) {
+	rows, err := s.db.QueryContext(ctx, `
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+       (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
+       p.views, p.published_at, p.created_at, p.updated_at,
+       COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
+FROM posts p
+LEFT JOIN categories c ON c.id = p.category_id
+WHERE p.status = 'published'
+ORDER BY p.published_at DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	posts, err := scanPosts(rows)
+	if err != nil {
+		return nil, err
+	}
+	groups := make([]models.ArchiveGroup, 0)
+	indexByLabel := map[string]int{}
+	for _, post := range posts {
+		label := post.PublishedAt.Format("2006.01")
+		index, ok := indexByLabel[label]
+		if !ok {
+			index = len(groups)
+			indexByLabel[label] = index
+			groups = append(groups, models.ArchiveGroup{
+				Label: label,
+				Year:  post.PublishedAt.Year(),
+				Month: post.PublishedAt.Month(),
+			})
+		}
+		groups[index].Posts = append(groups[index].Posts, post)
+		groups[index].Count = len(groups[index].Posts)
+	}
+	return groups, nil
+}
+
 func (s *PostStore) BySlug(ctx context.Context, slug string) (models.Post, error) {
 	var post models.Post
 	var content string

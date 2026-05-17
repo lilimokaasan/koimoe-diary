@@ -1,0 +1,37 @@
+{{template "head" .}}
+{{template "site_header" .}}
+<div id="primary" class="content-area with-sidebar sakurairo-archives-layout">
+	<main id="main" class="site-main" role="main">
+		<section class="archives-hero">
+			<p class="home-kicker"><i class="iconfont icon-sakura"></i> Memory Archives</p>
+			<h1>{{.SectionTitle}}</h1>
+			<p>Small fragments, gathered softly by month.</p>
+		</section>
+		<div class="archives-timeline">
+			{{range .ArchiveGroups}}
+			<section class="archive-month">
+				<header>
+					<span>{{.Label}}</span>
+					<strong>{{.Count}} Posts</strong>
+				</header>
+				<div class="archive-month-posts">
+					{{range .Posts}}
+					<a class="archive-post-row" href="/post/{{.Slug}}">
+						<time datetime="{{.PublishedAt.Format "2006-01-02"}}">{{.PublishedAt.Format "01.02"}}</time>
+						<span>{{.Title}}</span>
+						<small><i class="iconfont icon-attention"></i>{{.Views}} Hits · <i class="iconfont icon-mark"></i>{{.CommentCount}} Comments</small>
+					</a>
+					{{end}}
+				</div>
+			</section>
+			{{else}}
+			<section class="archive-month empty-archive">
+				<header><span>No memories yet</span><strong>0 Posts</strong></header>
+				<p>When new diary entries arrive, they will gather here month by month.</p>
+			</section>
+			{{end}}
+		</div>
+	</main>
+	{{template "sidebar" .}}
+</div>
+{{template "site_footer" .}}

@@ -52,6 +52,14 @@ type Tag struct {
 	PostCount int
 }
 
+type ArchiveGroup struct {
+	Label string
+	Year  int
+	Month time.Month
+	Posts []Post
+	Count int
+}
+
 type PageInfo struct {
 	Page       int
 	PageSize   int
