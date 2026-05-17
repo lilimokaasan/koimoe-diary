@@ -237,6 +237,12 @@ body {
 	margin-top: 32px;
 }
 
+.single-post-layout.content-area.with-sidebar {
+	gap: 34px;
+	grid-template-columns: minmax(0, 1fr) 320px;
+	max-width: 1360px;
+}
+
 .sakurairo-single {
 	backdrop-filter: blur(12px);
 	background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 252, 0.76));
@@ -247,7 +253,7 @@ body {
 }
 
 .single-cover {
-	aspect-ratio: 16 / 7;
+	aspect-ratio: 16 / 6;
 	background-position: center;
 	background-size: cover;
 	position: relative;
@@ -262,8 +268,8 @@ body {
 
 .sakurairo-single .entry-header {
 	margin: 0 auto;
-	max-width: 780px;
-	padding: 34px 34px 16px;
+	max-width: 920px;
+	padding: 38px 46px 18px;
 	text-align: center;
 }
 
@@ -313,8 +319,8 @@ body {
 .sakurairo-single .entry-content {
 	color: #58515a;
 	margin: 0 auto;
-	max-width: 780px;
-	padding: 16px 34px 10px;
+	max-width: 920px;
+	padding: 18px 46px 12px;
 }
 
 .sakurairo-single .entry-content a {
@@ -353,8 +359,8 @@ body {
 	display: grid;
 	gap: 14px;
 	margin: 0 auto;
-	max-width: 780px;
-	padding: 18px 34px 36px;
+	max-width: 920px;
+	padding: 20px 46px 38px;
 }
 
 .post-lincenses {
@@ -1185,6 +1191,22 @@ body {
 		display: block;
 		padding-left: 12px;
 		padding-right: 12px;
+	}
+
+	.single-post-layout.content-area.with-sidebar {
+		max-width: none;
+	}
+
+	.sakurairo-single .entry-header,
+	.sakurairo-single .entry-content,
+	.sakurairo-single .post-footer {
+		max-width: 680px;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.single-cover {
+		aspect-ratio: 16 / 8;
 	}
 
 	.sakurairo-sidebar {
