@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS posts (
 	cover_image VARCHAR(500) NOT NULL,
 	status VARCHAR(20) NOT NULL DEFAULT 'published',
 	views BIGINT NOT NULL DEFAULT 0,
+	likes BIGINT NOT NULL DEFAULT 0,
 	published_at DATETIME NOT NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -96,7 +97,7 @@ CREATE TABLE IF NOT EXISTS comments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci`); err != nil {
 		return err
 	}
-	return s.ensurePostCategoryColumn()
+	return s.ensurePostColumns()
 }
 
 func (s *PostStore) SeedDemo() error {
@@ -177,7 +178,7 @@ func (s *PostStore) ListAll(ctx context.Context, limit int) ([]models.Post, erro
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
@@ -199,7 +200,7 @@ func (s *PostStore) ListPublishedPaged(ctx context.Context, page int, pageSize i
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
@@ -230,7 +231,7 @@ func (s *PostStore) SearchPaged(ctx context.Context, query string, page int, pag
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
@@ -257,7 +258,7 @@ func (s *PostStore) ByCategory(ctx context.Context, slug string, page int, pageS
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        c.id, c.slug, c.name, c.description
 FROM posts p
 JOIN categories c ON c.id = p.category_id
@@ -284,7 +285,7 @@ func (s *PostStore) ByTag(ctx context.Context, slug string, page int, pageSize i
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 JOIN post_tags pt ON pt.post_id = p.id
@@ -337,7 +338,7 @@ func (s *PostStore) ArchiveGroups(ctx context.Context) ([]models.ArchiveGroup, e
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
@@ -377,14 +378,14 @@ func (s *PostStore) BySlug(ctx context.Context, slug string) (models.Post, error
 	err := s.db.QueryRowContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
 WHERE p.slug = ? AND p.status = 'published'
 LIMIT 1`, slug).Scan(
 		&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage,
-		&post.CommentCount, &post.Views, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
+		&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
 	post.ContentHTML = template.HTML(content)
@@ -402,14 +403,14 @@ func (s *PostStore) ByID(ctx context.Context, id int64) (models.Post, error) {
 	err := s.db.QueryRowContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
 WHERE p.id = ?
 LIMIT 1`, id).Scan(
 		&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage, &post.Status,
-		&post.CommentCount, &post.Views, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
+		&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
 	post.ContentHTML = template.HTML(content)
@@ -508,6 +509,25 @@ func (s *PostStore) CountComments(ctx context.Context) (int, error) {
 func (s *PostStore) IncrementViews(ctx context.Context, id int64) error {
 	_, err := s.db.ExecContext(ctx, `UPDATE posts SET views = views + 1 WHERE id = ?`, id)
 	return err
+}
+
+func (s *PostStore) IncrementLikes(ctx context.Context, id int64) (int64, error) {
+	result, err := s.db.ExecContext(ctx, `UPDATE posts SET likes = likes + 1 WHERE id = ? AND status = 'published'`, id)
+	if err != nil {
+		return 0, err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	if affected == 0 {
+		return 0, sql.ErrNoRows
+	}
+	var likes int64
+	if err := s.db.QueryRowContext(ctx, `SELECT likes FROM posts WHERE id = ?`, id).Scan(&likes); err != nil {
+		return 0, err
+	}
+	return likes, nil
 }
 
 func (s *PostStore) ListComments(ctx context.Context, postID int64) ([]models.Comment, error) {
@@ -657,7 +677,7 @@ func scanAdminPosts(rows *sql.Rows) ([]models.Post, error) {
 		var content string
 		if err := rows.Scan(
 			&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage, &post.Status,
-			&post.CommentCount, &post.Views, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
+			&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 			&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 		); err != nil {
 			return nil, err
@@ -675,7 +695,7 @@ func scanPosts(rows *sql.Rows) ([]models.Post, error) {
 		var content string
 		if err := rows.Scan(
 			&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage,
-			&post.CommentCount, &post.Views, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
+			&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 			&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 		); err != nil {
 			return nil, err
@@ -692,7 +712,7 @@ func (s *PostStore) adjacentPublished(ctx context.Context, post models.Post, com
 	query := `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
-       p.views, p.published_at, p.created_at, p.updated_at,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
@@ -701,7 +721,7 @@ ORDER BY p.published_at ` + direction + `
 LIMIT 1`
 	err := s.db.QueryRowContext(ctx, query, post.PublishedAt).Scan(
 		&adjacent.ID, &adjacent.Slug, &adjacent.Title, &adjacent.Excerpt, &content, &adjacent.CoverImage,
-		&adjacent.CommentCount, &adjacent.Views, &adjacent.PublishedAt, &adjacent.CreatedAt, &adjacent.UpdatedAt,
+		&adjacent.CommentCount, &adjacent.Views, &adjacent.Likes, &adjacent.PublishedAt, &adjacent.CreatedAt, &adjacent.UpdatedAt,
 		&adjacent.Category.ID, &adjacent.Category.Slug, &adjacent.Category.Name, &adjacent.Category.Description,
 	)
 	adjacent.ContentHTML = template.HTML(content)
@@ -745,18 +765,25 @@ func normalizePage(page int, pageSize int) (int, int) {
 	return page, pageSize
 }
 
-func (s *PostStore) ensurePostCategoryColumn() error {
+func (s *PostStore) ensurePostColumns() error {
+	if err := s.ensureColumn("posts", "category_id", `ALTER TABLE posts ADD COLUMN category_id BIGINT NULL AFTER cover_image`); err != nil {
+		return err
+	}
+	return s.ensureColumn("posts", "likes", `ALTER TABLE posts ADD COLUMN likes BIGINT NOT NULL DEFAULT 0 AFTER views`)
+}
+
+func (s *PostStore) ensureColumn(table string, column string, alter string) error {
 	var exists int
 	if err := s.db.QueryRow(`
 SELECT COUNT(*)
 FROM information_schema.COLUMNS
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'posts' AND COLUMN_NAME = 'category_id'`).Scan(&exists); err != nil {
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?`, table, column).Scan(&exists); err != nil {
 		return err
 	}
 	if exists > 0 {
 		return nil
 	}
-	_, err := s.db.Exec(`ALTER TABLE posts ADD COLUMN category_id BIGINT NULL AFTER cover_image`)
+	_, err := s.db.Exec(alter)
 	return err
 }
 

@@ -432,17 +432,65 @@ body {
 	line-height: 1.6;
 }
 
-.single-author a,
+.single-actions a,
 .post-nextprev a {
 	color: var(--sakura-rose);
 	text-decoration: none;
 }
 
-.single-author a {
+.single-actions {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: flex-end;
+}
+
+.single-actions a,
+.post-like-button {
+	align-items: center;
 	background: rgba(251, 152, 192, 0.1);
+	border: 0;
 	border-radius: 999px;
+	box-sizing: border-box;
+	color: var(--sakura-rose);
+	cursor: pointer;
+	display: inline-flex;
+	font: inherit;
+	gap: 7px;
 	padding: 9px 13px;
+	text-decoration: none;
+	transition: background-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
 	white-space: nowrap;
+}
+
+.post-like-button strong {
+	font-family: "Ubuntu", sans-serif;
+	font-size: 13px;
+}
+
+.single-actions a:hover,
+.post-like-button:hover,
+.post-like-button.is-liked {
+	background: rgba(251, 152, 192, 0.18);
+	box-shadow: 0 10px 22px rgba(251, 152, 192, 0.14);
+	transform: translateY(-1px);
+}
+
+.post-like-button.is-liked i,
+.post-like-button.is-liked span,
+.post-like-button.is-liked strong {
+	color: #e674a0;
+}
+
+.post-like-button.is-loading {
+	opacity: 0.72;
+	pointer-events: none;
+}
+
+.post-like-button.has-error {
+	background: rgba(254, 242, 242, 0.92);
+	color: #b42318;
 }
 
 .post-nextprev {
@@ -1027,6 +1075,10 @@ body {
 	.single-author a {
 		display: inline-flex;
 		margin-top: 12px;
+	}
+
+	.single-actions {
+		justify-content: flex-start;
 	}
 
 	.post-nextprev a {

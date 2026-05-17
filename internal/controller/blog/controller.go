@@ -64,6 +64,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/search", c.Search)
 	server.BindHandler("GET:/api/posts", c.APIPosts)
 	server.BindHandler("GET:/api/posts/{slug}", c.APIPost)
+	server.BindHandler("POST:/api/posts/{id}/like", c.LikePost)
 	server.BindStatusHandler(404, c.NotFound)
 }
 
@@ -330,6 +331,27 @@ func (c *Controller) APIPost(r *ghttp.Request) {
 		return
 	}
 	r.Response.WriteJson(post)
+}
+
+func (c *Controller) LikePost(r *ghttp.Request) {
+	id := r.GetRouter("id").Int64()
+	if id <= 0 {
+		r.Response.WriteStatus(400, "Bad Request")
+		return
+	}
+	likes, err := c.posts.IncrementLikes(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.WriteStatus(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	r.Response.WriteJson(map[string]any{
+		"ok":    true,
+		"likes": likes,
+	})
 }
 
 func (c *Controller) NotFound(r *ghttp.Request) {

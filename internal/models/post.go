@@ -19,6 +19,7 @@ type Post struct {
 	Tags         []Tag
 	CommentCount int64
 	Views        int64
+	Likes        int64
 	PublishedAt  time.Time
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
