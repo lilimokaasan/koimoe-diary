@@ -54,6 +54,11 @@ func New() (*App, error) {
 		_ = db.Close()
 		return nil, err
 	}
+	linkStore := store.NewLinkStore(db)
+	if err := linkStore.Init(); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
 	site, err := settingsStore.Site(context.Background(), cfg.GetSite())
 	if err != nil {
 		_ = db.Close()
@@ -77,8 +82,8 @@ func New() (*App, error) {
 		})
 	})
 
-	admin.New(&cfg, postStore, settingsStore, renderer).Register(server)
-	blog.New(&cfg, postStore, renderer).Register(server)
+	admin.New(&cfg, postStore, settingsStore, linkStore, renderer).Register(server)
+	blog.New(&cfg, postStore, linkStore, renderer).Register(server)
 
 	return &App{cfg: &cfg, db: db, server: server}, nil
 }

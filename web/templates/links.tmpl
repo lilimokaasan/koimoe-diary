@@ -1,0 +1,43 @@
+{{template "head" .}}
+{{template "site_header" .}}
+<div id="primary" class="content-area with-sidebar sakurairo-links-layout">
+	<main id="main" class="site-main" role="main">
+		<section class="links-hero">
+			<p class="home-kicker"><i class="iconfont icon-sakura"></i> KoiMoe Friends</p>
+			<h1>{{.SectionTitle}}</h1>
+			<p>Soft little doors to the places I like returning to.</p>
+		</section>
+		<div class="friend-link-sections">
+			{{range .LinkCategories}}
+			<section class="friend-link-section">
+				<header>
+					<h2>{{.Name}}</h2>
+					{{if .Description}}<p>{{.Description}}</p>{{end}}
+				</header>
+				<div class="friend-link-grid">
+					{{range .Links}}
+					<a class="friend-link-card" href="{{.URL}}" target="_blank" rel="noopener noreferrer">
+						<span class="friend-link-avatar">
+							{{if .ImageURL}}<img src="{{.ImageURL}}" alt="{{.Name}}">{{else}}<i class="fa fa-heart-o" aria-hidden="true"></i>{{end}}
+						</span>
+						<span class="friend-link-body">
+							<strong>{{.Name}}</strong>
+							<small>{{if .Description}}{{.Description}}{{else}}{{.URL}}{{end}}</small>
+						</span>
+					</a>
+					{{end}}
+				</div>
+			</section>
+			{{else}}
+			<section class="friend-link-section empty-links">
+				<header>
+					<h2>No links yet</h2>
+					<p>When friendly sites are added in the dashboard, they will bloom here.</p>
+				</header>
+			</section>
+			{{end}}
+		</div>
+	</main>
+	{{template "sidebar" .}}
+</div>
+{{template "site_footer" .}}

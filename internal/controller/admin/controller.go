@@ -28,6 +28,7 @@ type Controller struct {
 	cfg      *config.Config
 	posts    *store.PostStore
 	settings *store.SettingsStore
+	links    *store.LinkStore
 	renderer *view.Renderer
 }
 
@@ -39,6 +40,8 @@ type PageData struct {
 	Posts       []models.Post
 	Comments    []models.Comment
 	Post        models.Post
+	FriendLinks []models.FriendLink
+	FriendLink  models.FriendLink
 	Settings    config.Site
 	Navigation  string
 	ContentHTML string
@@ -47,8 +50,8 @@ type PageData struct {
 	Now         time.Time
 }
 
-func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, settings: settings, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -61,6 +64,12 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/admin/comments/{id}/delete", c.DeleteComment)
 	server.BindHandler("GET:/admin/settings", c.Settings)
 	server.BindHandler("POST:/admin/settings", c.SaveSettings)
+	server.BindHandler("GET:/admin/links", c.Links)
+	server.BindHandler("GET:/admin/links/new", c.NewLink)
+	server.BindHandler("POST:/admin/links", c.SaveLink)
+	server.BindHandler("GET:/admin/links/{id}/edit", c.EditLink)
+	server.BindHandler("POST:/admin/links/{id}", c.SaveLink)
+	server.BindHandler("POST:/admin/links/{id}/delete", c.DeleteLink)
 	server.BindHandler("GET:/admin/posts/new", c.NewPost)
 	server.BindHandler("POST:/admin/posts", c.SavePost)
 	server.BindHandler("GET:/admin/posts/{id}/edit", c.EditPost)
@@ -214,6 +223,110 @@ func (c *Controller) DeleteComment(r *ghttp.Request) {
 		return
 	}
 	r.Response.RedirectTo("/admin/comments?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) Links(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	links, err := c.links.ListAdmin(r.Context())
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_links.tmpl", PageData{
+		Site:        c.cfg.GetSite(),
+		Title:       "Links - " + c.cfg.GetSite().Name,
+		Message:     r.GetQuery("saved").String(),
+		FriendLinks: links,
+		Now:         time.Now(),
+	})
+}
+
+func (c *Controller) NewLink(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	c.render(r, "admin_link_form.tmpl", PageData{
+		Site:  c.cfg.GetSite(),
+		Title: "New Link - " + c.cfg.GetSite().Name,
+		FriendLink: models.FriendLink{
+			Category:  models.FriendLinkCategory{Name: "Friends"},
+			Visible:   true,
+			SortOrder: 0,
+		},
+		IsNew: true,
+		Now:   time.Now(),
+	})
+}
+
+func (c *Controller) EditLink(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	link, err := c.links.ByID(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.WriteStatus(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_link_form.tmpl", PageData{
+		Site:       c.cfg.GetSite(),
+		Title:      "Edit Link - " + c.cfg.GetSite().Name,
+		Message:    r.GetQuery("saved").String(),
+		FriendLink: link,
+		Now:        time.Now(),
+	})
+}
+
+func (c *Controller) SaveLink(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	input := store.FriendLinkInput{
+		ID:           id,
+		CategoryName: r.GetForm("category").String(),
+		Name:         r.GetForm("name").String(),
+		URL:          r.GetForm("url").String(),
+		Description:  r.GetForm("description").String(),
+		ImageURL:     r.GetForm("image_url").String(),
+		SortOrder:    r.GetForm("sort_order").Int(),
+		Visible:      r.GetForm("visible").String() == "1",
+	}
+	if strings.TrimSpace(input.Name) == "" || strings.TrimSpace(input.URL) == "" {
+		c.render(r, "admin_link_form.tmpl", PageData{
+			Site:       c.cfg.GetSite(),
+			Title:      "Link Form - " + c.cfg.GetSite().Name,
+			Error:      "Name and URL are required.",
+			FriendLink: friendLinkFromInput(input),
+			IsNew:      id == 0,
+			Now:        time.Now(),
+		})
+		return
+	}
+	linkID, err := c.links.SaveLink(r.Context(), input)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/links/"+strconv.FormatInt(linkID, 10)+"/edit?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) DeleteLink(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	if err := c.links.DeleteLink(r.Context(), id); err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/links?saved=1", http.StatusSeeOther)
 }
 
 func (c *Controller) NewPost(r *ghttp.Request) {
@@ -398,6 +511,21 @@ func postFromInput(input store.PostInput) models.Post {
 		Category:    models.Category{Name: input.CategoryName},
 		Tags:        tags,
 		ContentHTML: template.HTML(input.ContentHTML),
+	}
+}
+
+func friendLinkFromInput(input store.FriendLinkInput) models.FriendLink {
+	return models.FriendLink{
+		ID:          input.ID,
+		Name:        strings.TrimSpace(input.Name),
+		URL:         strings.TrimSpace(input.URL),
+		Description: strings.TrimSpace(input.Description),
+		ImageURL:    strings.TrimSpace(input.ImageURL),
+		SortOrder:   input.SortOrder,
+		Visible:     input.Visible,
+		Category: models.FriendLinkCategory{
+			Name: strings.TrimSpace(input.CategoryName),
+		},
 	}
 }
 

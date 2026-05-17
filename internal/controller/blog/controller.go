@@ -20,6 +20,7 @@ import (
 type Controller struct {
 	cfg      *config.Config
 	posts    *store.PostStore
+	links    *store.LinkStore
 	renderer *view.Renderer
 }
 
@@ -34,6 +35,7 @@ type PageData struct {
 	PreviousPost  models.Post
 	NextPost      models.Post
 	ArchiveGroups []models.ArchiveGroup
+	LinkCategories []models.FriendLinkCategory
 	Comments      []models.Comment
 	CommentOK     bool
 	CommentErr    string
@@ -49,8 +51,8 @@ type PageData struct {
 	Now           time.Time
 }
 
-func New(cfg *config.Config, posts *store.PostStore, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, links: links, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -59,6 +61,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/post/{slug}/comments", c.CreateComment)
 	server.BindHandler("GET:/archive", c.Archive)
 	server.BindHandler("GET:/archives", c.Archives)
+	server.BindHandler("GET:/links", c.Links)
 	server.BindHandler("GET:/category/{slug}", c.Category)
 	server.BindHandler("GET:/tag/{slug}", c.Tag)
 	server.BindHandler("GET:/search", c.Search)
@@ -221,6 +224,22 @@ func (c *Controller) Archives(r *ghttp.Request) {
 		SectionTitle:  "Archives",
 		ArchiveGroups: groups,
 		Now:           time.Now(),
+	})
+}
+
+func (c *Controller) Links(r *ghttp.Request) {
+	categories, err := c.links.ListPublic(r.Context())
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "links.tmpl", PageData{
+		Site:           c.cfg.GetSite(),
+		Title:          "Links - " + c.cfg.GetSite().Name,
+		Description:    "Friendly little doors around KoiMoe Diary.",
+		SectionTitle:   "Links",
+		LinkCategories: categories,
+		Now:            time.Now(),
 	})
 }
 
