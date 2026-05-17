@@ -15,6 +15,12 @@ type Site struct {
 	ThemeColor  string
 	HeroImage   string
 	Avatar      string
+	Navigation  []NavItem
+}
+
+type NavItem struct {
+	Label string `json:"label"`
+	URL   string `json:"url"`
 }
 
 type Config struct {
@@ -66,6 +72,13 @@ func FromEnv() Config {
 			ThemeColor:  env("THEME_COLOR", "#fe9600"),
 			HeroImage:   env("HERO_IMAGE", "/static/theme/screenshot.jpg"),
 			Avatar:      env("SITE_AVATAR", "/static/theme/content-image/d-1.jpg"),
+			Navigation: []NavItem{
+				{Label: "Home", URL: "/"},
+				{Label: "Archive", URL: "/archive"},
+				{Label: "Blog", URL: "/category/blog"},
+				{Label: "Sakurairo", URL: "/tag/sakurairo"},
+				{Label: "Search", URL: "/search"},
+			},
 		},
 	}
 }

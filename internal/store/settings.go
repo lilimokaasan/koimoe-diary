@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 
 	"sakurairo-go/internal/config"
 )
@@ -54,10 +55,20 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 	if values["site_avatar"] != "" {
 		site.Avatar = values["site_avatar"]
 	}
+	if values["navigation"] != "" {
+		var navigation []config.NavItem
+		if err := json.Unmarshal([]byte(values["navigation"]), &navigation); err == nil && len(navigation) > 0 {
+			site.Navigation = navigation
+		}
+	}
 	return site, nil
 }
 
 func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
+	navigation, err := json.Marshal(site.Navigation)
+	if err != nil {
+		return err
+	}
 	settings := map[string]string{
 		"site_name":        site.Name,
 		"site_description": site.Description,
@@ -66,6 +77,7 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"theme_color":      site.ThemeColor,
 		"hero_image":       site.HeroImage,
 		"site_avatar":      site.Avatar,
+		"navigation":       string(navigation),
 	}
 	for key, value := range settings {
 		if _, err := s.db.ExecContext(ctx, `
@@ -79,6 +91,10 @@ ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`, key, value); err
 }
 
 func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
+	navigation, err := json.Marshal(defaults.Navigation)
+	if err != nil {
+		return err
+	}
 	settings := map[string]string{
 		"site_name":        defaults.Name,
 		"site_description": defaults.Description,
@@ -87,6 +103,7 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		"theme_color":      defaults.ThemeColor,
 		"hero_image":       defaults.HeroImage,
 		"site_avatar":      defaults.Avatar,
+		"navigation":       string(navigation),
 	}
 	for key, value := range settings {
 		if _, err := s.db.Exec(`

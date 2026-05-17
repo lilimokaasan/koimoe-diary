@@ -248,6 +248,11 @@ textarea {
 	font-size: 13px;
 }
 
+.navigation-input {
+	font-family: "Source Code Pro", Consolas, monospace;
+	font-size: 13px;
+}
+
 button,
 .button {
 	align-items: center;

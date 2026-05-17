@@ -40,6 +40,7 @@ type PageData struct {
 	Comments    []models.Comment
 	Post        models.Post
 	Settings    config.Site
+	Navigation  string
 	ContentHTML string
 	Tags        string
 	IsNew       bool
@@ -75,7 +76,10 @@ func (c *Controller) Settings(r *ghttp.Request) {
 		Title:    "Settings - " + c.cfg.GetSite().Name,
 		Message:  r.GetQuery("saved").String(),
 		Settings: c.cfg.GetSite(),
-		Now:      time.Now(),
+		Navigation: formatNavigation(
+			c.cfg.GetSite().Navigation,
+		),
+		Now: time.Now(),
 	})
 }
 
@@ -91,6 +95,7 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		ThemeColor:  strings.TrimSpace(r.GetForm("theme_color").String()),
 		HeroImage:   strings.TrimSpace(r.GetForm("hero_image").String()),
 		Avatar:      strings.TrimSpace(r.GetForm("site_avatar").String()),
+		Navigation:  parseNavigation(r.GetForm("navigation").String()),
 	}
 	site = normalizeSiteSettings(site, c.cfg.GetSite())
 	if err := c.settings.SaveSite(r.Context(), site); err != nil {
@@ -437,5 +442,44 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	if site.Avatar == "" {
 		site.Avatar = fallback.Avatar
 	}
+	if len(site.Navigation) == 0 {
+		site.Navigation = fallback.Navigation
+	}
 	return site
+}
+
+func parseNavigation(value string) []config.NavItem {
+	var items []config.NavItem
+	for _, line := range strings.Split(value, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		label, url, ok := strings.Cut(line, "|")
+		if !ok {
+			continue
+		}
+		label = strings.TrimSpace(label)
+		url = strings.TrimSpace(url)
+		if label == "" || !isAllowedNavURL(url) {
+			continue
+		}
+		items = append(items, config.NavItem{Label: label, URL: url})
+	}
+	return items
+}
+
+func formatNavigation(items []config.NavItem) string {
+	lines := make([]string, 0, len(items))
+	for _, item := range items {
+		if item.Label == "" || item.URL == "" {
+			continue
+		}
+		lines = append(lines, item.Label+" | "+item.URL)
+	}
+	return strings.Join(lines, "\n")
+}
+
+func isAllowedNavURL(url string) bool {
+	return strings.HasPrefix(url, "/") || strings.HasPrefix(url, "https://") || strings.HasPrefix(url, "http://")
 }

@@ -40,6 +40,7 @@
 					<label>Description<textarea name="site_description" rows="3" required>{{.Settings.Description}}</textarea></label>
 					<label>Author<input type="text" name="site_author" value="{{.Settings.Author}}" required></label>
 					<label>Notice<textarea name="site_notice" rows="3">{{.Settings.Notice}}</textarea></label>
+					<label>Navigation<textarea class="navigation-input" name="navigation" rows="7" placeholder="Home | /">{{.Navigation}}</textarea></label>
 				</section>
 				<section>
 					<label>Theme Color<input type="text" name="theme_color" value="{{.Settings.ThemeColor}}" placeholder="#fe9600"></label>

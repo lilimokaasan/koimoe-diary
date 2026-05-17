@@ -84,11 +84,7 @@
 					</div>
 					<nav>
 						<ul id="menu-primary" class="menu">
-							<li><a href="/">Home</a></li>
-							<li><a href="/archive">Archive</a></li>
-							<li><a href="/category/blog">Blog</a></li>
-							<li><a href="/tag/sakurairo">Sakurairo</a></li>
-							<li><a href="/search">Search</a></li>
+							{{range .Site.Navigation}}<li><a href="{{.URL}}">{{.Label}}</a></li>{{end}}
 						</ul>
 					</nav>
 				</div>
