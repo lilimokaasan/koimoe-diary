@@ -300,6 +300,7 @@ friend_links(id, category_id, name, url, description, image_url, sort_order, vis
 Go 版当前单用户场景：
 
 - 保留 admin 登录入口即可。
+- 当前右上角三横杠菜单不应是空交互；在导航菜单中至少提供指向 `/admin/login` 的登录入口。若管理员已登录，访问登录入口可沿用后台现有逻辑跳转到 `/admin`。
 - 多用户资料、前台注册、普通用户菜单可以暂缓。
 
 ## 5. 评论系统
