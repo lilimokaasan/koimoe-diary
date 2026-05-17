@@ -233,13 +233,19 @@
 	</div>
 	<form class="comment-form" method="post" action="/post/{{.Post.Slug}}/comments">
 		<div class="comment-grid">
-			<input type="text" name="author" placeholder="Name" maxlength="80" required>
-			<input type="email" name="email" placeholder="Email" maxlength="255" required>
-			<input type="url" name="website" placeholder="Website" maxlength="255">
+			<input type="text" name="author" placeholder="Nickname (Name*)" maxlength="80" required>
+			<input type="email" name="email" placeholder="email (Must*)" maxlength="255" required>
+			<input type="url" name="website" placeholder="Site" maxlength="255">
 		</div>
 		<input class="hp-field" type="text" name="homepage" tabindex="-1" autocomplete="off">
-		<textarea name="content" placeholder="Say something..." maxlength="2000" required></textarea>
-		<button type="submit">Post Comment</button>
+		<div class="comment-textarea">
+			<textarea class="commentbody" name="content" placeholder="You are a surprise that I will only meet once in my life ..." maxlength="2000" required></textarea>
+			<span class="input-label">Leave a comment</span>
+		</div>
+		<div class="comment-form-footer">
+			<span class="comment-tip">Click me OωO</span>
+			<button type="submit">BiuBiuBiu~</button>
+		</div>
 	</form>
 </section>
 {{end}}
