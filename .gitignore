@@ -1,0 +1,8 @@
+.env
+*.local
+bin/
+dist/
+tmp/
+web/static/uploads/
+*.exe
+*.log

@@ -1,0 +1,259 @@
+{{define "head"}}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta name="theme-color" content="{{.Site.ThemeColor}}">
+	<meta name="description" content="{{.Description}}">
+	<title>{{.Title}}</title>
+	<link rel="icon" href="/favicon.png?v=20260518-crop" type="image/png">
+	<link rel="shortcut icon" href="/favicon.ico?v=20260518-crop">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
+	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
+	<link rel="stylesheet" href="/static/theme/style.css">
+	<link rel="stylesheet" href="/static/app.css">
+	<script>
+		window.mashiro_global = {};
+		window.mashiro_option = {
+			NProgressON: true,
+			audio: false,
+			darkmode: true,
+			cookie_version_control: "",
+			site_name: "{{.Site.Name}}",
+			author_name: "{{.Site.Author}}",
+			template_url: "/static/theme",
+			site_url: "",
+			live_search: false,
+			skin_bg0: "none",
+			skin_bg1: "https://cdn.jsdelivr.net/gh/Fuukei/Public_Repository/vision/background/foreground/bg1.png",
+			skin_bg2: "https://cdn.jsdelivr.net/gh/Fuukei/Public_Repository/vision/background/foreground/bg2.png",
+			skin_bg3: "https://cdn.jsdelivr.net/gh/Fuukei/Public_Repository/vision/background/foreground/bg3.png",
+			skin_bg4: "https://cdn.jsdelivr.net/gh/Fuukei/Public_Repository/vision/background/foreground/bg4.png",
+			land_at_home: true,
+			baguetteBoxON: true,
+			clipboardCopyright: false,
+			float_player_on: false,
+			cover_beta: false,
+			windowheight: "auto"
+		};
+	</script>
+</head>
+{{end}}
+
+{{define "site_header"}}
+<body class="home blog hfeed chinese-font">
+<div class="scrollbar" id="bar"></div>
+<section id="main-container">
+	<div class="headertop filter-undertint">
+		<style>.header-info::before{display:none!important;opacity:0!important}</style>
+		<div id="banner_wave_1"></div><div id="banner_wave_2"></div>
+		<figure id="centerbg" class="centerbg" style="background-image:url('{{.Site.HeroImage}}')">
+			<div class="focusinfo">
+				<div class="header-tou"><a href="/"><img src="{{.Site.Avatar}}" alt="{{.Site.Name}}"></a></div>
+				<div class="header-info">
+					<p>{{.Site.Description}}</p>
+				</div>
+			</div>
+			<div class="headertop-down faa-float animated" onclick="window.scrollTo({top: document.querySelector('#content').offsetTop, behavior: 'smooth'})">
+				<span><i class="fa fa-chevron-down" aria-hidden="true" style="color:{{.Site.ThemeColor}}"></i></span>
+			</div>
+		</figure>
+	</div>
+	<div id="page" class="site wrapper">
+		<header class="site-header no-select" role="banner">
+			<div class="site-top">
+				<div class="site-branding">
+					<span class="site-title">
+						<span class="logolink moe-mashiro">
+							<a href="/">
+								<ruby>
+									<span class="sakuraso">{{.Site.Name}}</span>
+									<rp></rp><rt class="chinese-font">{{.Site.Author}}</rt><rp></rp>
+								</ruby>
+							</a>
+						</span>
+					</span>
+				</div>
+				<div class="searchbox"><i class="iconfont js-toggle-search iconsearch icon-search"></i></div>
+				<div class="lower">
+					<div id="show-nav" class="showNav">
+						<div class="line line1"></div>
+						<div class="line line2"></div>
+						<div class="line line3"></div>
+					</div>
+					<nav>
+						<ul id="menu-primary" class="menu">
+							<li><a href="/">Home</a></li>
+							<li><a href="/archive">Archive</a></li>
+							<li><a href="/category/blog">Blog</a></li>
+							<li><a href="/tag/sakurairo">Sakurairo</a></li>
+							<li><a href="/search">Search</a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
+		<div id="content" class="site-content">
+{{end}}
+
+{{define "site_footer"}}
+		</div>
+	</div>
+	<footer id="colophon" class="site-footer" role="contentinfo">
+		<div class="site-info" theme-info="Sakurairo Go">
+			<div class="footertext">
+				<i class="iconfont icon-sakura rotating" style="color:{{.Site.ThemeColor}};display:inline-block;font-size:26px"></i>
+				<p style="color:#666">{{.Site.Description}}</p>
+			</div>
+			<div class="footer-device">
+				<p style="font-family:'Ubuntu',sans-serif"><span style="color:#b9b9b9">Theme Sakurairo, rewritten with Go. &copy; {{year .Now}} {{.Site.Name}}</span></p>
+			</div>
+		</div>
+	</footer>
+	<div class="openNav no-select"><div class="iconflat no-select"><div class="icon"></div></div></div>
+</section>
+<a class="cd-top faa-float animated"></a>
+<button id="moblieGoTop" title="Go to top"><i class="fa fa-chevron-up" aria-hidden="true"></i></button>
+<button id="changskin" style="bottom:15px"><i class="iconfont icon-gear inline-block rotating"></i></button>
+<form class="js-search search-form search-form--modal" method="get" action="/search" role="search">
+	<div class="search-form__inner">
+		<div class="micro">
+			<p class="micro mb-">Want to find something?</p>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" type="search" name="q" placeholder="Search" required>
+		</div>
+	</div>
+	<div class="search_close"></div>
+</form>
+<div class="skin-menu no-select">
+	Style
+	<div class="theme-controls row-container">
+		<ul class="menu-list">
+			<li id="white-bg"><i class="fa fa-television" aria-hidden="true"></i></li>
+			<li id="diy1-bg"><i class="fa fa-heart-o" aria-hidden="true"></i></li>
+			<li id="diy2-bg"><i class="fa fa-star-o" aria-hidden="true"></i></li>
+			<li id="dark-bg"><i class="fa fa-moon-o" aria-hidden="true"></i></li>
+		</ul>
+	</div>
+</div>
+<script src="/static/theme/cdn/js/lib.js"></script>
+<script src="/static/theme/js/sakura-app.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>
+{{end}}
+
+{{define "post_card"}}
+<article class="post post-list" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="post-entry">
+		<div class="feature">
+			<a href="/post/{{.Slug}}">
+				<div class="overlay"><i class="iconfont icon-text"></i></div>
+				<img src="{{.CoverImage}}" alt="{{.Title}}">
+			</a>
+		</div>
+		<h1 class="entry-title"><a href="/post/{{.Slug}}">{{.Title}}</a></h1>
+		<div class="p-time"><i class="iconfont icon-time"></i>{{since .PublishedAt}}</div>
+		{{if .Category.ID}}
+		<div class="post-taxonomy">
+			<a href="/category/{{.Category.Slug}}"><i class="fa fa-folder-o" aria-hidden="true"></i> {{.Category.Name}}</a>
+			{{range .Tags}}<a href="/tag/{{.Slug}}"><i class="iconfont icon-tags"></i> {{.Name}}</a>{{end}}
+		</div>
+		{{end}}
+		<p>{{.Excerpt}}</p>
+		<footer class="entry-footer">
+			<div class="post-more"><a href="/post/{{.Slug}}"><i class="iconfont icon-caidan"></i></a></div>
+			<div class="info-meta">
+				<div class="comnum"><span><i class="iconfont icon-mark"></i>{{.CommentCount}} Comments</span></div>
+				<div class="views"><span><i class="iconfont icon-attention"></i>{{.Views}} Hits</span></div>
+			</div>
+		</footer>
+	</div>
+	<hr>
+</article>
+{{end}}
+
+{{define "sidebar"}}
+<aside class="sakurairo-sidebar" aria-label="Sidebar">
+	<section class="sidebar-card profile-card">
+		<img class="profile-avatar" src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+		<h2>{{.Site.Author}}</h2>
+		<p>{{.Site.Description}}</p>
+		<div class="site-stats">
+			<span><strong>{{.PostTotal}}</strong> Posts</span>
+			<span><strong>{{.CommentTotal}}</strong> Comments</span>
+		</div>
+	</section>
+	<section class="sidebar-card">
+		<h2><i class="fa fa-clock-o" aria-hidden="true"></i> Recent</h2>
+		<ul class="sidebar-list">
+			{{range .RecentPosts}}
+			<li><a href="/post/{{.Slug}}">{{.Title}}</a><span>{{since .PublishedAt}}</span></li>
+			{{end}}
+		</ul>
+	</section>
+	{{if .Categories}}
+	<section class="sidebar-card">
+		<h2><i class="fa fa-folder-o" aria-hidden="true"></i> Categories</h2>
+		<ul class="sidebar-list compact">
+			{{range .Categories}}
+			<li><a href="/category/{{.Slug}}">{{.Name}}</a><span>{{.PostCount}}</span></li>
+			{{end}}
+		</ul>
+	</section>
+	{{end}}
+	{{if .Tags}}
+	<section class="sidebar-card">
+		<h2><i class="iconfont icon-tags"></i> Tags</h2>
+		<div class="tag-cloud">
+			{{range .Tags}}<a href="/tag/{{.Slug}}">{{.Name}}<span>{{.PostCount}}</span></a>{{end}}
+		</div>
+	</section>
+	{{end}}
+</aside>
+{{end}}
+
+{{define "comments"}}
+<section id="comments" class="comments-area sakurairo-comments">
+	<h2 class="comments-title"><i class="iconfont icon-mark"></i> Comments</h2>
+	{{if .CommentOK}}<div class="comment-message success">Comment posted.</div>{{end}}
+	{{if .CommentErr}}<div class="comment-message error">{{.CommentErr}}</div>{{end}}
+	<div class="comment-list">
+		{{range .Comments}}
+		<article class="comment-body">
+			<div class="comment-avatar">{{printf "%.1s" .Author}}</div>
+			<div class="comment-main">
+				<div class="comment-meta">
+					<strong>{{.Author}}</strong>
+					<span>{{since .CreatedAt}}</span>
+				</div>
+				<p>{{.Content}}</p>
+			</div>
+		</article>
+		{{else}}
+		<p class="no-comments">No comments yet.</p>
+		{{end}}
+	</div>
+	<form class="comment-form" method="post" action="/post/{{.Post.Slug}}/comments">
+		<div class="comment-grid">
+			<input type="text" name="author" placeholder="Name" maxlength="80" required>
+			<input type="email" name="email" placeholder="Email" maxlength="255" required>
+			<input type="url" name="website" placeholder="Website" maxlength="255">
+		</div>
+		<input class="hp-field" type="text" name="homepage" tabindex="-1" autocomplete="off">
+		<textarea name="content" placeholder="Say something..." maxlength="2000" required></textarea>
+		<button type="submit">Post Comment</button>
+	</form>
+</section>
+{{end}}
+
+{{define "pagination"}}
+{{if gt .Page.TotalPages 1}}
+<nav class="navigator sakurairo-pagination">
+	{{if .Page.HasPrev}}<a href="{{.Page.URL .Page.PrevPage}}"><i class="iconfont icon-back"></i></a>{{end}}
+	<span>{{.Page.Page}} / {{.Page.TotalPages}}</span>
+	{{if .Page.HasNext}}<a href="{{.Page.URL .Page.NextPage}}"><i class="iconfont icon-right"></i></a>{{end}}
+</nav>
+{{end}}
+{{end}}

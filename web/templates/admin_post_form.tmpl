@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/" target="_blank">View Site</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero compact">
+		<div>
+			<p>{{if .IsNew}}New Draft{{else}}Editor{{end}}</p>
+			<h1>{{if .IsNew}}Catch a new thought.{{else}}Shape this post.{{end}}</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<form class="admin-panel editor-panel" method="post" enctype="multipart/form-data" action="{{if .IsNew}}/admin/posts{{else}}/admin/posts/{{.Post.ID}}{{end}}">
+			<div class="panel-title">
+				<h1>{{if .IsNew}}New Post{{else}}Edit Post{{end}}</h1>
+				<div class="actions">
+					<a class="button" href="/admin">Cancel</a>
+					<button class="primary" type="submit">Save</button>
+				</div>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
+			<div class="editor-grid">
+				<section class="editor-main">
+					<label>Title<input type="text" name="title" value="{{.Post.Title}}" required></label>
+					<label>Slug<input type="text" name="slug" value="{{.Post.Slug}}" placeholder="auto-generated from title"></label>
+					<label>Excerpt<textarea name="excerpt" rows="3">{{.Post.Excerpt}}</textarea></label>
+					<label>Content HTML<textarea class="content-input" name="content_html" rows="18" required>{{.ContentHTML}}</textarea></label>
+				</section>
+				<aside class="editor-side">
+					<label>Status
+						<select name="status">
+							<option value="published" {{if ne .Post.Status "draft"}}selected{{end}}>Published</option>
+							<option value="draft" {{if eq .Post.Status "draft"}}selected{{end}}>Draft</option>
+						</select>
+					</label>
+					<label>Category<input type="text" name="category" value="{{.Post.Category.Name}}" placeholder="Blog"></label>
+					<label>Tags<input type="text" name="tags" value="{{.Tags}}" placeholder="Go, Sakurairo"></label>
+					<div class="cover-box">
+						{{if .Post.CoverImage}}<img src="{{.Post.CoverImage}}" alt="Cover preview">{{end}}
+						<label>Cover Image<input type="text" name="cover_image" value="{{.Post.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+						<label>Upload Cover<input type="file" name="cover_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
+						<p>Uploading a file will replace the cover path when saved.</p>
+					</div>
+				</aside>
+			</div>
+		</form>
+	</main>
+</body>
+</html>

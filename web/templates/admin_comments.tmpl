@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/" target="_blank">View Site</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero compact">
+		<div>
+			<p>Conversation</p>
+			<h1>Keep the comment garden tidy.</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<section class="admin-panel">
+			<div class="panel-title">
+				<h1>Comments</h1>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Updated.</div>{{end}}
+			<div class="comment-admin-list">
+				{{range .Comments}}
+				<article class="comment-admin-card">
+					<div class="comment-admin-main">
+						<div class="comment-admin-meta">
+							<strong>{{.Author}}</strong>
+							<span>{{.Email}}</span>
+							<span>{{since .CreatedAt}}</span>
+							<span class="status {{.Status}}">{{.Status}}</span>
+						</div>
+						<p>{{.Content}}</p>
+						<a href="/post/{{.PostSlug}}" target="_blank">{{.PostTitle}}</a>
+					</div>
+					<div class="comment-admin-actions">
+						{{if eq .Status "approved"}}
+						<form method="post" action="/admin/comments/{{.ID}}/status">
+							<input type="hidden" name="status" value="hidden">
+							<button type="submit">Hide</button>
+						</form>
+						{{else}}
+						<form method="post" action="/admin/comments/{{.ID}}/status">
+							<input type="hidden" name="status" value="approved">
+							<button type="submit">Approve</button>
+						</form>
+						{{end}}
+						<form method="post" action="/admin/comments/{{.ID}}/delete">
+							<button class="danger" type="submit">Delete</button>
+						</form>
+					</div>
+				</article>
+				{{else}}
+				<p class="empty-state">No comments yet.</p>
+				{{end}}
+			</div>
+		</section>
+	</main>
+</body>
+</html>

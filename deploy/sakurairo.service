@@ -1,0 +1,15 @@
+[Unit]
+Description=Sakurairo Go
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/sakurairo
+EnvironmentFile=/opt/sakurairo/.env
+ExecStart=/opt/sakurairo/sakurairo
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

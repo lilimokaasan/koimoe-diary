@@ -1,0 +1,27 @@
+{{template "head" .}}
+{{template "site_header" .}}
+{{if .Notice}}
+<div class="notice" style="margin-top:60px">
+	<i class="iconfont icon-notification"></i>
+	<div class="notice-content">{{.Notice}}</div>
+</div>
+{{end}}
+<div class="top-feature">
+	<h1 class="fes-title" style="font-family:'Ubuntu',sans-serif"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> Featured</h1>
+	<div class="feature-content">
+		<li class="feature-1"><a href="/archive"><div class="feature-title"><span class="foverlay-bg"></span><span class="foverlay">Archive</span></div><img src="/static/theme/content-image/d-2.jpg" alt="archive"></a></li>
+		<li class="feature-2"><a href="/search"><div class="feature-title"><span class="foverlay-bg"></span><span class="foverlay">Search</span></div><img src="/static/theme/content-image/d-3.jpg" alt="search"></a></li>
+		<li class="feature-3"><a href="/"><div class="feature-title"><span class="foverlay-bg"></span><span class="foverlay">Sakurairo Go</span></div><img src="/static/theme/content-image/d-4.jpg" alt="sakurairo"></a></li>
+	</div>
+</div>
+<div id="primary" class="content-area with-sidebar">
+	<main id="main" class="site-main" role="main">
+		<h1 class="main-title" style="font-family:'Ubuntu',sans-serif"><i class="fa fa-bookmark-o" aria-hidden="true"></i> {{.SectionTitle}}</h1>
+		{{range .Posts}}{{template "post_card" .}}{{else}}
+		<article class="post post-list"><div class="post-entry"><h1 class="entry-title">No posts yet</h1><p>The database is ready. Next we can import WordPress content or create posts in the admin area.</p></div></article>
+		{{end}}
+		{{template "pagination" .}}
+	</main>
+	{{template "sidebar" .}}
+</div>
+{{template "site_footer" .}}

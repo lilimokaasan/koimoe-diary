@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/" target="_blank">View Site</a>
+			<a class="button" href="/admin/posts/new">New Post</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero">
+		<div>
+			<p>Dashboard</p>
+			<h1>Write softly, publish beautifully.</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<section class="admin-panel">
+			<div class="panel-title">
+				<h1>Posts</h1>
+				<a class="button primary" href="/admin/posts/new">New Post</a>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			<table class="admin-table">
+				<thead><tr><th>Title</th><th>Status</th><th>Category</th><th>Updated</th><th></th></tr></thead>
+				<tbody>
+					{{range .Posts}}
+					<tr>
+						<td><a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a><span>{{.Slug}}</span></td>
+						<td><span class="status {{.Status}}">{{.Status}}</span></td>
+						<td>{{.Category.Name}}</td>
+						<td>{{since .UpdatedAt}}</td>
+						<td><a href="/post/{{.Slug}}" target="_blank">Open</a></td>
+					</tr>
+					{{else}}
+					<tr><td colspan="5">No posts yet.</td></tr>
+					{{end}}
+				</tbody>
+			</table>
+		</section>
+	</main>
+</body>
+</html>

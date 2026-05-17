@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+	<div class="auth-bg" aria-hidden="true"></div>
+	<main class="admin-auth">
+		<form class="admin-panel auth-panel" method="post" action="/admin/login">
+			<a class="auth-avatar" href="/"><img src="{{.Site.Avatar}}" alt="{{.Site.Name}}"></a>
+			<h1>{{.Site.Name}}</h1>
+			<p>Welcome back, dream keeper.</p>
+			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
+			<label><span>Username</span><input type="text" name="username" value="admin" autocomplete="username" required></label>
+			<label><span>Password</span><input type="password" name="password" autocomplete="current-password" required></label>
+			<button type="submit">Login</button>
+			<div class="auth-links"><a href="/">Back to site</a></div>
+		</form>
+	</main>
+</body>
+</html>

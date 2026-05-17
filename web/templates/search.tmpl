@@ -1,0 +1,13 @@
+{{template "head" .}}
+{{template "site_header" .}}
+<div id="primary" class="content-area with-sidebar">
+	<main id="main" class="site-main" role="main">
+		<h1 class="main-title" style="font-family:'Ubuntu',sans-serif"><i class="fa fa-search" aria-hidden="true"></i> {{.SectionTitle}} {{.Query}}</h1>
+		{{range .Posts}}{{template "post_card" .}}{{else}}
+		<article class="post post-list"><div class="post-entry"><h1 class="entry-title">No results</h1><p>Try another keyword.</p></div></article>
+		{{end}}
+		{{template "pagination" .}}
+	</main>
+	{{template "sidebar" .}}
+</div>
+{{template "site_footer" .}}
