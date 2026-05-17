@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/admin/links">Links</a>
+			<a href="/admin/settings">Settings</a>
+			<a href="/" target="_blank">View Site</a>
+			<a class="button" href="/admin/links/new">New Link</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero">
+		<div>
+			<p>Friends</p>
+			<h1>Keep the small doors warm.</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<section class="admin-panel">
+			<div class="panel-title">
+				<h1>Links</h1>
+				<a class="button primary" href="/admin/links/new">New Link</a>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			<table class="admin-table">
+				<thead><tr><th>Name</th><th>Category</th><th>Status</th><th>Order</th><th></th></tr></thead>
+				<tbody>
+					{{range .FriendLinks}}
+					<tr>
+						<td><a href="/admin/links/{{.ID}}/edit">{{.Name}}</a><span>{{.URL}}</span></td>
+						<td>{{.Category.Name}}</td>
+						<td><span class="status {{if .Visible}}published{{else}}hidden{{end}}">{{if .Visible}}visible{{else}}hidden{{end}}</span></td>
+						<td>{{.SortOrder}}</td>
+						<td class="table-actions">
+							<a href="{{.URL}}" target="_blank" rel="noopener noreferrer">Open</a>
+							<form method="post" action="/admin/links/{{.ID}}/delete"><button class="danger" type="submit">Delete</button></form>
+						</td>
+					</tr>
+					{{else}}
+					<tr><td colspan="5">No links yet.</td></tr>
+					{{end}}
+				</tbody>
+			</table>
+		</section>
+	</main>
+</body>
+</html>
