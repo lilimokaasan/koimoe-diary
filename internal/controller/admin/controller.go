@@ -25,8 +25,9 @@ import (
 )
 
 type Controller struct {
-	cfg      config.Config
+	cfg      *config.Config
 	posts    *store.PostStore
+	settings *store.SettingsStore
 	renderer *view.Renderer
 }
 
@@ -38,14 +39,15 @@ type PageData struct {
 	Posts       []models.Post
 	Comments    []models.Comment
 	Post        models.Post
+	Settings    config.Site
 	ContentHTML string
 	Tags        string
 	IsNew       bool
 	Now         time.Time
 }
 
-func New(cfg config.Config, posts *store.PostStore, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, settings: settings, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -56,10 +58,47 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/admin/comments", c.Comments)
 	server.BindHandler("POST:/admin/comments/{id}/status", c.UpdateCommentStatus)
 	server.BindHandler("POST:/admin/comments/{id}/delete", c.DeleteComment)
+	server.BindHandler("GET:/admin/settings", c.Settings)
+	server.BindHandler("POST:/admin/settings", c.SaveSettings)
 	server.BindHandler("GET:/admin/posts/new", c.NewPost)
 	server.BindHandler("POST:/admin/posts", c.SavePost)
 	server.BindHandler("GET:/admin/posts/{id}/edit", c.EditPost)
 	server.BindHandler("POST:/admin/posts/{id}", c.SavePost)
+}
+
+func (c *Controller) Settings(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	c.render(r, "admin_settings.tmpl", PageData{
+		Site:     c.cfg.GetSite(),
+		Title:    "Settings - " + c.cfg.GetSite().Name,
+		Message:  r.GetQuery("saved").String(),
+		Settings: c.cfg.GetSite(),
+		Now:      time.Now(),
+	})
+}
+
+func (c *Controller) SaveSettings(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	site := config.Site{
+		Name:        strings.TrimSpace(r.GetForm("site_name").String()),
+		Description: strings.TrimSpace(r.GetForm("site_description").String()),
+		Author:      strings.TrimSpace(r.GetForm("site_author").String()),
+		Notice:      strings.TrimSpace(r.GetForm("site_notice").String()),
+		ThemeColor:  strings.TrimSpace(r.GetForm("theme_color").String()),
+		HeroImage:   strings.TrimSpace(r.GetForm("hero_image").String()),
+		Avatar:      strings.TrimSpace(r.GetForm("site_avatar").String()),
+	}
+	site = normalizeSiteSettings(site, c.cfg.GetSite())
+	if err := c.settings.SaveSite(r.Context(), site); err != nil {
+		c.error(r, err)
+		return
+	}
+	c.cfg.SetSite(site)
+	r.Response.RedirectTo("/admin/settings?saved=1", http.StatusSeeOther)
 }
 
 func (c *Controller) Login(r *ghttp.Request) {
@@ -68,8 +107,8 @@ func (c *Controller) Login(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "admin_login.tmpl", PageData{
-		Site:  c.cfg.Site,
-		Title: "Admin Login - " + c.cfg.Site.Name,
+		Site:  c.cfg.GetSite(),
+		Title: "Admin Login - " + c.cfg.GetSite().Name,
 		Error: r.GetQuery("error").String(),
 		Now:   time.Now(),
 	})
@@ -78,8 +117,8 @@ func (c *Controller) Login(r *ghttp.Request) {
 func (c *Controller) LoginPost(r *ghttp.Request) {
 	if c.cfg.AdminPassword == "" {
 		c.render(r, "admin_login.tmpl", PageData{
-			Site:  c.cfg.Site,
-			Title: "Admin Login - " + c.cfg.Site.Name,
+			Site:  c.cfg.GetSite(),
+			Title: "Admin Login - " + c.cfg.GetSite().Name,
 			Error: "Admin password is not configured.",
 			Now:   time.Now(),
 		})
@@ -89,8 +128,8 @@ func (c *Controller) LoginPost(r *ghttp.Request) {
 	password := r.GetForm("password").String()
 	if username != c.cfg.AdminUsername || subtle.ConstantTimeCompare([]byte(password), []byte(c.cfg.AdminPassword)) != 1 {
 		c.render(r, "admin_login.tmpl", PageData{
-			Site:  c.cfg.Site,
-			Title: "Admin Login - " + c.cfg.Site.Name,
+			Site:  c.cfg.GetSite(),
+			Title: "Admin Login - " + c.cfg.GetSite().Name,
 			Error: "Invalid username or password.",
 			Now:   time.Now(),
 		})
@@ -121,8 +160,8 @@ func (c *Controller) Dashboard(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "admin_posts.tmpl", PageData{
-		Site:    c.cfg.Site,
-		Title:   "Posts - " + c.cfg.Site.Name,
+		Site:    c.cfg.GetSite(),
+		Title:   "Posts - " + c.cfg.GetSite().Name,
 		Message: r.GetQuery("saved").String(),
 		Posts:   posts,
 		Now:     time.Now(),
@@ -139,8 +178,8 @@ func (c *Controller) Comments(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "admin_comments.tmpl", PageData{
-		Site:     c.cfg.Site,
-		Title:    "Comments - " + c.cfg.Site.Name,
+		Site:     c.cfg.GetSite(),
+		Title:    "Comments - " + c.cfg.GetSite().Name,
 		Message:  r.GetQuery("saved").String(),
 		Comments: comments,
 		Now:      time.Now(),
@@ -177,8 +216,8 @@ func (c *Controller) NewPost(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "admin_post_form.tmpl", PageData{
-		Site:  c.cfg.Site,
-		Title: "New Post - " + c.cfg.Site.Name,
+		Site:  c.cfg.GetSite(),
+		Title: "New Post - " + c.cfg.GetSite().Name,
 		Post: models.Post{
 			Status:     "published",
 			CoverImage: "/static/theme/content-image/d-1.jpg",
@@ -203,7 +242,7 @@ func (c *Controller) EditPost(r *ghttp.Request) {
 		c.error(r, err)
 		return
 	}
-	data := c.formData(post, "Edit Post - "+c.cfg.Site.Name, "")
+	data := c.formData(post, "Edit Post - "+c.cfg.GetSite().Name, "")
 	data.Message = r.GetQuery("saved").String()
 	c.render(r, "admin_post_form.tmpl", data)
 }
@@ -226,14 +265,14 @@ func (c *Controller) SavePost(r *ghttp.Request) {
 	}
 	if uploadedCover, uploadErr := c.saveCoverUpload(r); uploadErr != "" {
 		post := postFromInput(input)
-		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.Site.Name, uploadErr))
+		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.GetSite().Name, uploadErr))
 		return
 	} else if uploadedCover != "" {
 		input.CoverImage = uploadedCover
 	}
 	if input.Title == "" || input.ContentHTML == "" {
 		post := postFromInput(input)
-		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.Site.Name, "Title and content are required."))
+		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.GetSite().Name, "Title and content are required."))
 		return
 	}
 	postID, err := c.posts.SavePost(r.Context(), input)
@@ -304,7 +343,7 @@ func (c *Controller) formData(post models.Post, title string, errText string) Pa
 		tags = append(tags, tag.Name)
 	}
 	return PageData{
-		Site:        c.cfg.Site,
+		Site:        c.cfg.GetSite(),
 		Title:       title,
 		Error:       errText,
 		Message:     "",
@@ -377,4 +416,26 @@ func splitTags(value string) []string {
 		}
 	}
 	return tags
+}
+
+func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
+	if site.Name == "" {
+		site.Name = fallback.Name
+	}
+	if site.Description == "" {
+		site.Description = fallback.Description
+	}
+	if site.Author == "" {
+		site.Author = fallback.Author
+	}
+	if site.ThemeColor == "" {
+		site.ThemeColor = fallback.ThemeColor
+	}
+	if site.HeroImage == "" {
+		site.HeroImage = fallback.HeroImage
+	}
+	if site.Avatar == "" {
+		site.Avatar = fallback.Avatar
+	}
+	return site
 }

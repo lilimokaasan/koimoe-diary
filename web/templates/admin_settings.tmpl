@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/admin/settings">Settings</a>
+			<a href="/" target="_blank">View Site</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero compact">
+		<div>
+			<p>Theme Settings</p>
+			<h1>Tune the site's sakura mood.</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<form class="admin-panel settings-panel" method="post" action="/admin/settings">
+			<div class="panel-title">
+				<h1>Site Settings</h1>
+				<div class="actions">
+					<a class="button" href="/">Preview</a>
+					<button class="primary" type="submit">Save</button>
+				</div>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			<div class="settings-grid">
+				<section>
+					<label>Site Name<input type="text" name="site_name" value="{{.Settings.Name}}" required></label>
+					<label>Description<textarea name="site_description" rows="3" required>{{.Settings.Description}}</textarea></label>
+					<label>Author<input type="text" name="site_author" value="{{.Settings.Author}}" required></label>
+					<label>Notice<textarea name="site_notice" rows="3">{{.Settings.Notice}}</textarea></label>
+				</section>
+				<section>
+					<label>Theme Color<input type="text" name="theme_color" value="{{.Settings.ThemeColor}}" placeholder="#fe9600"></label>
+					<label>Hero Image<input type="text" name="hero_image" value="{{.Settings.HeroImage}}" placeholder="/static/theme/screenshot.jpg"></label>
+					<label>Avatar<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<div class="settings-preview">
+						<div class="preview-hero" style="background-image:url('{{.Settings.HeroImage}}')"></div>
+						<img src="{{.Settings.Avatar}}" alt="{{.Settings.Author}}">
+						<strong>{{.Settings.Name}}</strong>
+						<span>{{.Settings.Description}}</span>
+					</div>
+				</section>
+			</div>
+		</form>
+	</main>
+</body>
+</html>

@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type Site struct {
@@ -17,6 +18,7 @@ type Site struct {
 }
 
 type Config struct {
+	siteMu           sync.RWMutex
 	Addr             string
 	DSN              string
 	StaticDir        string
@@ -28,6 +30,18 @@ type Config struct {
 	DBMaxIdleConns   int
 	DBConnMaxMinutes int
 	Site             Site
+}
+
+func (c *Config) GetSite() Site {
+	c.siteMu.RLock()
+	defer c.siteMu.RUnlock()
+	return c.Site
+}
+
+func (c *Config) SetSite(site Site) {
+	c.siteMu.Lock()
+	defer c.siteMu.Unlock()
+	c.Site = site
 }
 
 func FromEnv() Config {

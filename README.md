@@ -48,6 +48,7 @@ ADMIN_SECRET='change-me-too'
 - 后台登录
 - 后台文章列表、新建、编辑和封面上传
 - 后台评论管理
+- 后台站点设置：站点名称、描述、作者、公告、主题色、顶部图和头像
 - 健康检查接口：`/api/health`
 - 文章 JSON 接口：`/api/posts`、`/api/posts/{slug}`
 - Sakurairo 原主题 CSS/JS/字体/默认图片资源映射

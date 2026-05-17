@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"time"
@@ -17,7 +18,7 @@ import (
 )
 
 type App struct {
-	cfg    config.Config
+	cfg    *config.Config
 	db     *sql.DB
 	server *ghttp.Server
 }
@@ -48,6 +49,17 @@ func New() (*App, error) {
 			return nil, err
 		}
 	}
+	settingsStore := store.NewSettingsStore(db)
+	if err := settingsStore.Init(cfg.GetSite()); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	site, err := settingsStore.Site(context.Background(), cfg.GetSite())
+	if err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	cfg.SetSite(site)
 
 	renderer, err := view.NewDefaultRenderer()
 	if err != nil {
@@ -61,14 +73,14 @@ func New() (*App, error) {
 	server.BindHandler("GET:/api/health", func(r *ghttp.Request) {
 		r.Response.WriteJson(g.Map{
 			"ok":   true,
-			"name": cfg.Site.Name,
+			"name": cfg.GetSite().Name,
 		})
 	})
 
-	admin.New(cfg, postStore, renderer).Register(server)
-	blog.New(cfg, postStore, renderer).Register(server)
+	admin.New(&cfg, postStore, settingsStore, renderer).Register(server)
+	blog.New(&cfg, postStore, renderer).Register(server)
 
-	return &App{cfg: cfg, db: db, server: server}, nil
+	return &App{cfg: &cfg, db: db, server: server}, nil
 }
 
 func (a *App) Run() {

@@ -18,7 +18,7 @@ import (
 )
 
 type Controller struct {
-	cfg      config.Config
+	cfg      *config.Config
 	posts    *store.PostStore
 	renderer *view.Renderer
 }
@@ -46,7 +46,7 @@ type PageData struct {
 	Now          time.Time
 }
 
-func New(cfg config.Config, posts *store.PostStore, renderer *view.Renderer) *Controller {
+func New(cfg *config.Config, posts *store.PostStore, renderer *view.Renderer) *Controller {
 	return &Controller{cfg: cfg, posts: posts, renderer: renderer}
 }
 
@@ -77,13 +77,13 @@ func (c *Controller) Home(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "home.tmpl", PageData{
-		Site:         c.cfg.Site,
-		Title:        c.cfg.Site.Name,
-		Description:  c.cfg.Site.Description,
+		Site:         c.cfg.GetSite(),
+		Title:        c.cfg.GetSite().Name,
+		Description:  c.cfg.GetSite().Description,
 		SectionTitle: "Latest Posts",
 		Posts:        posts,
 		Page:         store.PageInfo(page, pageSize, total, "/", ""),
-		Notice:       c.cfg.Site.Notice,
+		Notice:       c.cfg.GetSite().Notice,
 		Now:          time.Now(),
 	})
 }
@@ -114,8 +114,8 @@ func (c *Controller) Post(r *ghttp.Request) {
 	}
 
 	c.render(r, "post.tmpl", PageData{
-		Site:        c.cfg.Site,
-		Title:       post.Title + " - " + c.cfg.Site.Name,
+		Site:        c.cfg.GetSite(),
+		Title:       post.Title + " - " + c.cfg.GetSite().Name,
 		Description: post.Excerpt,
 		Post:        post,
 		Comments:    comments,
@@ -155,8 +155,8 @@ func (c *Controller) CreateComment(r *ghttp.Request) {
 			return
 		}
 		c.render(r, "post.tmpl", PageData{
-			Site:        c.cfg.Site,
-			Title:       post.Title + " - " + c.cfg.Site.Name,
+			Site:        c.cfg.GetSite(),
+			Title:       post.Title + " - " + c.cfg.GetSite().Name,
 			Description: post.Excerpt,
 			Post:        post,
 			Comments:    comments,
@@ -187,9 +187,9 @@ func (c *Controller) Archive(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "archive.tmpl", PageData{
-		Site:         c.cfg.Site,
-		Title:        "Archive - " + c.cfg.Site.Name,
-		Description:  c.cfg.Site.Description,
+		Site:         c.cfg.GetSite(),
+		Title:        "Archive - " + c.cfg.GetSite().Name,
+		Description:  c.cfg.GetSite().Description,
 		SectionTitle: "Archive",
 		Posts:        posts,
 		Page:         store.PageInfo(page, pageSize, total, "/archive", ""),
@@ -212,9 +212,9 @@ func (c *Controller) Search(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "search.tmpl", PageData{
-		Site:         c.cfg.Site,
-		Title:        "Search - " + c.cfg.Site.Name,
-		Description:  c.cfg.Site.Description,
+		Site:         c.cfg.GetSite(),
+		Title:        "Search - " + c.cfg.GetSite().Name,
+		Description:  c.cfg.GetSite().Description,
 		SectionTitle: "Search",
 		Query:        q,
 		Posts:        posts,
@@ -242,8 +242,8 @@ func (c *Controller) Category(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "archive.tmpl", PageData{
-		Site:         c.cfg.Site,
-		Title:        category.Name + " - " + c.cfg.Site.Name,
+		Site:         c.cfg.GetSite(),
+		Title:        category.Name + " - " + c.cfg.GetSite().Name,
 		Description:  category.Description,
 		SectionTitle: "Category: " + category.Name,
 		Category:     category,
@@ -272,9 +272,9 @@ func (c *Controller) Tag(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "archive.tmpl", PageData{
-		Site:         c.cfg.Site,
-		Title:        tag.Name + " - " + c.cfg.Site.Name,
-		Description:  c.cfg.Site.Description,
+		Site:         c.cfg.GetSite(),
+		Title:        tag.Name + " - " + c.cfg.GetSite().Name,
+		Description:  c.cfg.GetSite().Description,
 		SectionTitle: "Tag: " + tag.Name,
 		Tag:          tag,
 		Posts:        posts,
@@ -309,8 +309,8 @@ func (c *Controller) APIPost(r *ghttp.Request) {
 func (c *Controller) NotFound(r *ghttp.Request) {
 	r.Response.WriteHeader(404)
 	c.render(r, "404.tmpl", PageData{
-		Site:  c.cfg.Site,
-		Title: "Not Found - " + c.cfg.Site.Name,
+		Site:  c.cfg.GetSite(),
+		Title: "Not Found - " + c.cfg.GetSite().Name,
 		Now:   time.Now(),
 	})
 }
