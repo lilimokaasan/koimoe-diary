@@ -243,6 +243,11 @@ body {
 	max-width: 1360px;
 }
 
+.single-post-layout .site-main {
+	max-width: none;
+	width: 100%;
+}
+
 .sakurairo-single {
 	backdrop-filter: blur(12px);
 	background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 252, 0.76));

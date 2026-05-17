@@ -1,4 +1,4 @@
-# KoiMoe Copy Guide
+# KoiMoe Text Design Guide
 
 This document is the reference for public-facing text, naming, atmosphere words, and image-search taste for this personal blog. Use it when writing page titles, subtitles, notices, empty states, button copy, admin login text, image prompts, or short descriptions.
 

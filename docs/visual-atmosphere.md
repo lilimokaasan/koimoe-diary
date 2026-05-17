@@ -118,6 +118,26 @@ Implementation rules:
 - Avoid abrupt scroll jumps, thick dark scrollbars, or heavy custom scroll physics that make the page feel gimmicky.
 - Respect reduced-motion preferences by disabling nonessential eased or animated scrolling when users request less motion.
 
+Current proven implementation from the temporary `koimoe.com` landing page:
+
+- Style browser scrollbars directly:
+  - `scrollbar-color: #FB98C0 #ffeeeb` and `scrollbar-width: thin` on `html`.
+  - `::-webkit-scrollbar` width/height around `6px`.
+  - `::-webkit-scrollbar-track` in pale pink/gray.
+  - `::-webkit-scrollbar-thumb` in `#FB98C0`, with a rounded `25px` thumb and a slightly deeper pink hover state.
+- Add a fixed top progress element:
+  - Markup: `<div class="scrollbar-progress" aria-hidden="true"></div>`.
+  - CSS: fixed at `top: 0`, `height: 3px`, `transform-origin: left center`, pink gradient background, soft pink glow, high z-index.
+  - JS: on `scroll` and `resize`, compute `window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)` and set `transform: scaleX(progress)`.
+- For wheel inertia, do not hand-roll custom velocity or target-position scroll physics unless there is a strong reason. The hand-written versions felt wrong during continuous wheel scrolling.
+- Reuse the original Sakurairo SmoothScroll core instead:
+  - Source: `D:\codex\Sakurairo-1.20.10\cdn\js\src\20.SmoothScroll.js`.
+  - Temporary page deployment copy: `D:\codex\koimoe-temp-page\assets\smooth-scroll.js`, served as `/assets/smooth-scroll.js`.
+  - Load it with `<script src="assets/smooth-scroll.js"></script>` before page-specific scripts.
+  - This script uses the original theme's queue-based easing, acceleration, pulse algorithm, keyboard support, and touchpad detection. It handles continuous wheel scrolling much better than simple target-chasing or velocity-decay code.
+- Keep page-specific JS responsible only for progress-bar updates and local interactions. Let `20.SmoothScroll.js` own wheel/keyboard smoothing.
+- If the SmoothScroll script is copied into the GoFrame app, keep it as a static asset under `web/static/theme` or another clearly named local static path rather than embedding the minified code into templates.
+
 ## Search
 
 Search should feel like a Sakurairo overlay:
@@ -140,6 +160,7 @@ Design rules:
 - Keep article content in a translucent paper-like container.
 - Preserve generous reading width and line height.
 - On desktop and wide screens, do not let single-post cards become a narrow phone-like column. The main article should use the available horizontal space: prefer a wider content shell, a slightly wider sidebar, and an article text/paper width around 900-920px when the viewport allows it.
+- When widening article pages, override both the outer layout and the inherited Sakurairo `.site-content` / `.site-main` max-width constraints; otherwise the original theme can still cap the main column around 860px.
 - Keep the desktop cover band relatively wide and calm rather than tall and poster-like; mobile can return to a taller image ratio for readability.
 - Style images with gentle radius and soft shadow.
 - Style blockquotes with pale pink background and pink left accent.
@@ -237,7 +258,7 @@ This does not mean ignoring correctness. It means the main product shape is a pe
 
 ## Future Visual Punch List
 
-- Add the Sakurairo-like pink scrollbar, soft scroll behavior, and top reading-progress bar.
+- Port the temporary page's proven Sakurairo-like pink scrollbar, top reading-progress bar, and original `20.SmoothScroll.js` integration into the main GoFrame public layout.
 - Make home post cards closer to the original split `post-list-thumb` design.
 - Strengthen full-screen modal search.
 - Add mobile navigation that keeps the immersive hero mood.
