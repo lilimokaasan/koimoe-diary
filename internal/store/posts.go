@@ -383,6 +383,18 @@ LIMIT 1`, id).Scan(
 	return post, err
 }
 
+func (s *PostStore) AdjacentPublished(ctx context.Context, post models.Post) (models.Post, models.Post, error) {
+	previous, err := s.adjacentPublished(ctx, post, `<`, `DESC`)
+	if err != nil && err != sql.ErrNoRows {
+		return models.Post{}, models.Post{}, err
+	}
+	next, nextErr := s.adjacentPublished(ctx, post, `>`, `ASC`)
+	if nextErr != nil && nextErr != sql.ErrNoRows {
+		return models.Post{}, models.Post{}, nextErr
+	}
+	return previous, next, nil
+}
+
 func (s *PostStore) CategoryBySlug(ctx context.Context, slug string) (models.Category, error) {
 	var category models.Category
 	err := s.db.QueryRowContext(ctx, `
@@ -634,6 +646,33 @@ func scanPosts(rows *sql.Rows) ([]models.Post, error) {
 		posts = append(posts, post)
 	}
 	return posts, rows.Err()
+}
+
+func (s *PostStore) adjacentPublished(ctx context.Context, post models.Post, comparator string, direction string) (models.Post, error) {
+	var adjacent models.Post
+	var content string
+	query := `
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+       (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
+       p.views, p.published_at, p.created_at, p.updated_at,
+       COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
+FROM posts p
+LEFT JOIN categories c ON c.id = p.category_id
+WHERE p.status = 'published' AND p.published_at ` + comparator + ` ?
+ORDER BY p.published_at ` + direction + `
+LIMIT 1`
+	err := s.db.QueryRowContext(ctx, query, post.PublishedAt).Scan(
+		&adjacent.ID, &adjacent.Slug, &adjacent.Title, &adjacent.Excerpt, &content, &adjacent.CoverImage,
+		&adjacent.CommentCount, &adjacent.Views, &adjacent.PublishedAt, &adjacent.CreatedAt, &adjacent.UpdatedAt,
+		&adjacent.Category.ID, &adjacent.Category.Slug, &adjacent.Category.Name, &adjacent.Category.Description,
+	)
+	adjacent.ContentHTML = template.HTML(content)
+	if err == nil {
+		posts := []models.Post{adjacent}
+		err = s.hydrateTags(ctx, posts)
+		adjacent = posts[0]
+	}
+	return adjacent, err
 }
 
 func PageInfo(page int, pageSize int, total int, basePath string, query string) models.PageInfo {

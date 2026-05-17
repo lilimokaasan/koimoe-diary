@@ -1,22 +1,54 @@
 {{template "head" .}}
 {{template "site_header" .}}
-<div id="primary" class="content-area with-sidebar">
+<div id="primary" class="content-area with-sidebar single-post-layout">
 	<main id="main" class="site-main" role="main">
-		<article class="post type-post status-publish">
+		<article class="post type-post status-publish sakurairo-single">
+			{{if .Post.CoverImage}}<div class="single-cover" style="background-image:url('{{.Post.CoverImage}}')"></div>{{end}}
 			<header class="entry-header">
+				<p class="single-kicker"><i class="iconfont icon-sakura"></i> {{.Site.Name}}</p>
 				<h1 class="entry-title">{{.Post.Title}}</h1>
-				<p class="entry-census">{{since .Post.PublishedAt}}&nbsp;&nbsp;{{.Post.Views}} Views</p>
-				<hr>
+				<div class="entry-census">
+					<span><i class="iconfont icon-time"></i>{{since .Post.PublishedAt}}</span>
+					<span><i class="iconfont icon-attention"></i>{{.Post.Views}} Views</span>
+					<span><i class="iconfont icon-mark"></i>{{.Post.CommentCount}} Comments</span>
+				</div>
 			</header>
 			<div class="entry-content">
 				{{.Post.ContentHTML}}
 			</div>
 			<footer class="post-footer">
 				<div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> Attribution-NonCommercial-ShareAlike 4.0 International</a></div>
-				{{if .Post.Category.ID}}<div class="post-tags"><i class="fa fa-folder-o" aria-hidden="true"></i> <a href="/category/{{.Post.Category.Slug}}">{{.Post.Category.Name}}</a></div>{{end}}
-				{{if .Post.Tags}}<div class="post-tags"><i class="iconfont icon-tags"></i> {{range .Post.Tags}}<a href="/tag/{{.Slug}}">{{.Name}}</a> {{end}}</div>{{end}}
+				<div class="single-taxonomy">
+					{{if .Post.Category.ID}}<div class="post-tags"><i class="fa fa-folder-o" aria-hidden="true"></i> <a href="/category/{{.Post.Category.Slug}}">{{.Post.Category.Name}}</a></div>{{end}}
+					{{if .Post.Tags}}<div class="post-tags"><i class="iconfont icon-tags"></i> {{range .Post.Tags}}<a href="/tag/{{.Slug}}">{{.Name}}</a> {{end}}</div>{{end}}
+				</div>
 			</footer>
 		</article>
+		<section class="single-author">
+			<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+			<div>
+				<p>Written by</p>
+				<h2>{{.Site.Author}}</h2>
+				<span>{{.Site.Description}}</span>
+			</div>
+			<a href="#comments"><i class="iconfont icon-mark"></i> Comment</a>
+		</section>
+		{{if or .PreviousPost.ID .NextPost.ID}}
+		<nav class="post-nextprev" aria-label="Adjacent posts">
+			{{if .PreviousPost.ID}}
+			<a class="prev" href="/post/{{.PreviousPost.Slug}}">
+				<span><i class="iconfont icon-back"></i> Older Post</span>
+				<strong>{{.PreviousPost.Title}}</strong>
+			</a>
+			{{else}}<span></span>{{end}}
+			{{if .NextPost.ID}}
+			<a class="next" href="/post/{{.NextPost.Slug}}">
+				<span>Newer Post <i class="iconfont icon-right"></i></span>
+				<strong>{{.NextPost.Title}}</strong>
+			</a>
+			{{else}}<span></span>{{end}}
+		</nav>
+		{{end}}
 		{{template "comments" .}}
 	</main>
 	{{template "sidebar" .}}

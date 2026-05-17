@@ -31,6 +31,8 @@ type PageData struct {
 	Query        string
 	Posts        []models.Post
 	Post         models.Post
+	PreviousPost models.Post
+	NextPost     models.Post
 	Comments     []models.Comment
 	CommentOK    bool
 	CommentErr   string
@@ -112,15 +114,21 @@ func (c *Controller) Post(r *ghttp.Request) {
 		c.error(r, err)
 		return
 	}
+	previousPost, nextPost, err := c.posts.AdjacentPublished(r.Context(), post)
+	if err != nil {
+		log.Printf("load adjacent posts: %v", err)
+	}
 
 	c.render(r, "post.tmpl", PageData{
-		Site:        c.cfg.GetSite(),
-		Title:       post.Title + " - " + c.cfg.GetSite().Name,
-		Description: post.Excerpt,
-		Post:        post,
-		Comments:    comments,
-		CommentOK:   r.GetQuery("comment").String() == "ok",
-		Now:         time.Now(),
+		Site:         c.cfg.GetSite(),
+		Title:        post.Title + " - " + c.cfg.GetSite().Name,
+		Description:  post.Excerpt,
+		Post:         post,
+		PreviousPost: previousPost,
+		NextPost:     nextPost,
+		Comments:     comments,
+		CommentOK:    r.GetQuery("comment").String() == "ok",
+		Now:          time.Now(),
 	})
 }
 
