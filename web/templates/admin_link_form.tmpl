@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/admin/links">Links</a>
+			<a href="/admin/settings">Settings</a>
+			<a href="/" target="_blank">View Site</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero compact">
+		<div>
+			<p>{{if .IsNew}}New Friend{{else}}Friend Link{{end}}</p>
+			<h1>{{if .IsNew}}Add a gentle doorway.{{else}}Tune this little doorway.{{end}}</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<form class="admin-panel editor-panel" method="post" action="{{if .IsNew}}/admin/links{{else}}/admin/links/{{.FriendLink.ID}}{{end}}">
+			<div class="panel-title">
+				<h1>{{if .IsNew}}New Link{{else}}Edit Link{{end}}</h1>
+				<div class="actions">
+					<a class="button" href="/admin/links">Cancel</a>
+					<button class="primary" type="submit">Save</button>
+				</div>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
+			<div class="editor-grid">
+				<section class="editor-main">
+					<label>Name<input type="text" name="name" value="{{.FriendLink.Name}}" required></label>
+					<label>URL<input type="url" name="url" value="{{.FriendLink.URL}}" placeholder="https://example.com" required></label>
+					<label>Description<textarea name="description" rows="5">{{.FriendLink.Description}}</textarea></label>
+					<label>Image URL<input type="text" name="image_url" value="{{.FriendLink.ImageURL}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+				</section>
+				<aside class="editor-side">
+					<label>Category<input type="text" name="category" value="{{.FriendLink.Category.Name}}" placeholder="Friends"></label>
+					<label>Sort Order<input type="number" name="sort_order" value="{{.FriendLink.SortOrder}}"></label>
+					<label class="checkbox-label"><input type="checkbox" name="visible" value="1" {{if .FriendLink.Visible}}checked{{end}}> Visible on site</label>
+					<div class="link-preview">
+						<span class="friend-link-avatar">
+							{{if .FriendLink.ImageURL}}<img src="{{.FriendLink.ImageURL}}" alt="{{.FriendLink.Name}}">{{else}}<i class="fa fa-heart-o" aria-hidden="true"></i>{{end}}
+						</span>
+						<strong>{{if .FriendLink.Name}}{{.FriendLink.Name}}{{else}}Friend Link{{end}}</strong>
+						<small>{{if .FriendLink.Description}}{{.FriendLink.Description}}{{else}}A soft little door around KoiMoe Diary.{{end}}</small>
+					</div>
+				</aside>
+			</div>
+		</form>
+	</main>
+</body>
+</html>
