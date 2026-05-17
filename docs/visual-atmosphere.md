@@ -139,6 +139,8 @@ Design rules:
 - Use pink-tinted metadata pills for time, views, and comments.
 - Keep article content in a translucent paper-like container.
 - Preserve generous reading width and line height.
+- On desktop and wide screens, do not let single-post cards become a narrow phone-like column. The main article should use the available horizontal space: prefer a wider content shell, a slightly wider sidebar, and an article text/paper width around 900-920px when the viewport allows it.
+- Keep the desktop cover band relatively wide and calm rather than tall and poster-like; mobile can return to a taller image ratio for readability.
 - Style images with gentle radius and soft shadow.
 - Style blockquotes with pale pink background and pink left accent.
 - Style code blocks clearly, but keep them integrated with the soft page.
