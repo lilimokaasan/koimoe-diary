@@ -9,8 +9,11 @@ This document is the reference for public-facing text, naming, atmosphere words,
 - Optional Japanese-style title: `こいもえ日和`
 - Optional Chinese title: `恋萌手帖`
 - Domain identity: `koimoe.com`
+- Author name: `莉莉姆`
 
 Use `KoiMoe Diary` as the safest default title. It keeps the `koi` / `moe` meaning while feeling lighter and less direct than using `恋萌` everywhere.
+
+When copy, UI labels, metadata, profile cards, article bylines, examples, or seeded content need an author name, use `莉莉姆`.
 
 ## Core Feeling
 

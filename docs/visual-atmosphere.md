@@ -96,6 +96,28 @@ Navigation should be light:
 - Search/user icons can be visual affordances.
 - Mobile should keep the immersive feeling rather than collapsing into a purely utilitarian menu.
 
+## Scrolling And Motion
+
+Scrolling is part of the Sakurairo atmosphere. The original local WordPress reference at `http://localhost:8881/` makes wheel scrolling feel soft and warm through a pink scrollbar, a subtle top reading-progress bar, and gentle eased motion.
+
+Reference observations:
+
+- Global WebKit scrollbar width/height is about `6px`.
+- Scrollbar track is a quiet pale gray around `#eee`.
+- Scrollbar thumb uses the Sakurairo pink `#FB98C0`.
+- The mobile nav scrollbar is visually hidden where appropriate.
+- A fixed top `.scrollbar` / `#bar` progress indicator is about `3px` high, uses `#FB98C0`, and transitions width/background over about `1s`.
+- Some internal scroll areas and anchor-style movements use smooth/eased behavior, which gives the page a slight inertia-like feeling instead of hard mechanical jumps.
+
+Implementation rules:
+
+- Use a pink scrollbar thumb on public pages and visually important admin pages.
+- Keep scrollbars thin and quiet; they should feel like a delicate accent, not a browser default.
+- Use smooth or eased scrolling for anchor jumps, back-to-top controls, search/comment navigation, and other programmatic scroll actions.
+- Preserve native wheel/touch scrolling where possible, but tune surrounding transitions so scrolling feels continuous and calm.
+- Avoid abrupt scroll jumps, thick dark scrollbars, or heavy custom scroll physics that make the page feel gimmicky.
+- Respect reduced-motion preferences by disabling nonessential eased or animated scrolling when users request less motion.
+
 ## Search
 
 Search should feel like a Sakurairo overlay:
@@ -166,6 +188,7 @@ The original Sakurairo theme includes floating controls that contribute to mood:
 - Search/user affordances.
 - Style/skin menu.
 - Font controls.
+- Pink scrollbar and top reading-progress affordance.
 
 These are part of the theme atmosphere, not just utilities. Future implementations should treat them as visual features and keep them light, icon-oriented, and unobtrusive.
 
@@ -212,6 +235,7 @@ This does not mean ignoring correctness. It means the main product shape is a pe
 
 ## Future Visual Punch List
 
+- Add the Sakurairo-like pink scrollbar, soft scroll behavior, and top reading-progress bar.
 - Make home post cards closer to the original split `post-list-thumb` design.
 - Strengthen full-screen modal search.
 - Add mobile navigation that keeps the immersive hero mood.
