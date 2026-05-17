@@ -65,11 +65,11 @@ func FromEnv() Config {
 		DBMaxIdleConns:   envInt("DB_MAX_IDLE_CONNS", 5),
 		DBConnMaxMinutes: envInt("DB_CONN_MAX_MINUTES", 30),
 		Site: Site{
-			Name:        env("SITE_NAME", "Sakurairo Go"),
-			Description: env("SITE_DESCRIPTION", "A lightweight GoFrame blog inspired by Sakurairo."),
-			Author:      env("SITE_AUTHOR", "Codex"),
-			Notice:      env("SITE_NOTICE", "The Sakurairo GoFrame rewrite has started."),
-			ThemeColor:  env("THEME_COLOR", "#fe9600"),
+			Name:        env("SITE_NAME", "KoiMoe Diary"),
+			Description: env("SITE_DESCRIPTION", "恋と萌えの小さな場所"),
+			Author:      env("SITE_AUTHOR", "KoiMoe"),
+			Notice:      env("SITE_NOTICE", "A soft diary for tiny heartbeats, cute things, and everyday fragments."),
+			ThemeColor:  env("THEME_COLOR", "#fb98c0"),
 			HeroImage:   env("HERO_IMAGE", "/static/theme/screenshot.jpg"),
 			Avatar:      env("SITE_AVATAR", "/static/theme/content-image/d-1.jpg"),
 			Navigation: []NavItem{
