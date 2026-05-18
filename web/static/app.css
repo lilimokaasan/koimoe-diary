@@ -28,6 +28,46 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body,
+#main-container,
+.site {
+	cursor: url("/static/theme/cursor/normal.cur"), auto;
+}
+
+a,
+button,
+.searchbox,
+.showNav,
+.openNav,
+.cd-top,
+#moblieGoTop,
+#changskin,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+	cursor: url("/static/theme/cursor/ayuda.cur"), pointer;
+}
+
+a:active,
+button:active {
+	cursor: url("/static/theme/cursor/work.cur"), alias;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+	cursor: url("/static/theme/cursor/texto.cur"), text;
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+[aria-disabled="true"] {
+	cursor: url("/static/theme/cursor/No_Disponible.cur"), not-allowed;
+}
+
 .centerbg {
 	background-position: center;
 	background-size: cover;
