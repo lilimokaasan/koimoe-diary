@@ -11,6 +11,34 @@
 	var searchCacheKey = "koimoe-search-index-v2";
 	var userEntry = document.querySelector(".user-entry");
 	var userToggle = userEntry && userEntry.querySelector(".js-toggle-user-menu");
+	var progressBar = document.querySelector("#bar, .scrollbar-progress");
+	var progressFrame;
+
+	function updateReadingProgress() {
+		if (!progressBar) {
+			return;
+		}
+		var doc = document.documentElement;
+		var scrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
+		var progress = Math.min(1, Math.max(0, (window.scrollY || doc.scrollTop || 0) / scrollable));
+		progressBar.style.width = "100%";
+		progressBar.style.background = "linear-gradient(90deg, #fb98c0, #ffbfd5 58%, #fe9600)";
+		progressBar.style.transform = "scaleX(" + progress + ")";
+	}
+
+	function requestReadingProgressUpdate() {
+		if (progressFrame) {
+			return;
+		}
+		progressFrame = window.requestAnimationFrame(function () {
+			progressFrame = null;
+			updateReadingProgress();
+		});
+	}
+
+	updateReadingProgress();
+	window.addEventListener("scroll", requestReadingProgressUpdate, { passive: true });
+	window.addEventListener("resize", requestReadingProgressUpdate);
 
 	userToggle && userToggle.addEventListener("click", function (event) {
 		event.preventDefault();
