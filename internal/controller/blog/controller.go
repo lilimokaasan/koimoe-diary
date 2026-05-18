@@ -42,6 +42,7 @@ type PageData struct {
 	CanonicalURL   string
 	MetaImage      string
 	MetaType       string
+	IsHome         bool
 	SectionTitle   string
 	Query          string
 	Posts          []models.Post
@@ -119,6 +120,7 @@ func (c *Controller) Home(r *ghttp.Request) {
 		Site:           c.cfg.GetSite(),
 		Title:          c.cfg.GetSite().Name,
 		Description:    c.cfg.GetSite().Description,
+		IsHome:         true,
 		SectionTitle:   "Latest Posts",
 		Posts:          posts,
 		FeaturedImages: c.randomFeatureImages(r.Context(), 3),
