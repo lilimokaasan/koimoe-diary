@@ -75,57 +75,6 @@ body {
 	transform: translateY(-1px);
 }
 
-.headertop.koimoe-home-logo-hero .centerbg::after {
-	background:
-		linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 246, 250, 0.46)),
-		linear-gradient(90deg, rgba(251, 152, 192, 0.12), rgba(255, 255, 255, 0.08), rgba(254, 150, 0, 0.08));
-}
-
-.koimoe-logo-focus {
-	max-width: 960px;
-	padding: 0 22px;
-	top: 48.5%;
-	width: 100%;
-}
-
-.koimoe-hero-logo-wrap {
-	align-items: center;
-	display: flex;
-	justify-content: center;
-	margin: 0 auto;
-	max-width: 840px;
-}
-
-.koimoe-hero-logo-wrap a {
-	display: inline-flex;
-	max-width: 100%;
-}
-
-.koimoe-hero-logo {
-	filter: drop-shadow(0 22px 42px rgba(102, 67, 84, 0.18));
-	height: auto !important;
-	max-height: 210px;
-	max-width: min(760px, 86vw);
-	object-fit: contain;
-	padding: 0 !important;
-	width: 100% !important;
-}
-
-.koimoe-hero-description {
-	background: transparent;
-	margin-top: 18px;
-	width: auto;
-}
-
-.koimoe-hero-description p {
-	backdrop-filter: blur(10px);
-	background: rgba(255, 255, 255, 0.54);
-	color: rgba(92, 78, 88, 0.74);
-	display: inline-block;
-	max-width: min(620px, 82vw);
-	white-space: normal;
-}
-
 .site-top .menu {
 	display: flex;
 	gap: 22px;
@@ -273,6 +222,20 @@ body {
 	letter-spacing: 0;
 	line-height: 1.25;
 	margin: 6px 0 10px;
+}
+
+.home-intro .home-logo-heading {
+	line-height: 1;
+	margin: 12px auto 12px;
+}
+
+.koimoe-home-logo {
+	display: block;
+	filter: drop-shadow(0 18px 34px rgba(102, 67, 84, 0.14));
+	height: auto;
+	margin: 0 auto;
+	max-width: min(760px, 88vw);
+	width: 100%;
 }
 
 .home-intro p {
@@ -1568,25 +1531,12 @@ body {
 		max-width: 156px;
 	}
 
-	.koimoe-logo-focus {
-		padding: 0 16px;
-		top: 49%;
+	.home-intro .home-logo-heading {
+		margin-top: 8px;
 	}
 
-	.koimoe-hero-logo {
-		max-height: 132px;
-		max-width: 88vw;
-	}
-
-	.koimoe-hero-description {
-		margin-top: 12px;
-	}
-
-	.koimoe-hero-description p {
-		font-size: 13px;
-		line-height: 1.65;
-		max-width: 84vw;
-		padding: 10px 14px;
+	.koimoe-home-logo {
+		max-width: 90vw;
 	}
 
 	.content-area.with-sidebar {
