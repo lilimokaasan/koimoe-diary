@@ -71,6 +71,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/feed.xml", c.Feed)
 	server.BindHandler("HEAD:/feed", c.Feed)
 	server.BindHandler("HEAD:/feed.xml", c.Feed)
+	server.BindHandler("GET:/sitemap.xml", c.Sitemap)
+	server.BindHandler("HEAD:/sitemap.xml", c.Sitemap)
 	server.BindHandler("GET:/category/{slug}", c.Category)
 	server.BindHandler("GET:/tag/{slug}", c.Tag)
 	server.BindHandler("GET:/search", c.Search)
@@ -303,6 +305,74 @@ func (c *Controller) Feed(r *ghttp.Request) {
 		return
 	}
 	r.Response.Header().Set("Content-Type", "application/atom+xml; charset=utf-8")
+	r.Response.Write([]byte(xml.Header))
+	r.Response.Write(output)
+}
+
+func (c *Controller) Sitemap(r *ghttp.Request) {
+	ctx := r.Context()
+	posts, err := c.posts.ListPublished(ctx, 500)
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	categories, err := c.posts.ListCategories(ctx)
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	tags, err := c.posts.ListTags(ctx)
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+
+	baseURL := requestBaseURL(r)
+	now := time.Now()
+	latest := now
+	if len(posts) > 0 {
+		latest = posts[0].PublishedAt
+	}
+	sitemap := sitemapURLSet{
+		XMLNS: "http://www.sitemaps.org/schemas/sitemap/0.9",
+		URLs: []sitemapURL{
+			{Loc: baseURL + "/", LastMod: latest.Format("2006-01-02"), ChangeFreq: "daily", Priority: "1.0"},
+			{Loc: baseURL + "/archives", LastMod: latest.Format("2006-01-02"), ChangeFreq: "weekly", Priority: "0.7"},
+			{Loc: baseURL + "/links", LastMod: now.Format("2006-01-02"), ChangeFreq: "monthly", Priority: "0.5"},
+			{Loc: baseURL + "/search", LastMod: now.Format("2006-01-02"), ChangeFreq: "monthly", Priority: "0.3"},
+		},
+	}
+	for _, post := range posts {
+		sitemap.URLs = append(sitemap.URLs, sitemapURL{
+			Loc:        baseURL + "/post/" + post.Slug,
+			LastMod:    post.PublishedAt.Format("2006-01-02"),
+			ChangeFreq: "monthly",
+			Priority:   "0.8",
+		})
+	}
+	for _, category := range categories {
+		sitemap.URLs = append(sitemap.URLs, sitemapURL{
+			Loc:        baseURL + "/category/" + category.Slug,
+			LastMod:    latest.Format("2006-01-02"),
+			ChangeFreq: "weekly",
+			Priority:   "0.6",
+		})
+	}
+	for _, tag := range tags {
+		sitemap.URLs = append(sitemap.URLs, sitemapURL{
+			Loc:        baseURL + "/tag/" + tag.Slug,
+			LastMod:    latest.Format("2006-01-02"),
+			ChangeFreq: "weekly",
+			Priority:   "0.5",
+		})
+	}
+
+	output, err := xml.MarshalIndent(sitemap, "", "  ")
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	r.Response.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	r.Response.Write([]byte(xml.Header))
 	r.Response.Write(output)
 }
@@ -677,4 +747,17 @@ type atomAuthor struct {
 type atomText struct {
 	Type string `xml:"type,attr,omitempty"`
 	Text string `xml:",chardata"`
+}
+
+type sitemapURLSet struct {
+	XMLName xml.Name     `xml:"urlset"`
+	XMLNS   string       `xml:"xmlns,attr"`
+	URLs    []sitemapURL `xml:"url"`
+}
+
+type sitemapURL struct {
+	Loc        string `xml:"loc"`
+	LastMod    string `xml:"lastmod,omitempty"`
+	ChangeFreq string `xml:"changefreq,omitempty"`
+	Priority   string `xml:"priority,omitempty"`
 }
