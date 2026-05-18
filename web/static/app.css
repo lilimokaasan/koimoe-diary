@@ -69,15 +69,16 @@ html {
 
 .scrollbar,
 .scrollbar-progress {
-	background: linear-gradient(90deg, #fb98c0, #ffbfd5 58%, #fe9600);
-	box-shadow: 0 0 10px rgba(251, 152, 192, 0.44);
+	background: linear-gradient(90deg, var(--sakura-pink), #ffd7e7);
+	box-shadow: 0 0 16px rgba(251, 152, 192, 0.6);
 	height: 3px;
 	left: 0;
+	pointer-events: none;
 	position: fixed;
 	top: 0;
 	transform: scaleX(0);
 	transform-origin: left center;
-	transition: transform 0.16s ease-out, background 1s ease;
+	transition: transform 0.18s ease-out;
 	width: 100%;
 	z-index: 99999;
 }

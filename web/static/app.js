@@ -22,7 +22,7 @@
 		var scrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
 		var progress = Math.min(1, Math.max(0, (window.scrollY || doc.scrollTop || 0) / scrollable));
 		progressBar.style.width = "100%";
-		progressBar.style.background = "linear-gradient(90deg, #fb98c0, #ffbfd5 58%, #fe9600)";
+		progressBar.style.background = "linear-gradient(90deg, #fb98c0, #ffd7e7)";
 		progressBar.style.transform = "scaleX(" + progress + ")";
 	}
 
