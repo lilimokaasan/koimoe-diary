@@ -69,6 +69,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/links", c.Links)
 	server.BindHandler("GET:/feed", c.Feed)
 	server.BindHandler("GET:/feed.xml", c.Feed)
+	server.BindHandler("HEAD:/feed", c.Feed)
+	server.BindHandler("HEAD:/feed.xml", c.Feed)
 	server.BindHandler("GET:/category/{slug}", c.Category)
 	server.BindHandler("GET:/tag/{slug}", c.Tag)
 	server.BindHandler("GET:/search", c.Search)
