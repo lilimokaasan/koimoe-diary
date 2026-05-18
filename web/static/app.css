@@ -167,42 +167,57 @@ textarea:disabled,
 	background: transparent;
 }
 
+.showNav,
+.openNav {
+	display: none !important;
+}
+
 .searchbox {
 	align-items: center;
 	display: inline-flex;
 	float: right;
-	height: 75px;
+	height: 44px;
 	line-height: 1;
-	margin-left: 16px;
+	margin: 12px 0 0 12px;
 	position: relative;
 	z-index: 1002;
 }
 
-.searchbox__button {
+.searchbox__button,
+.user-entry__toggle {
 	align-items: center;
 	backdrop-filter: blur(12px);
 	background: rgba(255, 255, 255, 0.74);
 	border: 1px solid rgba(251, 152, 192, 0.36);
 	border-radius: 50%;
 	box-shadow: 0 10px 28px rgba(128, 82, 105, 0.14);
+	display: inline-flex;
+	height: 44px;
+	justify-content: center;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.2s ease;
+	width: 44px;
+}
+
+.searchbox__button {
 	color: var(--sakura-pink);
 	cursor: url("/static/theme/cursor/ayuda.cur"), pointer;
-	display: inline-flex;
-	font-size: 16px;
-	height: 38px;
-	justify-content: center;
+	font-size: 18px;
 	padding: 0;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.2s ease;
-	width: 38px;
+}
+
+.searchbox__button:hover,
+.searchbox__button:focus-visible,
+.user-entry__toggle:hover,
+.user-entry.is-open .user-entry__toggle {
+	border-color: rgba(251, 152, 192, 0.78);
+	box-shadow: 0 12px 34px rgba(251, 152, 192, 0.26);
+	outline: none;
+	transform: translateY(-1px);
 }
 
 .searchbox__button:hover,
 .searchbox__button:focus-visible {
-	border-color: rgba(251, 152, 192, 0.78);
-	box-shadow: 0 12px 34px rgba(251, 152, 192, 0.26);
 	color: var(--sakura-rose);
-	outline: none;
-	transform: translateY(-1px);
 }
 
 .site-top .menu {
@@ -220,40 +235,22 @@ textarea:disabled,
 
 .user-entry {
 	float: right;
-	margin: 12px 0 0 14px;
+	margin: 12px 0 0 12px;
 	position: relative;
 	z-index: 1000;
 }
 
 .user-entry__toggle {
-	align-items: center;
-	backdrop-filter: blur(12px);
-	background: rgba(255, 255, 255, 0.74);
-	border: 1px solid rgba(251, 152, 192, 0.36);
-	border-radius: 50%;
-	box-shadow: 0 10px 28px rgba(128, 82, 105, 0.14);
 	cursor: pointer;
-	display: inline-flex;
-	height: 38px;
-	justify-content: center;
-	padding: 3px;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-	width: 38px;
-}
-
-.user-entry__toggle:hover,
-.user-entry.is-open .user-entry__toggle {
-	border-color: rgba(251, 152, 192, 0.78);
-	box-shadow: 0 12px 34px rgba(251, 152, 192, 0.26);
-	transform: translateY(-1px);
+	padding: 4px;
 }
 
 .user-entry__toggle img {
 	border-radius: 50%;
 	display: block;
-	height: 30px;
+	height: 34px;
 	object-fit: cover;
-	width: 30px;
+	width: 34px;
 }
 
 .user-entry__menu {
