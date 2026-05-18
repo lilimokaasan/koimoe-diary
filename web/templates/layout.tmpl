@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css?v=20260519-stable-link-cursor">
-	<link rel="stylesheet" href="/static/app.css?v=20260519-pink-progress">
+	<link rel="stylesheet" href="/static/app.css?v=20260519-modal-search">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -151,11 +151,7 @@
 		<div class="micro">
 			<p class="micro mb-">Want to find something?</p>
 			<i class="iconfont icon-search"></i>
-			<input class="text-input" type="search" name="q" placeholder="Search" autocomplete="off" required>
-		</div>
-		<div class="koimoe-live-search" data-live-search hidden>
-			<p class="koimoe-live-search__status" data-live-search-status>Type to search KoiMoe Diary.</p>
-			<div class="koimoe-live-search__results" data-live-search-results></div>
+			<input class="text-input" type="search" name="q" placeholder="Search" autocomplete="off" aria-label="Search KoiMoe Diary" required>
 		</div>
 	</div>
 	<div class="search_close"></div>
@@ -178,7 +174,7 @@
 	}
 </script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260519-pink-progress"></script>
+<script src="/static/app.js?v=20260519-modal-search"></script>
 </body>
 </html>
 {{end}}

@@ -4,13 +4,17 @@
 	<main id="main" class="site-main" role="main">
 		<section class="koimoe-search-hero" aria-labelledby="search-title">
 			<p class="home-kicker"><i class="iconfont icon-search"></i> Search KoiMoe</p>
+			{{if .Query}}
+			<h1 id="search-title">Search results for: {{.Query}}</h1>
+			{{else}}
 			<h1 id="search-title">Find a tiny fragment.</h1>
+			{{end}}
 			<form class="koimoe-search-form" method="get" action="/search" role="search">
 				<input type="search" name="q" value="{{.Query}}" placeholder="Post title, tag, category, or a remembered word..." autocomplete="off" autofocus>
 				<button type="submit"><i class="iconfont icon-search"></i><span>Search</span></button>
 			</form>
 			{{if .Query}}
-			<p class="koimoe-search-note">{{.Page.Total}} diary fragments matched "{{.Query}}". Categories and tags are gathered below when they bloom too.</p>
+			<p class="koimoe-search-note">{{.Page.Total}} diary fragments matched your search. Categories and tags are gathered below when they bloom too.</p>
 			{{else}}
 			<p class="koimoe-search-note">Search posts, categories, and tags from this little diary room.</p>
 			{{end}}

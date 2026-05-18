@@ -1250,6 +1250,72 @@ textarea:disabled,
 	width: min(640px, 80vw);
 }
 
+body.search-open {
+	overflow: hidden;
+}
+
+.search-form--modal {
+	backdrop-filter: blur(10px);
+	background:
+		radial-gradient(circle at 78% 70%, rgba(251, 152, 192, 0.18), transparent 30%),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 247, 251, 0.68));
+}
+
+.search-form.is-visible {
+	background:
+		radial-gradient(circle at 78% 70%, rgba(251, 152, 192, 0.18), transparent 30%),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 247, 251, 0.68));
+}
+
+.search-form--modal .search-form__inner {
+	height: 220px;
+	max-width: 680px;
+	text-align: left;
+}
+
+.search-form--modal .micro {
+	position: relative;
+}
+
+.search-form--modal .micro p {
+	color: #9d8f98;
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 16px;
+	letter-spacing: 0;
+	margin-bottom: 18px;
+	padding-left: 24px;
+}
+
+.search-form--modal .micro i {
+	color: var(--sakura-pink);
+	left: 20px;
+	opacity: 0.86;
+}
+
+.search-form--modal input[type="search"] {
+	background: rgba(255, 255, 255, 0.82);
+	border: 1px solid rgba(251, 152, 192, 0.34);
+	box-shadow: 0 18px 48px rgba(113, 78, 96, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.76);
+	color: var(--sakura-ink);
+	height: 58px;
+}
+
+.search-form--modal input[type="search"]:focus {
+	background: rgba(255, 255, 255, 0.94);
+	border-color: rgba(251, 152, 192, 0.82);
+	box-shadow: 0 20px 52px rgba(113, 78, 96, 0.18), 0 0 0 4px rgba(251, 152, 192, 0.16);
+}
+
+.search-form .search_close {
+	border-radius: 50%;
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.search-form .search_close:hover {
+	background: rgba(251, 152, 192, 0.1);
+	transform: rotate(90deg);
+}
+
 .sakurairo-search-layout .site-main {
 	min-width: 0;
 }
@@ -1386,96 +1452,6 @@ textarea:disabled,
 	font-size: 14px;
 	letter-spacing: 0;
 	margin: 0 0 14px;
-}
-
-.search-keyword {
-	background: rgba(251, 152, 192, 0.2);
-	border-radius: 5px;
-	color: var(--sakura-rose);
-	padding: 0 3px;
-}
-
-.koimoe-live-search {
-	background: rgba(255, 255, 255, 0.72);
-	border: 1px solid rgba(251, 152, 192, 0.24);
-	border-radius: 8px;
-	box-shadow: 0 20px 54px rgba(117, 79, 99, 0.14);
-	margin: 24px auto 0;
-	max-height: 52vh;
-	max-width: min(760px, 84vw);
-	overflow-y: auto;
-	padding: 18px;
-	text-align: left;
-}
-
-.koimoe-live-search[hidden] {
-	display: none;
-}
-
-.koimoe-live-search__status {
-	color: #9b8f99;
-	font-family: "Noto Serif SC", serif;
-	font-size: 15px;
-	margin: 0;
-	text-align: center;
-}
-
-.koimoe-live-search__group + .koimoe-live-search__group {
-	margin-top: 18px;
-}
-
-.koimoe-live-search__title {
-	color: var(--sakura-rose);
-	font-family: "Ubuntu", sans-serif;
-	font-size: 12px;
-	font-weight: 700;
-	letter-spacing: 0;
-	margin: 0 0 10px;
-	text-transform: uppercase;
-}
-
-.koimoe-live-search__list {
-	display: grid;
-	gap: 10px;
-}
-
-.koimoe-live-search__item {
-	background: rgba(255, 247, 251, 0.76);
-	border: 1px solid rgba(251, 152, 192, 0.18);
-	border-radius: 8px;
-	color: #5f5660;
-	display: grid;
-	gap: 4px;
-	padding: 12px 14px;
-	text-decoration: none;
-	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-.koimoe-live-search__item:hover {
-	background: rgba(255, 239, 247, 0.92);
-	border-color: rgba(251, 152, 192, 0.38);
-	color: #4b424d;
-	transform: translateY(-1px);
-}
-
-.koimoe-live-search__item-title {
-	font-family: "Noto Serif SC", serif;
-	font-size: 18px;
-	line-height: 1.35;
-}
-
-.koimoe-live-search__meta,
-.koimoe-live-search__excerpt {
-	color: #9b8f99;
-	font-size: 13px;
-	line-height: 1.6;
-}
-
-.koimoe-live-search__excerpt {
-	display: -webkit-box;
-	overflow: hidden;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
 }
 
 .sakurairo-comments {
@@ -1858,11 +1834,6 @@ textarea:disabled,
 		grid-template-columns: 1fr;
 	}
 
-	.koimoe-live-search {
-		max-height: 46vh;
-		max-width: 86vw;
-		padding: 14px;
-	}
 
 	.koimoe-search-hero {
 		padding: 26px 18px;
@@ -1882,9 +1853,6 @@ textarea:disabled,
 		grid-template-columns: 1fr;
 	}
 
-	.koimoe-live-search__item-title {
-		font-size: 16px;
-	}
 
 	.koimoe-error-layout {
 		margin-top: 42px;
