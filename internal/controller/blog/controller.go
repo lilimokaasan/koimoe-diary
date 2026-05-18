@@ -67,6 +67,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/search", c.Search)
 	server.BindHandler("GET:/api/posts", c.APIPosts)
 	server.BindHandler("GET:/api/posts/{slug}", c.APIPost)
+	server.BindHandler("GET:/api/search-index", c.APISearchIndex)
 	server.BindHandler("POST:/api/posts/{id}/like", c.LikePost)
 	server.BindStatusHandler(404, c.NotFound)
 }
@@ -350,6 +351,16 @@ func (c *Controller) APIPost(r *ghttp.Request) {
 		return
 	}
 	r.Response.WriteJson(post)
+}
+
+func (c *Controller) APISearchIndex(r *ghttp.Request) {
+	index, err := c.posts.SearchIndex(r.Context())
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	r.Response.Header().Set("Cache-Control", "public, max-age=60")
+	r.Response.WriteJson(index)
 }
 
 func (c *Controller) LikePost(r *ghttp.Request) {

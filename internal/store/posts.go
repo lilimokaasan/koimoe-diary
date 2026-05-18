@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	stdhtml "html"
 	"html/template"
 	"math"
 	"regexp"
@@ -502,6 +503,62 @@ ORDER BY t.name`)
 	return tags, rows.Err()
 }
 
+func (s *PostStore) SearchIndex(ctx context.Context) (models.SearchIndex, error) {
+	posts, err := s.ListPublished(ctx, 200)
+	if err != nil {
+		return models.SearchIndex{}, err
+	}
+	categories, err := s.ListCategories(ctx)
+	if err != nil {
+		return models.SearchIndex{}, err
+	}
+	tags, err := s.ListTags(ctx)
+	if err != nil {
+		return models.SearchIndex{}, err
+	}
+
+	index := models.SearchIndex{
+		GeneratedAt: time.Now(),
+		Posts:       make([]models.SearchPostItem, 0, len(posts)),
+		Categories:  make([]models.SearchTaxonomyItem, 0, len(categories)),
+		Tags:        make([]models.SearchTaxonomyItem, 0, len(tags)),
+	}
+	for _, post := range posts {
+		tagNames := make([]string, 0, len(post.Tags))
+		for _, tag := range post.Tags {
+			tagNames = append(tagNames, tag.Name)
+		}
+		index.Posts = append(index.Posts, models.SearchPostItem{
+			Title:        post.Title,
+			URL:          "/post/" + post.Slug,
+			Excerpt:      post.Excerpt,
+			Content:      searchText(string(post.ContentHTML)),
+			CoverImage:   post.CoverImage,
+			Category:     post.Category.Name,
+			Tags:         tagNames,
+			CommentCount: post.CommentCount,
+			Views:        post.Views,
+			Likes:        post.Likes,
+			PublishedAt:  post.PublishedAt,
+		})
+	}
+	for _, category := range categories {
+		index.Categories = append(index.Categories, models.SearchTaxonomyItem{
+			Name:      category.Name,
+			URL:       "/category/" + category.Slug,
+			PostCount: category.PostCount,
+		})
+	}
+	for _, tag := range tags {
+		index.Tags = append(index.Tags, models.SearchTaxonomyItem{
+			Name:      tag.Name,
+			URL:       "/tag/" + tag.Slug,
+			PostCount: tag.PostCount,
+		})
+	}
+	return index, nil
+}
+
 func (s *PostStore) CountComments(ctx context.Context) (int, error) {
 	return s.count(ctx, `SELECT COUNT(*) FROM comments WHERE status = 'approved'`)
 }
@@ -905,9 +962,23 @@ func normalizePostInput(input PostInput) PostInput {
 }
 
 var nonSlug = regexp.MustCompile(`[^a-z0-9]+`)
+var htmlTag = regexp.MustCompile(`<[^>]+>`)
+var whitespace = regexp.MustCompile(`\s+`)
 
 func slugify(value string) string {
 	value = strings.ToLower(strings.TrimSpace(value))
 	value = nonSlug.ReplaceAllString(value, "-")
 	return strings.Trim(value, "-")
+}
+
+func searchText(value string) string {
+	value = htmlTag.ReplaceAllString(value, " ")
+	value = stdhtml.UnescapeString(value)
+	value = whitespace.ReplaceAllString(value, " ")
+	value = strings.TrimSpace(value)
+	if len([]rune(value)) <= 600 {
+		return value
+	}
+	runes := []rune(value)
+	return string(runes[:600])
 }
