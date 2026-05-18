@@ -75,6 +75,10 @@ body {
 	transform: translateY(-1px);
 }
 
+.site-header:hover {
+	background: transparent;
+}
+
 .site-top .menu {
 	display: flex;
 	gap: 22px;
