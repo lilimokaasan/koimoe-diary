@@ -145,6 +145,8 @@ Search should feel like a Sakurairo overlay:
 - Full-screen translucent veil.
 - Large rounded search input.
 - Centered composition.
+- Live search results should stay inside the overlay as soft translucent white/pink rows, grouped by posts, categories, and tags.
+- The first result state should feel helpful and quiet: loading, short-query, empty, and fallback messages should read like part of the KoiMoe diary rather than a system error.
 - Optional decorative character/image treatment on the side.
 - Search should feel atmospheric, not like a plain form page.
 

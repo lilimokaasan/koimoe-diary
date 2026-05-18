@@ -1012,6 +1012,89 @@ body {
 	width: min(640px, 80vw);
 }
 
+.koimoe-live-search {
+	background: rgba(255, 255, 255, 0.72);
+	border: 1px solid rgba(251, 152, 192, 0.24);
+	border-radius: 8px;
+	box-shadow: 0 20px 54px rgba(117, 79, 99, 0.14);
+	margin: 24px auto 0;
+	max-height: 52vh;
+	max-width: min(760px, 84vw);
+	overflow-y: auto;
+	padding: 18px;
+	text-align: left;
+}
+
+.koimoe-live-search[hidden] {
+	display: none;
+}
+
+.koimoe-live-search__status {
+	color: #9b8f99;
+	font-family: "Noto Serif SC", serif;
+	font-size: 15px;
+	margin: 0;
+	text-align: center;
+}
+
+.koimoe-live-search__group + .koimoe-live-search__group {
+	margin-top: 18px;
+}
+
+.koimoe-live-search__title {
+	color: var(--sakura-rose);
+	font-family: "Ubuntu", sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0;
+	margin: 0 0 10px;
+	text-transform: uppercase;
+}
+
+.koimoe-live-search__list {
+	display: grid;
+	gap: 10px;
+}
+
+.koimoe-live-search__item {
+	background: rgba(255, 247, 251, 0.76);
+	border: 1px solid rgba(251, 152, 192, 0.18);
+	border-radius: 8px;
+	color: #5f5660;
+	display: grid;
+	gap: 4px;
+	padding: 12px 14px;
+	text-decoration: none;
+	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.koimoe-live-search__item:hover {
+	background: rgba(255, 239, 247, 0.92);
+	border-color: rgba(251, 152, 192, 0.38);
+	color: #4b424d;
+	transform: translateY(-1px);
+}
+
+.koimoe-live-search__item-title {
+	font-family: "Noto Serif SC", serif;
+	font-size: 18px;
+	line-height: 1.35;
+}
+
+.koimoe-live-search__meta,
+.koimoe-live-search__excerpt {
+	color: #9b8f99;
+	font-size: 13px;
+	line-height: 1.6;
+}
+
+.koimoe-live-search__excerpt {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
 .sakurairo-comments {
 	margin: 48px auto 20px;
 	max-width: 780px;
@@ -1282,6 +1365,16 @@ body {
 
 	.friend-link-grid {
 		grid-template-columns: 1fr;
+	}
+
+	.koimoe-live-search {
+		max-height: 46vh;
+		max-width: 86vw;
+		padding: 14px;
+	}
+
+	.koimoe-live-search__item-title {
+		font-size: 16px;
 	}
 }
 
