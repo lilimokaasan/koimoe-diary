@@ -175,6 +175,30 @@ func (s *PostStore) ListRecent(ctx context.Context, limit int) ([]models.Post, e
 	return s.ListPublishedPaged(ctx, 1, limit)
 }
 
+func (s *PostStore) DistinctCoverImages(ctx context.Context, limit int) ([]string, error) {
+	rows, err := s.db.QueryContext(ctx, `
+SELECT cover_image
+FROM posts
+WHERE status = 'published' AND cover_image <> ''
+GROUP BY cover_image
+ORDER BY MAX(published_at) DESC
+LIMIT ?`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var images []string
+	for rows.Next() {
+		var image string
+		if err := rows.Scan(&image); err != nil {
+			return nil, err
+		}
+		images = append(images, image)
+	}
+	return images, rows.Err()
+}
+
 func (s *PostStore) ListAll(ctx context.Context, limit int) ([]models.Post, error) {
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,

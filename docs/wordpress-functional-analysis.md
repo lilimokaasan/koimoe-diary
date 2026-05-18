@@ -454,6 +454,12 @@ POST /api/posts/{id}/like
 POST /admin/comments/{id}/private
 ```
 
+Random image implementation note:
+
+- `/api/random-cover` and `/api/random-feature` are implemented as lightweight 302 image redirects, with `?format=json` available for debugging and later frontend integrations.
+- Random cover images prefer the configured hero/avatar, theme defaults, and local `web/static/curated-sakura-images` assets.
+- Random feature images prefer published post cover images, then fall back to curated square images and the cover pool.
+
 ## 7. 随机图与缓存设计
 
 旧主题会创建自定义表 `wp_sakurairo`：

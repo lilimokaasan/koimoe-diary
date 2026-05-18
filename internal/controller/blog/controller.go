@@ -2,10 +2,14 @@ package blog
 
 import (
 	"context"
+	crand "crypto/rand"
 	"database/sql"
 	"errors"
 	"log"
+	"math/big"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -68,6 +72,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/api/posts", c.APIPosts)
 	server.BindHandler("GET:/api/posts/{slug}", c.APIPost)
 	server.BindHandler("GET:/api/search-index", c.APISearchIndex)
+	server.BindHandler("GET:/api/random-cover", c.APIRandomCover)
+	server.BindHandler("GET:/api/random-feature", c.APIRandomFeature)
 	server.BindHandler("POST:/api/posts/{id}/like", c.LikePost)
 	server.BindStatusHandler(404, c.NotFound)
 }
@@ -363,6 +369,24 @@ func (c *Controller) APISearchIndex(r *ghttp.Request) {
 	r.Response.WriteJson(index)
 }
 
+func (c *Controller) APIRandomCover(r *ghttp.Request) {
+	images := c.coverImagePool()
+	c.writeRandomImage(r, "cover", images)
+}
+
+func (c *Controller) APIRandomFeature(r *ghttp.Request) {
+	images, err := c.posts.DistinctCoverImages(r.Context(), 80)
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	images = append(images, c.curatedImages("square")...)
+	if len(images) == 0 {
+		images = c.coverImagePool()
+	}
+	c.writeRandomImage(r, "feature", images)
+}
+
 func (c *Controller) LikePost(r *ghttp.Request) {
 	id := r.GetRouter("id").Int64()
 	if id <= 0 {
@@ -430,6 +454,91 @@ func (c *Controller) withSidebar(ctx context.Context, data *PageData) {
 	if err != nil {
 		log.Printf("count comments: %v", err)
 	}
+}
+
+func (c *Controller) coverImagePool() []string {
+	site := c.cfg.GetSite()
+	images := []string{
+		site.HeroImage,
+		site.Avatar,
+		"/static/theme/screenshot.jpg",
+		"/static/theme/content-image/d-1.jpg",
+		"/static/theme/content-image/d-2.jpg",
+		"/static/theme/content-image/d-3.jpg",
+		"/static/theme/content-image/d-4.jpg",
+	}
+	images = append(images, c.curatedImages("originals")...)
+	images = append(images, c.curatedImages("square")...)
+	return compactImageURLs(images)
+}
+
+func (c *Controller) curatedImages(section string) []string {
+	dir := filepath.Join(c.cfg.StaticDir, "curated-sakura-images", section)
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+	images := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		if entry.IsDir() || !isImageFile(entry.Name()) {
+			continue
+		}
+		images = append(images, "/static/curated-sakura-images/"+section+"/"+entry.Name())
+	}
+	return images
+}
+
+func (c *Controller) writeRandomImage(r *ghttp.Request, kind string, images []string) {
+	images = compactImageURLs(images)
+	if len(images) == 0 {
+		r.Response.WriteStatus(404, "No images")
+		return
+	}
+	image := images[randomIndex(len(images))]
+	r.Response.Header().Set("Cache-Control", "no-store")
+	if r.GetQuery("format").String() == "json" {
+		r.Response.WriteJson(map[string]any{
+			"kind":  kind,
+			"url":   image,
+			"count": len(images),
+		})
+		return
+	}
+	r.Response.RedirectTo(image, http.StatusFound)
+}
+
+func compactImageURLs(images []string) []string {
+	seen := map[string]bool{}
+	result := make([]string, 0, len(images))
+	for _, image := range images {
+		image = strings.TrimSpace(image)
+		if image == "" || seen[image] {
+			continue
+		}
+		seen[image] = true
+		result = append(result, image)
+	}
+	return result
+}
+
+func isImageFile(name string) bool {
+	switch strings.ToLower(filepath.Ext(name)) {
+	case ".jpg", ".jpeg", ".png", ".webp", ".gif":
+		return true
+	default:
+		return false
+	}
+}
+
+func randomIndex(length int) int {
+	if length <= 1 {
+		return 0
+	}
+	n, err := crand.Int(crand.Reader, big.NewInt(int64(length)))
+	if err != nil {
+		return int(time.Now().UnixNano() % int64(length))
+	}
+	return int(n.Int64())
 }
 
 func currentPage(r *ghttp.Request) int {
