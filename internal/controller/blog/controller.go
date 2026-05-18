@@ -4,6 +4,7 @@ import (
 	"context"
 	crand "crypto/rand"
 	"database/sql"
+	"encoding/xml"
 	"errors"
 	"log"
 	"math/big"
@@ -66,6 +67,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/archive", c.Archive)
 	server.BindHandler("GET:/archives", c.Archives)
 	server.BindHandler("GET:/links", c.Links)
+	server.BindHandler("GET:/feed", c.Feed)
+	server.BindHandler("GET:/feed.xml", c.Feed)
 	server.BindHandler("GET:/category/{slug}", c.Category)
 	server.BindHandler("GET:/tag/{slug}", c.Tag)
 	server.BindHandler("GET:/search", c.Search)
@@ -248,6 +251,58 @@ func (c *Controller) Links(r *ghttp.Request) {
 		LinkCategories: categories,
 		Now:            time.Now(),
 	})
+}
+
+func (c *Controller) Feed(r *ghttp.Request) {
+	posts, err := c.posts.ListPublished(r.Context(), 20)
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	site := c.cfg.GetSite()
+	baseURL := requestBaseURL(r)
+	updated := time.Now()
+	if len(posts) > 0 {
+		updated = posts[0].PublishedAt
+	}
+	feed := atomFeed{
+		XMLName:  xml.Name{Local: "feed"},
+		XMLNS:    "http://www.w3.org/2005/Atom",
+		Title:    site.Name,
+		Subtitle: site.Description,
+		ID:       baseURL + "/",
+		Updated:  updated.Format(time.RFC3339),
+		Links: []atomLink{
+			{Href: baseURL + "/", Rel: "alternate", Type: "text/html"},
+			{Href: baseURL + "/feed", Rel: "self", Type: "application/atom+xml"},
+		},
+		Author: atomAuthor{Name: site.Author},
+	}
+	for _, post := range posts {
+		feed.Entries = append(feed.Entries, atomEntry{
+			Title:   post.Title,
+			ID:      baseURL + "/post/" + post.Slug,
+			Updated: post.PublishedAt.Format(time.RFC3339),
+			Links: []atomLink{{
+				Href: baseURL + "/post/" + post.Slug,
+				Rel:  "alternate",
+				Type: "text/html",
+			}},
+			Summary: atomText{
+				Type: "html",
+				Text: post.Excerpt,
+			},
+		})
+	}
+
+	output, err := xml.MarshalIndent(feed, "", "  ")
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
+	r.Response.Header().Set("Content-Type", "application/atom+xml; charset=utf-8")
+	r.Response.Write([]byte(xml.Header))
+	r.Response.Write(output)
 }
 
 func (c *Controller) Search(r *ghttp.Request) {
@@ -541,6 +596,25 @@ func randomIndex(length int) int {
 	return int(n.Int64())
 }
 
+func requestBaseURL(r *ghttp.Request) string {
+	scheme := r.Header.Get("X-Forwarded-Proto")
+	if scheme == "" {
+		if r.TLS != nil {
+			scheme = "https"
+		} else {
+			scheme = "http"
+		}
+	}
+	host := r.Header.Get("X-Forwarded-Host")
+	if host == "" {
+		host = r.Host
+	}
+	if host == "" {
+		host = "blog.koimoe.com"
+	}
+	return strings.TrimRight(scheme+"://"+host, "/")
+}
+
 func currentPage(r *ghttp.Request) int {
 	page := r.GetQuery("page").Int()
 	if page < 1 {
@@ -566,4 +640,39 @@ func validateComment(comment models.Comment) string {
 	default:
 		return ""
 	}
+}
+
+type atomFeed struct {
+	XMLName  xml.Name     `xml:"feed"`
+	XMLNS    string       `xml:"xmlns,attr"`
+	Title    string       `xml:"title"`
+	Subtitle string       `xml:"subtitle,omitempty"`
+	ID       string       `xml:"id"`
+	Updated  string       `xml:"updated"`
+	Links    []atomLink   `xml:"link"`
+	Author   atomAuthor   `xml:"author"`
+	Entries  []atomEntry  `xml:"entry"`
+}
+
+type atomEntry struct {
+	Title   string     `xml:"title"`
+	ID      string     `xml:"id"`
+	Updated string     `xml:"updated"`
+	Links   []atomLink `xml:"link"`
+	Summary atomText   `xml:"summary"`
+}
+
+type atomLink struct {
+	Href string `xml:"href,attr"`
+	Rel  string `xml:"rel,attr,omitempty"`
+	Type string `xml:"type,attr,omitempty"`
+}
+
+type atomAuthor struct {
+	Name string `xml:"name"`
+}
+
+type atomText struct {
+	Type string `xml:"type,attr,omitempty"`
+	Text string `xml:",chardata"`
 }
