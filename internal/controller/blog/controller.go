@@ -33,6 +33,9 @@ type PageData struct {
 	Site           config.Site
 	Title          string
 	Description    string
+	CanonicalURL   string
+	MetaImage      string
+	MetaType       string
 	SectionTitle   string
 	Query          string
 	Posts          []models.Post
@@ -555,8 +558,34 @@ func (c *Controller) apiError(r *ghttp.Request, err error) {
 }
 
 func (c *Controller) render(r *ghttp.Request, name string, data PageData) {
+	c.withMeta(r, &data)
 	c.withSidebar(r.Context(), &data)
 	c.renderer.HTML(r, name, data)
+}
+
+func (c *Controller) withMeta(r *ghttp.Request, data *PageData) {
+	site := c.cfg.GetSite()
+	baseURL := requestBaseURL(r)
+	path := r.URL.Path
+	if path == "" {
+		path = "/"
+	}
+	data.CanonicalURL = baseURL + path
+	if strings.TrimSpace(data.Description) == "" {
+		data.Description = site.Description
+	}
+	image := site.HeroImage
+	if data.Post.ID > 0 && strings.TrimSpace(data.Post.CoverImage) != "" {
+		image = data.Post.CoverImage
+	} else if strings.TrimSpace(image) == "" {
+		image = site.Avatar
+	}
+	data.MetaImage = absoluteURL(baseURL, image)
+	if data.Post.ID > 0 {
+		data.MetaType = "article"
+	} else {
+		data.MetaType = "website"
+	}
 }
 
 func (c *Controller) withSidebar(ctx context.Context, data *PageData) {
@@ -685,6 +714,17 @@ func requestBaseURL(r *ghttp.Request) string {
 		host = "blog.koimoe.com"
 	}
 	return strings.TrimRight(scheme+"://"+host, "/")
+}
+
+func absoluteURL(baseURL string, value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" || strings.HasPrefix(value, "http://") || strings.HasPrefix(value, "https://") {
+		return value
+	}
+	if !strings.HasPrefix(value, "/") {
+		value = "/" + value
+	}
+	return strings.TrimRight(baseURL, "/") + value
 }
 
 func currentPage(r *ghttp.Request) int {

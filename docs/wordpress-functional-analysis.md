@@ -480,6 +480,7 @@ Feed implementation note:
 - Public templates advertise the feed with `<link rel="alternate" type="application/atom+xml">`.
 - The feed is a lightweight WordPress compatibility/convenience layer and should not require extra database tables.
 - `/sitemap.xml` is implemented as a lightweight XML sitemap covering core public pages, posts, categories, and tags.
+- Public pages include canonical, description, Open Graph, and Twitter card metadata; article pages use the post cover image and `article` type.
 
 Random image implementation note:
 
