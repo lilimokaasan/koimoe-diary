@@ -52,7 +52,7 @@ input[type="reset"] {
 
 a:active,
 button:active {
-	cursor: url("/static/theme/cursor/work.cur"), alias;
+	cursor: url("/static/theme/cursor/ayuda.cur"), pointer;
 }
 
 input,
