@@ -449,10 +449,18 @@ Go 版建议 API：
 GET  /api/search-index
 GET  /api/random-cover
 GET  /api/random-feature
+GET  /feed
+GET  /feed.xml
 POST /api/comments
 POST /api/posts/{id}/like
 POST /admin/comments/{id}/private
 ```
+
+Feed implementation note:
+
+- `/feed` and `/feed.xml` are implemented as Atom feeds for the latest published posts.
+- Public templates advertise the feed with `<link rel="alternate" type="application/atom+xml">`.
+- The feed is a lightweight WordPress compatibility/convenience layer and should not require extra database tables.
 
 Random image implementation note:
 

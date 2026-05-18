@@ -643,15 +643,15 @@ func validateComment(comment models.Comment) string {
 }
 
 type atomFeed struct {
-	XMLName  xml.Name     `xml:"feed"`
-	XMLNS    string       `xml:"xmlns,attr"`
-	Title    string       `xml:"title"`
-	Subtitle string       `xml:"subtitle,omitempty"`
-	ID       string       `xml:"id"`
-	Updated  string       `xml:"updated"`
-	Links    []atomLink   `xml:"link"`
-	Author   atomAuthor   `xml:"author"`
-	Entries  []atomEntry  `xml:"entry"`
+	XMLName  xml.Name    `xml:"feed"`
+	XMLNS    string      `xml:"xmlns,attr"`
+	Title    string      `xml:"title"`
+	Subtitle string      `xml:"subtitle,omitempty"`
+	ID       string      `xml:"id"`
+	Updated  string      `xml:"updated"`
+	Links    []atomLink  `xml:"link"`
+	Author   atomAuthor  `xml:"author"`
+	Entries  []atomEntry `xml:"entry"`
 }
 
 type atomEntry struct {
