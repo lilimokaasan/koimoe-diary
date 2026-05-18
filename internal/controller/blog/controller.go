@@ -546,8 +546,7 @@ func (c *Controller) LikePost(r *ghttp.Request) {
 }
 
 func (c *Controller) NotFound(r *ghttp.Request) {
-	r.Response.WriteHeader(404)
-	c.render(r, "error.tmpl", PageData{
+	c.renderStatus(r, http.StatusNotFound, "error.tmpl", PageData{
 		Site:           c.cfg.GetSite(),
 		Title:          "Not Found - " + c.cfg.GetSite().Name,
 		Description:    "This page is resting somewhere outside KoiMoe Diary.",
@@ -562,8 +561,7 @@ func (c *Controller) NotFound(r *ghttp.Request) {
 
 func (c *Controller) error(r *ghttp.Request, err error) {
 	log.Println(err)
-	r.Response.WriteHeader(500)
-	c.render(r, "error.tmpl", PageData{
+	c.renderStatus(r, http.StatusInternalServerError, "error.tmpl", PageData{
 		Site:           c.cfg.GetSite(),
 		Title:          "Something went softly wrong - " + c.cfg.GetSite().Name,
 		Description:    "KoiMoe Diary could not finish this request.",
@@ -586,6 +584,13 @@ func (c *Controller) render(r *ghttp.Request, name string, data PageData) {
 	c.withUserEntry(r, &data)
 	c.withSidebar(r.Context(), &data)
 	c.renderer.HTML(r, name, data)
+}
+
+func (c *Controller) renderStatus(r *ghttp.Request, status int, name string, data PageData) {
+	c.withMeta(r, &data)
+	c.withUserEntry(r, &data)
+	c.withSidebar(r.Context(), &data)
+	c.renderer.HTMLStatus(r, status, name, data)
 }
 
 func (c *Controller) withMeta(r *ghttp.Request, data *PageData) {
