@@ -169,6 +169,7 @@ Design rules:
 - Include a license/attribution area that feels like an information strip, not a legal block.
 - Include author card and comment anchor.
 - Include previous/next post navigation as part of the reading flow.
+- The article footer must be content-height driven. Override inherited Sakurairo footer rules such as fixed `height: 100px` or floating `.post-tags`; taxonomy pills should remain inside the article card with clear space above the author card.
 
 ## Comments
 

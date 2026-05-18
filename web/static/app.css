@@ -365,8 +365,10 @@ body {
 }
 
 .sakurairo-single .post-footer {
+	border-bottom: 0;
 	display: grid;
 	gap: 14px;
+	height: auto;
 	margin: 0 auto;
 	max-width: 840px;
 	padding: 20px 42px 46px;
@@ -399,8 +401,10 @@ body {
 	background: rgba(251, 152, 192, 0.1);
 	border-radius: 999px;
 	color: #746a73;
+	float: none;
 	font-size: 13px;
 	padding: 7px 11px;
+	text-transform: none;
 }
 
 .single-author {
