@@ -57,6 +57,122 @@ body {
 	padding: 12px 18px;
 }
 
+.headertop.koimoe-home-hero {
+	background: linear-gradient(180deg, rgba(255, 250, 252, 0.55), rgba(255, 255, 255, 0.92));
+}
+
+.headertop.koimoe-home-hero .centerbg {
+	background-position: center;
+	min-height: 620px;
+	position: relative;
+}
+
+.headertop.koimoe-home-hero .centerbg::after {
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 246, 250, 0.46) 46%, rgba(255, 255, 255, 0.9)),
+		linear-gradient(90deg, rgba(251, 152, 192, 0.16), rgba(255, 255, 255, 0.12), rgba(251, 152, 192, 0.12));
+}
+
+.koimoe-hero-focus {
+	max-width: 1000px;
+	padding: 0 22px;
+	top: 51%;
+	width: 100%;
+}
+
+.koimoe-hero-card {
+	align-items: center;
+	backdrop-filter: blur(16px);
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(255, 248, 251, 0.5));
+	border: 1px solid rgba(255, 255, 255, 0.84);
+	border-radius: 8px;
+	box-shadow: 0 26px 70px rgba(125, 82, 104, 0.16);
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	margin: 0 auto;
+	max-width: 900px;
+	padding: 38px 44px 34px;
+	position: relative;
+}
+
+.koimoe-hero-card::before,
+.koimoe-hero-card::after {
+	background:
+		radial-gradient(circle at center, rgba(251, 152, 192, 0.36) 0 2px, transparent 3px),
+		radial-gradient(circle at top, rgba(251, 152, 192, 0.18) 0 8px, transparent 9px);
+	border: 1px solid rgba(251, 152, 192, 0.16);
+	border-radius: 50%;
+	content: "";
+	height: 28px;
+	position: absolute;
+	width: 28px;
+}
+
+.koimoe-hero-card::before {
+	left: 24px;
+	top: 20px;
+}
+
+.koimoe-hero-card::after {
+	bottom: 20px;
+	right: 26px;
+}
+
+.koimoe-hero-logo {
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	display: block;
+	height: auto !important;
+	max-height: 265px;
+	max-width: 100%;
+	object-fit: contain;
+	padding: 0 !important;
+	width: min(760px, 82vw) !important;
+}
+
+.koimoe-hero-card p {
+	color: rgba(92, 78, 88, 0.74);
+	font-size: 15px;
+	line-height: 1.9;
+	margin: 8px auto 0;
+	max-width: 620px;
+}
+
+.koimoe-hero-actions {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	justify-content: center;
+	margin-top: 24px;
+}
+
+.koimoe-hero-actions a,
+.koimoe-hero-actions button {
+	align-items: center;
+	background: rgba(255, 244, 249, 0.76);
+	border: 1px solid rgba(251, 152, 192, 0.26);
+	border-radius: 999px;
+	box-shadow: 0 12px 28px rgba(251, 152, 192, 0.12);
+	color: var(--sakura-rose);
+	cursor: pointer;
+	display: inline-flex;
+	font: 14px/1.2 "Ubuntu", "Noto Serif SC", sans-serif;
+	gap: 8px;
+	letter-spacing: 0;
+	padding: 10px 18px;
+	text-decoration: none;
+	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.koimoe-hero-actions a:hover,
+.koimoe-hero-actions button:hover {
+	background: rgba(255, 235, 244, 0.94);
+	box-shadow: 0 15px 34px rgba(251, 152, 192, 0.22);
+	transform: translateY(-1px);
+}
+
 .site-top .menu {
 	display: flex;
 	gap: 22px;
@@ -191,7 +307,7 @@ body {
 .home-intro {
 	box-sizing: border-box;
 	color: var(--sakura-ink);
-	margin: 44px auto 10px;
+	margin: 52px auto 12px;
 	max-width: 780px;
 	padding: 0 20px;
 	text-align: center;
@@ -243,7 +359,9 @@ body {
 }
 
 .sakurairo-feature.top-feature {
-	margin-top: 34px;
+	margin: 36px auto 0;
+	max-width: 1180px;
+	padding: 0 18px;
 }
 
 .sakurairo-feature .fes-title,
@@ -255,13 +373,25 @@ body {
 }
 
 .sakurairo-feature .feature-content {
+	display: grid;
 	gap: 16px;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	width: 100%;
 }
 
 .sakurairo-feature .feature-content li {
+	float: none;
 	border-radius: 8px;
 	box-shadow: 0 18px 42px rgba(107, 74, 92, 0.16);
 	overflow: hidden;
+	width: 100%;
+}
+
+.sakurairo-feature .feature-content a {
+	display: block;
+	aspect-ratio: 1 / 1;
+	border-radius: 8px;
+	position: relative;
 }
 
 .sakurairo-feature .feature-content a::after {
@@ -272,13 +402,32 @@ body {
 	position: absolute;
 }
 
-.sakurairo-feature .feature-content a {
-	position: relative;
-}
-
 .post-entry .feature img,
 .feature-content img {
+	height: 100%;
 	object-fit: cover;
+	width: 100%;
+}
+
+.sakurairo-feature .feature-title .foverlay-bg,
+.sakurairo-feature .feature-title .foverlay {
+	height: 100%;
+	line-height: 1;
+	width: 100%;
+}
+
+.sakurairo-feature .feature-title .foverlay {
+	align-items: center;
+	display: flex;
+	font-size: 24px;
+	justify-content: center;
+	padding: 0 16px;
+	transform: translateY(100%);
+}
+
+.sakurairo-feature li.feature-2 {
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .post-list .post-entry {
@@ -1492,6 +1641,44 @@ body {
 }
 
 @media (max-width: 760px) {
+	.headertop.koimoe-home-hero .centerbg {
+		min-height: 520px;
+	}
+
+	.koimoe-hero-focus {
+		padding: 0 14px;
+		top: 50%;
+	}
+
+	.koimoe-hero-card {
+		padding: 28px 18px 26px;
+	}
+
+	.koimoe-hero-logo {
+		max-height: 205px;
+		width: 92vw !important;
+	}
+
+	.koimoe-hero-card p {
+		font-size: 14px;
+		line-height: 1.75;
+	}
+
+	.koimoe-hero-actions {
+		gap: 10px;
+		margin-top: 18px;
+	}
+
+	.koimoe-hero-actions a,
+	.koimoe-hero-actions button {
+		justify-content: center;
+		min-width: 128px;
+	}
+
+	.sakurairo-feature .feature-content {
+		grid-template-columns: 1fr;
+	}
+
 	.content-area.with-sidebar {
 		display: block;
 		padding-left: 12px;
