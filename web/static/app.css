@@ -70,6 +70,10 @@ body {
 	text-decoration: none;
 }
 
+.site-content:has(.content-area.with-sidebar) {
+	max-width: 1360px;
+}
+
 .home-intro {
 	box-sizing: border-box;
 	color: var(--sakura-ink);
