@@ -149,7 +149,7 @@ func (c *Controller) LoginPost(r *ghttp.Request) {
 		})
 		return
 	}
-	r.Cookie.SetCookie("sakurairo_admin", c.signToken(username, time.Now().Add(24*time.Hour)), "", "/admin", 24*time.Hour, ghttp.CookieOptions{
+	r.Cookie.SetCookie("sakurairo_admin", c.signToken(username, time.Now().Add(24*time.Hour)), "", "/", 24*time.Hour, ghttp.CookieOptions{
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	})
@@ -157,6 +157,10 @@ func (c *Controller) LoginPost(r *ghttp.Request) {
 }
 
 func (c *Controller) Logout(r *ghttp.Request) {
+	r.Cookie.SetCookie("sakurairo_admin", "", "", "/", -24*time.Hour, ghttp.CookieOptions{
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
 	r.Cookie.SetCookie("sakurairo_admin", "", "", "/admin", -24*time.Hour, ghttp.CookieOptions{
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,

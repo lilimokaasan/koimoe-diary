@@ -70,6 +70,120 @@ body {
 	text-decoration: none;
 }
 
+.user-entry {
+	float: right;
+	margin: 12px 0 0 14px;
+	position: relative;
+	z-index: 1000;
+}
+
+.user-entry__toggle {
+	align-items: center;
+	backdrop-filter: blur(12px);
+	background: rgba(255, 255, 255, 0.74);
+	border: 1px solid rgba(251, 152, 192, 0.36);
+	border-radius: 50%;
+	box-shadow: 0 10px 28px rgba(128, 82, 105, 0.14);
+	cursor: pointer;
+	display: inline-flex;
+	height: 38px;
+	justify-content: center;
+	padding: 3px;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+	width: 38px;
+}
+
+.user-entry__toggle:hover,
+.user-entry.is-open .user-entry__toggle {
+	border-color: rgba(251, 152, 192, 0.78);
+	box-shadow: 0 12px 34px rgba(251, 152, 192, 0.26);
+	transform: translateY(-1px);
+}
+
+.user-entry__toggle img {
+	border-radius: 50%;
+	display: block;
+	height: 30px;
+	object-fit: cover;
+	width: 30px;
+}
+
+.user-entry__menu {
+	backdrop-filter: blur(18px);
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 246, 250, 0.88));
+	border: 1px solid rgba(251, 152, 192, 0.22);
+	border-radius: 8px;
+	box-shadow: 0 18px 46px rgba(104, 73, 91, 0.16);
+	box-sizing: border-box;
+	min-width: 176px;
+	opacity: 0;
+	padding: 8px;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	top: 48px;
+	transform: translateY(-4px);
+	transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.user-entry.is-open .user-entry__menu {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.user-entry__menu::before {
+	background: rgba(255, 255, 255, 0.92);
+	border-left: 1px solid rgba(251, 152, 192, 0.18);
+	border-top: 1px solid rgba(251, 152, 192, 0.18);
+	content: "";
+	height: 10px;
+	position: absolute;
+	right: 14px;
+	top: -6px;
+	transform: rotate(45deg);
+	width: 10px;
+}
+
+.user-entry__menu a,
+.user-entry__menu button {
+	align-items: center;
+	background: transparent;
+	border: 0;
+	border-radius: 7px;
+	box-sizing: border-box;
+	color: var(--sakura-ink);
+	cursor: pointer;
+	display: flex;
+	font: 14px/1.2 "Ubuntu", "Noto Serif SC", sans-serif;
+	gap: 9px;
+	letter-spacing: 0;
+	padding: 10px 11px;
+	text-align: left;
+	text-decoration: none;
+	transition: background 0.18s ease, color 0.18s ease;
+	width: 100%;
+}
+
+.user-entry__menu a:hover,
+.user-entry__menu button:hover {
+	background: rgba(251, 152, 192, 0.14);
+	color: var(--sakura-rose);
+}
+
+.user-entry__menu form {
+	margin: 0;
+}
+
+.user-entry__menu i {
+	color: var(--sakura-rose);
+	width: 15px;
+}
+
+.site-top .menu-admin-login a {
+	color: var(--sakura-rose);
+}
+
 .site-content:has(.single-post-layout) {
 	max-width: 1280px;
 }

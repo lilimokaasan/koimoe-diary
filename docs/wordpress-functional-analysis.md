@@ -320,6 +320,13 @@ Go 版当前单用户场景：
 - `/feed` 或 `/feed.xml`：适合放 footer 或 `<link rel="alternate">`，不必占主菜单位置。
 - `/api/*`：纯接口，不作为用户菜单项。
 
+Implementation note:
+
+- The public header now includes a Sakurairo-style avatar user entry next to search and the hamburger menu.
+- Guests see a soft `Admin Login` entry; logged-in admins see `Dashboard`, `New Post`, `Profile`, and `Sign out`.
+- The default navigation fallback is `Home / Archives / Links / Search / Admin Login`; if database navigation omits an admin link, the layout adds `Admin Login` as a safety fallback.
+- Admin login cookies are scoped to `/` so public templates can render the logged-in user entry server-side while keeping the cookie HttpOnly.
+
 ## 5. 评论系统
 
 旧主题评论是功能最重的部分。

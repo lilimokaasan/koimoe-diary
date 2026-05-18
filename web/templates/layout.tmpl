@@ -24,7 +24,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css">
-	<link rel="stylesheet" href="/static/app.css?v=20260518-live-search">
+	<link rel="stylesheet" href="/static/app.css?v=20260518-user-entry">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -87,6 +87,23 @@
 						</span>
 					</span>
 				</div>
+				<div class="user-entry {{if .AdminLoggedIn}}is-logged-in{{end}}">
+					<button class="user-entry__toggle js-toggle-user-menu" type="button" aria-label="User menu" aria-expanded="false">
+						<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+					</button>
+					<div class="user-entry__menu" data-user-menu>
+						{{if .AdminLoggedIn}}
+						<a href="/admin"><i class="fa fa-dashboard" aria-hidden="true"></i> Dashboard</a>
+						<a href="/admin/posts/new"><i class="fa fa-pencil" aria-hidden="true"></i> New Post</a>
+						<a href="/admin/settings"><i class="fa fa-heart-o" aria-hidden="true"></i> Profile</a>
+						<form method="post" action="/admin/logout">
+							<button type="submit"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign out</button>
+						</form>
+						{{else}}
+						<a href="/admin/login"><i class="fa fa-sign-in" aria-hidden="true"></i> Admin Login</a>
+						{{end}}
+					</div>
+				</div>
 				<div class="searchbox"><i class="iconfont js-toggle-search iconsearch icon-search"></i></div>
 				<div class="lower">
 					<div id="show-nav" class="showNav">
@@ -97,6 +114,7 @@
 					<nav>
 						<ul id="menu-primary" class="menu">
 							{{range .Site.Navigation}}<li><a href="{{.URL}}">{{.Label}}</a></li>{{end}}
+							{{if .ShowAdminNav}}<li class="menu-admin-login"><a href="/admin/login">Admin Login</a></li>{{end}}
 						</ul>
 					</nav>
 				</div>
@@ -151,7 +169,7 @@
 </div>
 <script src="/static/theme/cdn/js/lib.js"></script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260518-live-search"></script>
+<script src="/static/app.js?v=20260518-user-entry"></script>
 </body>
 </html>
 {{end}}

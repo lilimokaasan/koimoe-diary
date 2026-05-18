@@ -74,11 +74,10 @@ func FromEnv() Config {
 			Avatar:      env("SITE_AVATAR", "/static/theme/content-image/d-1.jpg"),
 			Navigation: []NavItem{
 				{Label: "Home", URL: "/"},
-				{Label: "Archive", URL: "/archives"},
+				{Label: "Archives", URL: "/archives"},
 				{Label: "Links", URL: "/links"},
-				{Label: "Blog", URL: "/category/blog"},
-				{Label: "Sakurairo", URL: "/tag/sakurairo"},
 				{Label: "Search", URL: "/search"},
+				{Label: "Admin Login", URL: "/admin/login"},
 			},
 		},
 	}

@@ -8,6 +8,37 @@
 	var liveSearchResults = search && search.querySelector("[data-live-search-results]");
 	var searchIndexPromise;
 	var searchIndex;
+	var userEntry = document.querySelector(".user-entry");
+	var userToggle = userEntry && userEntry.querySelector(".js-toggle-user-menu");
+
+	userToggle && userToggle.addEventListener("click", function (event) {
+		event.preventDefault();
+		event.stopPropagation();
+		var isOpen = userEntry.classList.toggle("is-open");
+		userToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+	});
+
+	document.addEventListener("click", function (event) {
+		if (!userEntry || !userEntry.classList.contains("is-open") || userEntry.contains(event.target)) {
+			return;
+		}
+		closeUserEntry();
+	});
+
+	document.addEventListener("keydown", function (event) {
+		if (event.key === "Escape") {
+			closeUserEntry();
+			search && search.classList.remove("is-visible");
+		}
+	});
+
+	function closeUserEntry() {
+		if (!userEntry) {
+			return;
+		}
+		userEntry.classList.remove("is-open");
+		userToggle && userToggle.setAttribute("aria-expanded", "false");
+	}
 
 	searchButtons.forEach(function (button) {
 		button.addEventListener("click", function () {

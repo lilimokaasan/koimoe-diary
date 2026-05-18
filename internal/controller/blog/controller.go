@@ -2,15 +2,21 @@ package blog
 
 import (
 	"context"
+	"crypto/hmac"
 	crand "crypto/rand"
+	"crypto/sha256"
+	"crypto/subtle"
 	"database/sql"
+	"encoding/base64"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"log"
 	"math/big"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -57,6 +63,8 @@ type PageData struct {
 	Page           models.PageInfo
 	Notice         string
 	Now            time.Time
+	AdminLoggedIn  bool
+	ShowAdminNav   bool
 }
 
 func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, renderer *view.Renderer) *Controller {
@@ -559,6 +567,7 @@ func (c *Controller) apiError(r *ghttp.Request, err error) {
 
 func (c *Controller) render(r *ghttp.Request, name string, data PageData) {
 	c.withMeta(r, &data)
+	c.withUserEntry(r, &data)
 	c.withSidebar(r.Context(), &data)
 	c.renderer.HTML(r, name, data)
 }
@@ -610,6 +619,58 @@ func (c *Controller) withSidebar(ctx context.Context, data *PageData) {
 	if err != nil {
 		log.Printf("count comments: %v", err)
 	}
+}
+
+func (c *Controller) withUserEntry(r *ghttp.Request, data *PageData) {
+	data.AdminLoggedIn = c.isAdminLoggedIn(r)
+	data.ShowAdminNav = true
+	for _, item := range data.Site.Navigation {
+		url := strings.TrimSpace(item.URL)
+		if url == "/admin" || url == "/admin/login" {
+			data.ShowAdminNav = false
+			return
+		}
+	}
+}
+
+func (c *Controller) isAdminLoggedIn(r *ghttp.Request) bool {
+	cookie := r.Cookie.Get("sakurairo_admin")
+	if cookie == nil {
+		return false
+	}
+	username, ok := c.verifyAdminToken(cookie.String())
+	return ok && username == c.cfg.AdminUsername
+}
+
+func (c *Controller) verifyAdminToken(token string) (string, bool) {
+	data, err := base64.RawURLEncoding.DecodeString(token)
+	if err != nil {
+		return "", false
+	}
+	parts := strings.Split(string(data), ":")
+	if len(parts) != 3 {
+		return "", false
+	}
+	exp, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil || time.Now().Unix() > exp {
+		return "", false
+	}
+	payload := parts[0] + ":" + parts[1]
+	expected := c.adminSignature(payload)
+	if subtle.ConstantTimeCompare([]byte(parts[2]), []byte(expected)) != 1 {
+		return "", false
+	}
+	return parts[0], true
+}
+
+func (c *Controller) adminSignature(payload string) string {
+	secret := c.cfg.AdminSecret
+	if secret == "" {
+		secret = c.cfg.AdminPassword
+	}
+	mac := hmac.New(sha256.New, []byte(secret))
+	_, _ = mac.Write([]byte(payload))
+	return fmt.Sprintf("%x", mac.Sum(nil))
 }
 
 func (c *Controller) coverImagePool() []string {
