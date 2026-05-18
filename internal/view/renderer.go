@@ -1,6 +1,7 @@
 package view
 
 import (
+	"bytes"
 	"html/template"
 	"log"
 	"path/filepath"
@@ -46,4 +47,15 @@ func (r *Renderer) HTML(req *ghttp.Request, name string, data any) {
 	if err := r.templates.ExecuteTemplate(req.Response.Writer, name, data); err != nil {
 		log.Println(err)
 	}
+}
+
+func (r *Renderer) HTMLStatus(req *ghttp.Request, status int, name string, data any) {
+	var buffer bytes.Buffer
+	if err := r.templates.ExecuteTemplate(&buffer, name, data); err != nil {
+		log.Println(err)
+		req.Response.WriteStatus(status)
+		return
+	}
+	req.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
+	req.Response.WriteStatus(status, buffer.Bytes())
 }
