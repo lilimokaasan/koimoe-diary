@@ -259,6 +259,7 @@ This does not mean ignoring correctness. It means the main product shape is a pe
 - Admin login: custom anime train background with translucent glass panel.
 - Single post page: cover image band, translucent article paper, metadata pills, content styling, author card, adjacent post navigation.
 - Text direction: `KoiMoe Diary` / `恋と萌えの小さな場所`.
+- Error pages: 404 and server errors should stay gentle and atmospheric, using translucent pink-white paper, a faded hero image band, poetic copy, and soft home/search actions instead of plain technical text.
 
 ## Future Visual Punch List
 

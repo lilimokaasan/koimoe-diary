@@ -1398,6 +1398,99 @@ body {
 	display: none;
 }
 
+.koimoe-error-layout {
+	box-sizing: border-box;
+	margin: 68px auto 80px;
+	max-width: 980px;
+	padding: 0 22px;
+}
+
+.koimoe-error-layout .site-main {
+	width: 100%;
+}
+
+.koimoe-error-card {
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(255, 247, 251, 0.72));
+	border: 1px solid rgba(255, 255, 255, 0.82);
+	border-radius: 8px;
+	box-shadow: 0 24px 70px rgba(102, 72, 90, 0.14);
+	overflow: hidden;
+	text-align: center;
+}
+
+.koimoe-error-cover {
+	aspect-ratio: 16 / 5;
+	background-position: center;
+	background-size: cover;
+	filter: saturate(0.88) brightness(1.08);
+	opacity: 0.58;
+	position: relative;
+}
+
+.koimoe-error-cover::after {
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 247, 251, 0.84));
+	content: "";
+	inset: 0;
+	position: absolute;
+}
+
+.koimoe-error-body {
+	margin: -28px auto 0;
+	max-width: 660px;
+	padding: 0 32px 50px;
+	position: relative;
+}
+
+.koimoe-error-body h1 {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: clamp(32px, 5vw, 54px);
+	font-weight: 400;
+	line-height: 1.18;
+	margin: 12px 0 18px;
+}
+
+.koimoe-error-body p {
+	color: var(--sakura-muted);
+	font-size: 16px;
+	line-height: 1.9;
+	margin: 0 auto;
+}
+
+.koimoe-error-actions {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	justify-content: center;
+	margin-top: 30px;
+}
+
+.koimoe-error-actions a,
+.koimoe-error-actions button {
+	align-items: center;
+	background: rgba(255, 240, 247, 0.82);
+	border: 1px solid rgba(251, 152, 192, 0.26);
+	border-radius: 999px;
+	box-shadow: 0 12px 30px rgba(251, 152, 192, 0.12);
+	color: var(--sakura-rose);
+	cursor: pointer;
+	display: inline-flex;
+	font: 15px/1.2 "Ubuntu", "Noto Serif SC", sans-serif;
+	gap: 8px;
+	letter-spacing: 0;
+	padding: 12px 22px;
+	text-decoration: none;
+	transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.koimoe-error-actions a:hover,
+.koimoe-error-actions button:hover {
+	background: rgba(255, 230, 242, 0.96);
+	box-shadow: 0 15px 34px rgba(251, 152, 192, 0.22);
+	transform: translateY(-1px);
+}
+
 @media (max-width: 760px) {
 	.content-area.with-sidebar {
 		display: block;
@@ -1489,6 +1582,31 @@ body {
 
 	.koimoe-live-search__item-title {
 		font-size: 16px;
+	}
+
+	.koimoe-error-layout {
+		margin-top: 42px;
+		padding: 0 14px;
+	}
+
+	.koimoe-error-cover {
+		aspect-ratio: 16 / 8;
+	}
+
+	.koimoe-error-body {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	.koimoe-error-actions {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.koimoe-error-actions a,
+	.koimoe-error-actions button {
+		justify-content: center;
+		width: 100%;
 	}
 }
 

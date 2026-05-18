@@ -66,6 +66,11 @@ type PageData struct {
 	Now            time.Time
 	AdminLoggedIn  bool
 	ShowAdminNav   bool
+	ErrorCode      string
+	ErrorHeading   string
+	ErrorMessage   string
+	ErrorAction    string
+	ErrorActionURL string
 }
 
 func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, renderer *view.Renderer) *Controller {
@@ -542,16 +547,33 @@ func (c *Controller) LikePost(r *ghttp.Request) {
 
 func (c *Controller) NotFound(r *ghttp.Request) {
 	r.Response.WriteHeader(404)
-	c.render(r, "404.tmpl", PageData{
-		Site:  c.cfg.GetSite(),
-		Title: "Not Found - " + c.cfg.GetSite().Name,
-		Now:   time.Now(),
+	c.render(r, "error.tmpl", PageData{
+		Site:           c.cfg.GetSite(),
+		Title:          "Not Found - " + c.cfg.GetSite().Name,
+		Description:    "This page is resting somewhere outside KoiMoe Diary.",
+		ErrorCode:      "404",
+		ErrorHeading:   "The page slipped behind the petals.",
+		ErrorMessage:   "This little place does not exist yet. It may have moved, or it may still be waiting to be written.",
+		ErrorAction:    "Back to KoiMoe Diary",
+		ErrorActionURL: "/",
+		Now:            time.Now(),
 	})
 }
 
 func (c *Controller) error(r *ghttp.Request, err error) {
 	log.Println(err)
-	r.Response.WriteStatus(500, "Internal Server Error")
+	r.Response.WriteHeader(500)
+	c.render(r, "error.tmpl", PageData{
+		Site:           c.cfg.GetSite(),
+		Title:          "Something went softly wrong - " + c.cfg.GetSite().Name,
+		Description:    "KoiMoe Diary could not finish this request.",
+		ErrorCode:      "500",
+		ErrorHeading:   "The diary lost its thread for a moment.",
+		ErrorMessage:   "Something went wrong while opening this page. The server kept the details in its logs, so the public page can stay calm.",
+		ErrorAction:    "Return home",
+		ErrorActionURL: "/",
+		Now:            time.Now(),
+	})
 }
 
 func (c *Controller) apiError(r *ghttp.Request, err error) {

@@ -1,0 +1,19 @@
+{{template "head" .}}
+{{template "site_header" .}}
+<div id="primary" class="content-area koimoe-error-layout">
+	<main id="main" class="site-main" role="main">
+		<section class="koimoe-error-card" aria-labelledby="error-title">
+			<div class="koimoe-error-cover" style="background-image:url('{{.Site.HeroImage}}')"></div>
+			<div class="koimoe-error-body">
+				<p class="home-kicker"><i class="iconfont icon-sakura"></i> {{.ErrorCode}}</p>
+				<h1 id="error-title">{{.ErrorHeading}}</h1>
+				<p>{{.ErrorMessage}}</p>
+				<div class="koimoe-error-actions">
+					<a href="{{.ErrorActionURL}}">{{.ErrorAction}}</a>
+					<button class="js-toggle-search" type="button"><i class="iconfont icon-search"></i> Search</button>
+				</div>
+			</div>
+		</section>
+	</main>
+</div>
+{{template "site_footer" .}}
