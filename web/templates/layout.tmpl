@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css?v=20260519-stable-link-cursor">
-	<link rel="stylesheet" href="/static/app.css?v=20260519-modal-search">
+	<link rel="stylesheet" href="/static/app.css?v=20260519-visible-search">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -108,7 +108,11 @@
 						{{end}}
 					</div>
 				</div>
-				<div class="searchbox"><i class="iconfont js-toggle-search iconsearch icon-search"></i></div>
+				<div class="searchbox">
+					<button class="js-toggle-search searchbox__button" type="button" aria-label="Search KoiMoe Diary">
+						<i class="fa fa-search" aria-hidden="true"></i>
+					</button>
+				</div>
 				<div class="lower">
 					<div id="show-nav" class="showNav">
 						<div class="line line1"></div>
@@ -174,7 +178,7 @@
 	}
 </script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260519-modal-search"></script>
+<script src="/static/app.js?v=20260519-visible-search"></script>
 </body>
 </html>
 {{end}}
