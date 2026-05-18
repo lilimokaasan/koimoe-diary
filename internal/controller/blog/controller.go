@@ -50,6 +50,7 @@ type PageData struct {
 	NextPost       models.Post
 	ArchiveGroups  []models.ArchiveGroup
 	LinkCategories []models.FriendLinkCategory
+	FeaturedImages []string
 	Comments       []models.Comment
 	CommentOK      bool
 	CommentErr     string
@@ -110,14 +111,15 @@ func (c *Controller) Home(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "home.tmpl", PageData{
-		Site:         c.cfg.GetSite(),
-		Title:        c.cfg.GetSite().Name,
-		Description:  c.cfg.GetSite().Description,
-		SectionTitle: "Latest Posts",
-		Posts:        posts,
-		Page:         store.PageInfo(page, pageSize, total, "/", ""),
-		Notice:       c.cfg.GetSite().Notice,
-		Now:          time.Now(),
+		Site:           c.cfg.GetSite(),
+		Title:          c.cfg.GetSite().Name,
+		Description:    c.cfg.GetSite().Description,
+		SectionTitle:   "Latest Posts",
+		Posts:          posts,
+		FeaturedImages: c.randomFeatureImages(r.Context(), 3),
+		Page:           store.PageInfo(page, pageSize, total, "/", ""),
+		Notice:         c.cfg.GetSite().Notice,
+		Now:            time.Now(),
 	})
 }
 
@@ -513,15 +515,7 @@ func (c *Controller) APIRandomCover(r *ghttp.Request) {
 }
 
 func (c *Controller) APIRandomFeature(r *ghttp.Request) {
-	images, err := c.posts.DistinctCoverImages(r.Context(), 80)
-	if err != nil {
-		c.apiError(r, err)
-		return
-	}
-	images = append(images, c.curatedImages("square")...)
-	if len(images) == 0 {
-		images = c.coverImagePool()
-	}
+	images := c.featureImagePool(r.Context())
 	c.writeRandomImage(r, "feature", images)
 }
 
@@ -687,6 +681,45 @@ func (c *Controller) coverImagePool() []string {
 	images = append(images, c.curatedImages("originals")...)
 	images = append(images, c.curatedImages("square")...)
 	return compactImageURLs(images)
+}
+
+func (c *Controller) featureImagePool(ctx context.Context) []string {
+	images, err := c.posts.DistinctCoverImages(ctx, 80)
+	if err != nil {
+		log.Printf("load feature images: %v", err)
+	}
+	images = append(images, c.curatedImages("square")...)
+	if len(images) == 0 {
+		images = c.coverImagePool()
+	}
+	return compactImageURLs(images)
+}
+
+func (c *Controller) randomFeatureImages(ctx context.Context, count int) []string {
+	images := c.featureImagePool(ctx)
+	if count <= 0 {
+		return nil
+	}
+	if len(images) < count {
+		images = compactImageURLs(append(images, c.coverImagePool()...))
+	}
+	if len(images) == 0 {
+		images = []string{
+			"/static/theme/content-image/d-1.jpg",
+			"/static/theme/content-image/d-2.jpg",
+			"/static/theme/content-image/d-3.jpg",
+		}
+	}
+	result := make([]string, 0, count)
+	for len(result) < count && len(images) > 0 {
+		index := randomIndex(len(images))
+		result = append(result, images[index])
+		images = append(images[:index], images[index+1:]...)
+	}
+	for len(result) < count {
+		result = append(result, result[len(result)%len(result)])
+	}
+	return result
 }
 
 func (c *Controller) curatedImages(section string) []string {
