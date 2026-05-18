@@ -248,11 +248,12 @@ func (s *PostStore) Search(ctx context.Context, query string, limit int) ([]mode
 }
 
 func (s *PostStore) SearchPaged(ctx context.Context, query string, page int, pageSize int) ([]models.Post, error) {
+	query = normalizeSearchQuery(query)
 	if query == "" {
 		return s.ListPublishedPaged(ctx, page, pageSize)
 	}
 	page, pageSize = normalizePage(page, pageSize)
-	like := "%" + query + "%"
+	like := likePattern(query)
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
@@ -260,9 +261,20 @@ SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published' AND (p.title LIKE ? OR p.excerpt LIKE ? OR p.content_html LIKE ?)
+WHERE p.status = 'published' AND (
+	p.title LIKE ? ESCAPE '\\' OR
+	p.excerpt LIKE ? ESCAPE '\\' OR
+	p.content_html LIKE ? ESCAPE '\\' OR
+	c.name LIKE ? ESCAPE '\\' OR
+	EXISTS (
+		SELECT 1
+		FROM post_tags pt
+		JOIN tags t ON t.id = pt.tag_id
+		WHERE pt.post_id = p.id AND t.name LIKE ? ESCAPE '\\'
+	)
+)
 ORDER BY p.published_at DESC
-LIMIT ? OFFSET ?`, like, like, like, pageSize, (page-1)*pageSize)
+LIMIT ? OFFSET ?`, like, like, like, like, like, pageSize, (page-1)*pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -335,11 +347,27 @@ func (s *PostStore) CountPublished(ctx context.Context) (int, error) {
 }
 
 func (s *PostStore) CountSearch(ctx context.Context, query string) (int, error) {
+	query = normalizeSearchQuery(query)
 	if query == "" {
 		return s.CountPublished(ctx)
 	}
-	like := "%" + query + "%"
-	return s.count(ctx, `SELECT COUNT(*) FROM posts WHERE status = 'published' AND (title LIKE ? OR excerpt LIKE ? OR content_html LIKE ?)`, like, like, like)
+	like := likePattern(query)
+	return s.count(ctx, `
+SELECT COUNT(*)
+FROM posts p
+LEFT JOIN categories c ON c.id = p.category_id
+WHERE p.status = 'published' AND (
+	p.title LIKE ? ESCAPE '\\' OR
+	p.excerpt LIKE ? ESCAPE '\\' OR
+	p.content_html LIKE ? ESCAPE '\\' OR
+	c.name LIKE ? ESCAPE '\\' OR
+	EXISTS (
+		SELECT 1
+		FROM post_tags pt
+		JOIN tags t ON t.id = pt.tag_id
+		WHERE pt.post_id = p.id AND t.name LIKE ? ESCAPE '\\'
+	)
+)`, like, like, like, like, like)
 }
 
 func (s *PostStore) CountByCategory(ctx context.Context, slug string) (int, error) {
@@ -527,6 +555,74 @@ ORDER BY t.name`)
 	return tags, rows.Err()
 }
 
+func (s *PostStore) SearchCategories(ctx context.Context, query string, limit int) ([]models.Category, error) {
+	query = normalizeSearchQuery(query)
+	if query == "" {
+		return nil, nil
+	}
+	if limit <= 0 {
+		limit = 6
+	}
+	like := likePattern(query)
+	rows, err := s.db.QueryContext(ctx, `
+SELECT c.id, c.slug, c.name, c.description, COUNT(p.id) AS post_count
+FROM categories c
+LEFT JOIN posts p ON p.category_id = c.id AND p.status = 'published'
+WHERE c.name LIKE ? ESCAPE '\\' OR c.slug LIKE ? ESCAPE '\\' OR c.description LIKE ? ESCAPE '\\'
+GROUP BY c.id, c.slug, c.name, c.description
+HAVING post_count > 0
+ORDER BY post_count DESC, c.name
+LIMIT ?`, like, like, like, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []models.Category
+	for rows.Next() {
+		var category models.Category
+		if err := rows.Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.PostCount); err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	return categories, rows.Err()
+}
+
+func (s *PostStore) SearchTags(ctx context.Context, query string, limit int) ([]models.Tag, error) {
+	query = normalizeSearchQuery(query)
+	if query == "" {
+		return nil, nil
+	}
+	if limit <= 0 {
+		limit = 8
+	}
+	like := likePattern(query)
+	rows, err := s.db.QueryContext(ctx, `
+SELECT t.id, t.slug, t.name, COUNT(pt.post_id) AS post_count
+FROM tags t
+JOIN post_tags pt ON pt.tag_id = t.id
+JOIN posts p ON p.id = pt.post_id AND p.status = 'published'
+WHERE t.name LIKE ? ESCAPE '\\' OR t.slug LIKE ? ESCAPE '\\'
+GROUP BY t.id, t.slug, t.name
+ORDER BY post_count DESC, t.name
+LIMIT ?`, like, like, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tags []models.Tag
+	for rows.Next() {
+		var tag models.Tag
+		if err := rows.Scan(&tag.ID, &tag.Slug, &tag.Name, &tag.PostCount); err != nil {
+			return nil, err
+		}
+		tags = append(tags, tag)
+	}
+	return tags, rows.Err()
+}
+
 func (s *PostStore) SearchIndex(ctx context.Context) (models.SearchIndex, error) {
 	posts, err := s.ListPublished(ctx, 200)
 	if err != nil {
@@ -544,8 +640,10 @@ func (s *PostStore) SearchIndex(ctx context.Context) (models.SearchIndex, error)
 	index := models.SearchIndex{
 		GeneratedAt: time.Now(),
 		Posts:       make([]models.SearchPostItem, 0, len(posts)),
+		Pages:       []models.SearchPostItem{},
 		Categories:  make([]models.SearchTaxonomyItem, 0, len(categories)),
 		Tags:        make([]models.SearchTaxonomyItem, 0, len(tags)),
+		Comments:    []models.SearchCommentItem{},
 	}
 	for _, post := range posts {
 		tagNames := make([]string, 0, len(post.Tags))
@@ -988,6 +1086,7 @@ func normalizePostInput(input PostInput) PostInput {
 var nonSlug = regexp.MustCompile(`[^a-z0-9]+`)
 var htmlTag = regexp.MustCompile(`<[^>]+>`)
 var whitespace = regexp.MustCompile(`\s+`)
+var searchSpace = strings.NewReplacer("\u00a0", " ", "\u3000", " ")
 
 func slugify(value string) string {
 	value = strings.ToLower(strings.TrimSpace(value))
@@ -998,6 +1097,7 @@ func slugify(value string) string {
 func searchText(value string) string {
 	value = htmlTag.ReplaceAllString(value, " ")
 	value = stdhtml.UnescapeString(value)
+	value = searchSpace.Replace(value)
 	value = whitespace.ReplaceAllString(value, " ")
 	value = strings.TrimSpace(value)
 	if len([]rune(value)) <= 600 {
@@ -1005,4 +1105,18 @@ func searchText(value string) string {
 	}
 	runes := []rune(value)
 	return string(runes[:600])
+}
+
+func normalizeSearchQuery(value string) string {
+	value = stdhtml.UnescapeString(value)
+	value = searchSpace.Replace(value)
+	value = whitespace.ReplaceAllString(value, " ")
+	return strings.TrimSpace(value)
+}
+
+func likePattern(value string) string {
+	value = strings.ReplaceAll(value, `\`, `\\`)
+	value = strings.ReplaceAll(value, `%`, `\%`)
+	value = strings.ReplaceAll(value, `_`, `\_`)
+	return "%" + value + "%"
 }

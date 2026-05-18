@@ -36,41 +36,43 @@ type Controller struct {
 }
 
 type PageData struct {
-	Site           config.Site
-	Title          string
-	Description    string
-	CanonicalURL   string
-	MetaImage      string
-	MetaType       string
-	SectionTitle   string
-	Query          string
-	Posts          []models.Post
-	Post           models.Post
-	PreviousPost   models.Post
-	NextPost       models.Post
-	ArchiveGroups  []models.ArchiveGroup
-	LinkCategories []models.FriendLinkCategory
-	FeaturedImages []string
-	Comments       []models.Comment
-	CommentOK      bool
-	CommentErr     string
-	Category       models.Category
-	Tag            models.Tag
-	RecentPosts    []models.Post
-	Categories     []models.Category
-	Tags           []models.Tag
-	PostTotal      int
-	CommentTotal   int
-	Page           models.PageInfo
-	Notice         string
-	Now            time.Time
-	AdminLoggedIn  bool
-	ShowAdminNav   bool
-	ErrorCode      string
-	ErrorHeading   string
-	ErrorMessage   string
-	ErrorAction    string
-	ErrorActionURL string
+	Site             config.Site
+	Title            string
+	Description      string
+	CanonicalURL     string
+	MetaImage        string
+	MetaType         string
+	SectionTitle     string
+	Query            string
+	Posts            []models.Post
+	Post             models.Post
+	PreviousPost     models.Post
+	NextPost         models.Post
+	ArchiveGroups    []models.ArchiveGroup
+	LinkCategories   []models.FriendLinkCategory
+	FeaturedImages   []string
+	Comments         []models.Comment
+	CommentOK        bool
+	CommentErr       string
+	Category         models.Category
+	Tag              models.Tag
+	SearchCategories []models.Category
+	SearchTags       []models.Tag
+	RecentPosts      []models.Post
+	Categories       []models.Category
+	Tags             []models.Tag
+	PostTotal        int
+	CommentTotal     int
+	Page             models.PageInfo
+	Notice           string
+	Now              time.Time
+	AdminLoggedIn    bool
+	ShowAdminNav     bool
+	ErrorCode        string
+	ErrorHeading     string
+	ErrorMessage     string
+	ErrorAction      string
+	ErrorActionURL   string
 }
 
 func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, renderer *view.Renderer) *Controller {
@@ -96,6 +98,9 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/api/posts", c.APIPosts)
 	server.BindHandler("GET:/api/posts/{slug}", c.APIPost)
 	server.BindHandler("GET:/api/search-index", c.APISearchIndex)
+	server.BindHandler("GET:/api/cache_search/json", c.APISearchIndex)
+	server.BindHandler("GET:/cache_search/json", c.APISearchIndex)
+	server.BindHandler("GET:/wp-json/sakura/v1/cache_search/json", c.APISearchIndex)
 	server.BindHandler("GET:/api/random-cover", c.APIRandomCover)
 	server.BindHandler("GET:/api/random-feature", c.APIRandomFeature)
 	server.BindHandler("POST:/api/posts/{id}/like", c.LikePost)
@@ -396,28 +401,47 @@ func (c *Controller) Sitemap(r *ghttp.Request) {
 }
 
 func (c *Controller) Search(r *ghttp.Request) {
-	q := r.GetQuery("q").String()
+	q := strings.TrimSpace(r.GetQuery("q").String())
 	page := currentPage(r)
 	pageSize := 10
-	posts, err := c.posts.SearchPaged(r.Context(), q, page, pageSize)
-	if err != nil {
-		c.error(r, err)
-		return
-	}
-	total, err := c.posts.CountSearch(r.Context(), q)
-	if err != nil {
-		c.error(r, err)
-		return
+	var posts []models.Post
+	var searchCategories []models.Category
+	var searchTags []models.Tag
+	total := 0
+	if q != "" {
+		var err error
+		posts, err = c.posts.SearchPaged(r.Context(), q, page, pageSize)
+		if err != nil {
+			c.error(r, err)
+			return
+		}
+		total, err = c.posts.CountSearch(r.Context(), q)
+		if err != nil {
+			c.error(r, err)
+			return
+		}
+		searchCategories, err = c.posts.SearchCategories(r.Context(), q, 6)
+		if err != nil {
+			c.error(r, err)
+			return
+		}
+		searchTags, err = c.posts.SearchTags(r.Context(), q, 8)
+		if err != nil {
+			c.error(r, err)
+			return
+		}
 	}
 	c.render(r, "search.tmpl", PageData{
-		Site:         c.cfg.GetSite(),
-		Title:        "Search - " + c.cfg.GetSite().Name,
-		Description:  c.cfg.GetSite().Description,
-		SectionTitle: "Search",
-		Query:        q,
-		Posts:        posts,
-		Page:         store.PageInfo(page, pageSize, total, "/search", q),
-		Now:          time.Now(),
+		Site:             c.cfg.GetSite(),
+		Title:            "Search - " + c.cfg.GetSite().Name,
+		Description:      "Search posts, categories, and tags from " + c.cfg.GetSite().Name + ".",
+		SectionTitle:     "Search",
+		Query:            q,
+		Posts:            posts,
+		SearchCategories: searchCategories,
+		SearchTags:       searchTags,
+		Page:             store.PageInfo(page, pageSize, total, "/search", q),
+		Now:              time.Now(),
 	})
 }
 

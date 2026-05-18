@@ -1,12 +1,67 @@
 {{template "head" .}}
 {{template "site_header" .}}
-<div id="primary" class="content-area with-sidebar">
+<div id="primary" class="content-area with-sidebar sakurairo-search-layout">
 	<main id="main" class="site-main" role="main">
-		<h1 class="main-title" style="font-family:'Ubuntu',sans-serif"><i class="fa fa-search" aria-hidden="true"></i> {{.SectionTitle}} {{.Query}}</h1>
-		{{range .Posts}}{{template "post_card" .}}{{else}}
-		<article class="post post-list"><div class="post-entry"><h1 class="entry-title">No results</h1><p>Try another keyword.</p></div></article>
+		<section class="koimoe-search-hero" aria-labelledby="search-title">
+			<p class="home-kicker"><i class="iconfont icon-search"></i> Search KoiMoe</p>
+			<h1 id="search-title">Find a tiny fragment.</h1>
+			<form class="koimoe-search-form" method="get" action="/search" role="search">
+				<input type="search" name="q" value="{{.Query}}" placeholder="Post title, tag, category, or a remembered word..." autocomplete="off" autofocus>
+				<button type="submit"><i class="iconfont icon-search"></i><span>Search</span></button>
+			</form>
+			{{if .Query}}
+			<p class="koimoe-search-note">{{.Page.Total}} diary fragments matched "{{.Query}}". Categories and tags are gathered below when they bloom too.</p>
+			{{else}}
+			<p class="koimoe-search-note">Search posts, categories, and tags from this little diary room.</p>
+			{{end}}
+		</section>
+
+		{{if .Query}}
+			{{if or .SearchCategories .SearchTags}}
+			<section class="koimoe-search-taxonomy" aria-label="Matched categories and tags">
+				{{range .SearchCategories}}
+				<a href="/category/{{.Slug}}">
+					<span><i class="fa fa-folder-o" aria-hidden="true"></i> Category</span>
+					<strong>{{.Name}}</strong>
+					<small>{{.PostCount}} posts</small>
+				</a>
+				{{end}}
+				{{range .SearchTags}}
+				<a href="/tag/{{.Slug}}">
+					<span><i class="iconfont icon-tags"></i> Tag</span>
+					<strong>{{.Name}}</strong>
+					<small>{{.PostCount}} posts</small>
+				</a>
+				{{end}}
+			</section>
+			{{end}}
+
+			<h1 class="main-title sakurairo-main-title"><i class="fa fa-search" aria-hidden="true"></i> Search Results</h1>
+			{{range .Posts}}{{template "post_card" .}}{{else}}
+			<article class="post post-list koimoe-empty-search">
+				<div class="post-entry">
+					<h1 class="entry-title">Nothing has bloomed here yet.</h1>
+					<p>Try a softer keyword, a category name, or a tag you remember.</p>
+				</div>
+			</article>
+			{{end}}
+			{{template "pagination" .}}
+		{{else}}
+			<section class="koimoe-search-suggestions" aria-label="Search starting points">
+				<div>
+					<h2><i class="fa fa-folder-o" aria-hidden="true"></i> Categories</h2>
+					<div class="tag-cloud">
+						{{range .Categories}}<a href="/category/{{.Slug}}">{{.Name}}<span>{{.PostCount}}</span></a>{{else}}<span>No categories yet.</span>{{end}}
+					</div>
+				</div>
+				<div>
+					<h2><i class="iconfont icon-tags"></i> Tags</h2>
+					<div class="tag-cloud">
+						{{range .Tags}}<a href="/tag/{{.Slug}}">{{.Name}}<span>{{.PostCount}}</span></a>{{else}}<span>No tags yet.</span>{{end}}
+					</div>
+				</div>
+			</section>
 		{{end}}
-		{{template "pagination" .}}
 	</main>
 	{{template "sidebar" .}}
 </div>

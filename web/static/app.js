@@ -8,6 +8,7 @@
 	var liveSearchResults = search && search.querySelector("[data-live-search-results]");
 	var searchIndexPromise;
 	var searchIndex;
+	var searchCacheKey = "koimoe-search-index-v2";
 	var userEntry = document.querySelector(".user-entry");
 	var userToggle = userEntry && userEntry.querySelector(".js-toggle-user-menu");
 
@@ -67,6 +68,16 @@
 			return;
 		}
 		liveSearch.hidden = false;
+		try {
+			var cached = window.sessionStorage && window.sessionStorage.getItem(searchCacheKey);
+			if (cached) {
+				searchIndex = JSON.parse(cached);
+				renderLiveSearch(searchInput ? searchInput.value : "");
+				return;
+			}
+		} catch (error) {
+			// Search still works without session storage.
+		}
 		liveSearchStatus.textContent = "Loading KoiMoe search index...";
 		searchIndexPromise = fetch("/api/search-index", {
 			headers: { Accept: "application/json" }
@@ -79,6 +90,13 @@
 			})
 			.then(function (payload) {
 				searchIndex = payload || {};
+				try {
+					if (window.sessionStorage) {
+						window.sessionStorage.setItem(searchCacheKey, JSON.stringify(searchIndex));
+					}
+				} catch (error) {
+					// Keep the in-memory index even when cache storage is unavailable.
+				}
 				renderLiveSearch(searchInput ? searchInput.value : "");
 			})
 			.catch(function () {
@@ -97,6 +115,36 @@
 			.replace(/>/g, "&gt;")
 			.replace(/"/g, "&quot;")
 			.replace(/'/g, "&#39;");
+	}
+
+	function truncateText(value, maxLength) {
+		var text = String(value || "").replace(/\s+/g, " ").trim();
+		if (text.length <= maxLength) {
+			return text;
+		}
+		return text.slice(0, maxLength - 1).trim() + "...";
+	}
+
+	function excerptAround(value, query) {
+		var text = String(value || "").replace(/\s+/g, " ").trim();
+		var index = normalizeSearchText(text).indexOf(query);
+		if (index < 0 || text.length <= 150) {
+			return truncateText(text, 150);
+		}
+		var start = Math.max(0, index - 52);
+		var end = Math.min(text.length, index + query.length + 90);
+		return (start > 0 ? "... " : "") + text.slice(start, end).trim() + (end < text.length ? " ..." : "");
+	}
+
+	function highlightText(value, query) {
+		var text = String(value || "");
+		var index = normalizeSearchText(text).indexOf(query);
+		if (index < 0 || !query) {
+			return escapeHTML(text);
+		}
+		return escapeHTML(text.slice(0, index)) +
+			'<mark class="search-keyword">' + escapeHTML(text.slice(index, index + query.length)) + "</mark>" +
+			escapeHTML(text.slice(index + query.length));
 	}
 
 	function includesQuery(parts, query) {
@@ -133,19 +181,25 @@
 				], normalized);
 			})
 			.slice(0, 8);
+		var pages = (searchIndex.pages || [])
+			.filter(function (page) {
+				return includesQuery([page.title, page.excerpt, page.content], normalized);
+			})
+			.slice(0, 4);
 		var categories = filterTaxonomy(searchIndex.categories, normalized).slice(0, 4);
 		var tags = filterTaxonomy(searchIndex.tags, normalized).slice(0, 6);
 
-		if (!posts.length && !categories.length && !tags.length) {
+		if (!posts.length && !pages.length && !categories.length && !tags.length) {
 			liveSearchStatus.textContent = "No matching fragments yet. Press Enter for full search.";
 			return;
 		}
 
 		liveSearchStatus.textContent = "";
 		liveSearchResults.innerHTML = [
-			renderSearchGroup("Posts", posts, renderPostResult),
-			renderSearchGroup("Categories", categories, renderTaxonomyResult),
-			renderSearchGroup("Tags", tags, renderTaxonomyResult)
+			renderSearchGroup("Posts", posts, renderPostResultItem, normalized),
+			renderSearchGroup("Pages", pages, renderPostResultItem, normalized),
+			renderSearchGroup("Categories", categories, renderTaxonomyResultItem, normalized),
+			renderSearchGroup("Tags", tags, renderTaxonomyResultItem, normalized)
 		].join("");
 	}
 
@@ -155,13 +209,15 @@
 		});
 	}
 
-	function renderSearchGroup(title, items, renderer) {
+	function renderSearchGroup(title, items, renderer, query) {
 		if (!items.length) {
 			return "";
 		}
 		return '<section class="koimoe-live-search__group">' +
 			'<h2 class="koimoe-live-search__title">' + escapeHTML(title) + "</h2>" +
-			'<div class="koimoe-live-search__list">' + items.map(renderer).join("") + "</div>" +
+			'<div class="koimoe-live-search__list">' + items.map(function (item) {
+				return renderer(item, query);
+			}).join("") + "</div>" +
 			"</section>";
 	}
 
@@ -182,6 +238,28 @@
 		var count = typeof item.post_count === "number" ? item.post_count + " posts" : "Archive";
 		return '<a class="koimoe-live-search__item" href="' + escapeHTML(item.url || "#") + '">' +
 			'<span class="koimoe-live-search__item-title">' + escapeHTML(item.name || "Archive") + "</span>" +
+			'<span class="koimoe-live-search__meta">' + escapeHTML(count) + "</span>" +
+			"</a>";
+	}
+
+	function renderPostResultItem(post, query) {
+		var meta = [
+			post.category || "Diary",
+			typeof post.views === "number" ? post.views + " views" : "",
+			typeof post.comment_count === "number" ? post.comment_count + " comments" : ""
+		].filter(Boolean).join(" · ");
+		var excerpt = post.excerpt || excerptAround(post.content || "", query);
+		return '<a class="koimoe-live-search__item" href="' + escapeHTML(post.url || "#") + '">' +
+			'<span class="koimoe-live-search__item-title">' + highlightText(post.title || "Untitled", query) + "</span>" +
+			'<span class="koimoe-live-search__meta">' + escapeHTML(meta) + "</span>" +
+			'<span class="koimoe-live-search__excerpt">' + highlightText(excerpt, query) + "</span>" +
+			"</a>";
+	}
+
+	function renderTaxonomyResultItem(item, query) {
+		var count = typeof item.post_count === "number" ? item.post_count + " posts" : "Archive";
+		return '<a class="koimoe-live-search__item" href="' + escapeHTML(item.url || "#") + '">' +
+			'<span class="koimoe-live-search__item-title">' + highlightText(item.name || "Archive", query) + "</span>" +
 			'<span class="koimoe-live-search__meta">' + escapeHTML(count) + "</span>" +
 			"</a>";
 	}

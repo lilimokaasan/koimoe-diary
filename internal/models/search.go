@@ -5,8 +5,10 @@ import "time"
 type SearchIndex struct {
 	GeneratedAt time.Time            `json:"generated_at"`
 	Posts       []SearchPostItem     `json:"posts"`
+	Pages       []SearchPostItem     `json:"pages"`
 	Categories  []SearchTaxonomyItem `json:"categories"`
 	Tags        []SearchTaxonomyItem `json:"tags"`
+	Comments    []SearchCommentItem  `json:"comments"`
 }
 
 type SearchPostItem struct {
@@ -27,4 +29,11 @@ type SearchTaxonomyItem struct {
 	Name      string `json:"name"`
 	URL       string `json:"url"`
 	PostCount int    `json:"post_count"`
+}
+
+type SearchCommentItem struct {
+	Title   string `json:"title"`
+	URL     string `json:"url"`
+	Content string `json:"content"`
+	Private bool   `json:"private"`
 }
