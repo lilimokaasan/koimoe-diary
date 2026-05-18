@@ -70,8 +70,8 @@ body {
 	text-decoration: none;
 }
 
-.site-content:has(.content-area.with-sidebar) {
-	max-width: 1360px;
+.site-content:has(.single-post-layout) {
+	max-width: 1280px;
 }
 
 .home-intro {
@@ -242,9 +242,9 @@ body {
 }
 
 .single-post-layout.content-area.with-sidebar {
-	gap: 34px;
-	grid-template-columns: minmax(0, 1fr) 320px;
-	max-width: 1360px;
+	gap: 30px;
+	grid-template-columns: minmax(0, 1fr) 300px;
+	max-width: 1240px;
 }
 
 .single-post-layout .site-main {
@@ -258,7 +258,7 @@ body {
 	border: 1px solid rgba(255, 255, 255, 0.84);
 	border-radius: 8px;
 	box-shadow: 0 18px 48px rgba(117, 79, 99, 0.12);
-	overflow: hidden;
+	overflow: visible;
 }
 
 .single-cover {
@@ -277,8 +277,8 @@ body {
 
 .sakurairo-single .entry-header {
 	margin: 0 auto;
-	max-width: 920px;
-	padding: 38px 46px 18px;
+	max-width: 840px;
+	padding: 38px 42px 18px;
 	text-align: center;
 }
 
@@ -328,8 +328,8 @@ body {
 .sakurairo-single .entry-content {
 	color: #58515a;
 	margin: 0 auto;
-	max-width: 920px;
-	padding: 18px 46px 12px;
+	max-width: 840px;
+	padding: 18px 42px 12px;
 }
 
 .sakurairo-single .entry-content a {
@@ -368,8 +368,8 @@ body {
 	display: grid;
 	gap: 14px;
 	margin: 0 auto;
-	max-width: 920px;
-	padding: 20px 46px 38px;
+	max-width: 840px;
+	padding: 20px 42px 46px;
 }
 
 .post-lincenses {
@@ -391,6 +391,8 @@ body {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 10px;
+	line-height: 1.5;
+	padding-bottom: 2px;
 }
 
 .single-taxonomy .post-tags {
