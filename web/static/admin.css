@@ -8,12 +8,41 @@
 }
 
 body.admin-page {
-	background: #fff1f7;
+	background:
+		linear-gradient(115deg, rgba(255, 251, 253, 0.92), rgba(255, 241, 247, 0.84) 46%, rgba(255, 255, 255, 0.78)),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 239, 247, 0.78)),
+		url("/static/curated-sakura-images/originals/sakura-street-soft.jpg") center / cover fixed no-repeat;
 	color: var(--ink);
 	font-family: "Merriweather Sans", "Noto Serif SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	letter-spacing: 0;
 	margin: 0;
 	min-height: 100vh;
+	position: relative;
+}
+
+body.admin-page::before {
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.34), transparent 32%, rgba(251, 152, 192, 0.08) 68%, rgba(255, 255, 255, 0.28)),
+		repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px 28px),
+		radial-gradient(rgba(255, 255, 255, 0.56) 1px, transparent 1.5px);
+	background-size: auto, auto, 22px 22px;
+	content: "";
+	inset: 0;
+	opacity: 0.58;
+	pointer-events: none;
+	position: fixed;
+	z-index: 0;
+}
+
+body.admin-page::after {
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.52), transparent 210px),
+		linear-gradient(90deg, rgba(255, 241, 247, 0.52), transparent 36%, rgba(255, 255, 255, 0.36));
+	content: "";
+	inset: 0;
+	pointer-events: none;
+	position: fixed;
+	z-index: 0;
 }
 
 .auth-bg {
@@ -46,15 +75,21 @@ body.admin-page {
 	justify-content: center;
 	min-height: 100vh;
 	padding: 28px;
+	position: relative;
+	z-index: 1;
 }
 
 .admin-panel {
-	background: rgba(255, 247, 251, 0.58);
-	border: 1px solid rgba(255, 255, 255, 0.68);
+	backdrop-filter: blur(18px) saturate(1.12);
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(255, 246, 251, 0.64)),
+		rgba(255, 247, 251, 0.62);
+	border: 1px solid rgba(255, 255, 255, 0.76);
 	border-radius: 8px;
-	box-shadow: 0 24px 70px rgba(72, 39, 60, 0.2);
+	box-shadow: 0 26px 80px rgba(92, 58, 78, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.72);
 	box-sizing: border-box;
 	padding: 24px;
+	position: relative;
 }
 
 .auth-panel {
@@ -106,11 +141,12 @@ body.admin-page {
 
 .admin-topbar {
 	align-items: stretch;
-	backdrop-filter: blur(16px);
+	backdrop-filter: blur(22px) saturate(1.12);
 	background:
-		linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 247, 251, 0.88)),
-		rgba(255, 255, 255, 0.86);
-	border-right: 1px solid var(--line);
+		linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 247, 251, 0.72)),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(251, 152, 192, 0.08)),
+		rgba(255, 255, 255, 0.72);
+	border-right: 1px solid rgba(255, 255, 255, 0.74);
 	bottom: 0;
 	box-sizing: border-box;
 	display: flex;
@@ -125,11 +161,21 @@ body.admin-page {
 	z-index: 20;
 }
 
+.admin-topbar::after {
+	background: linear-gradient(180deg, rgba(251, 152, 192, 0.12), transparent 38%, rgba(255, 255, 255, 0.36));
+	content: "";
+	inset: 0;
+	pointer-events: none;
+	position: absolute;
+}
+
 .brand {
 	align-items: center;
 	color: var(--ink) !important;
 	display: block;
 	padding: 2px 8px 0;
+	position: relative;
+	z-index: 1;
 }
 
 .brand img {
@@ -148,6 +194,7 @@ body.admin-page {
 	justify-content: flex-start;
 	min-width: 0;
 	position: relative;
+	z-index: 1;
 }
 
 .admin-topbar nav > a:not(.button) {
@@ -216,15 +263,18 @@ body.admin-page {
 .admin-hero {
 	align-items: center;
 	background:
-		linear-gradient(90deg, rgba(255, 247, 250, 0.94), rgba(255, 247, 250, 0.62)),
-		url("/static/theme/content-image/d-3.jpg") center / cover no-repeat;
-	border-bottom: 1px solid var(--line);
+		linear-gradient(90deg, rgba(255, 255, 255, 0.84), rgba(255, 247, 251, 0.62) 54%, rgba(255, 255, 255, 0.5)),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(251, 152, 192, 0.08)),
+		url("/static/curated-sakura-images/originals/fuji-pagoda-sakura-02.jpg") center / cover no-repeat;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.66);
 	box-sizing: border-box;
 	display: flex;
 	justify-content: space-between;
 	min-height: 174px;
 	margin-left: 244px;
 	padding: 34px 36px;
+	position: relative;
+	z-index: 1;
 }
 
 .admin-hero.compact {
@@ -262,6 +312,8 @@ body.admin-page {
 	margin: 0 0 0 244px;
 	max-width: none;
 	padding: 28px 20px 44px;
+	position: relative;
+	z-index: 1;
 }
 
 .taxonomy-shell {
