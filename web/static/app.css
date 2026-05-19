@@ -2242,8 +2242,28 @@ body.search-open {
 
 @media (max-width: 860px) {
 	.post-list .post-entry {
-		min-height: 82px;
-		padding-left: 72px;
+		align-items: start;
+		display: grid;
+		gap: 6px 14px;
+		grid-template-columns: 64px minmax(0, 1fr);
+		min-height: 0;
+		padding: 18px;
+	}
+
+	.post-list .feature {
+		grid-column: 1;
+		grid-row: 1 / span 3;
+		height: 64px;
+		left: auto;
+		margin: 0;
+		position: static;
+		top: auto;
+		width: 64px;
+	}
+
+	.post-list .feature img {
+		height: 64px;
+		width: 64px;
 	}
 
 	.post-list h1.entry-title,
@@ -2255,6 +2275,51 @@ body.search-open {
 	}
 
 	.post-list h1.entry-title {
+		display: block;
+		font-size: 17px;
+		grid-column: 2;
+		line-height: 1.45;
 		max-width: 100%;
+		overflow: visible;
+		text-overflow: clip;
+		white-space: normal;
+		width: 100%;
+	}
+
+	.post-list .p-time {
+		align-items: center;
+		display: inline-flex;
+		font-size: 12px;
+		grid-column: 2;
+		line-height: 1.4;
+		position: static;
+		right: auto;
+		top: auto;
+	}
+
+	.post-list .post-taxonomy {
+		grid-column: 2;
+		gap: 6px 10px;
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	.post-list p {
+		grid-column: 2;
+		height: auto;
+		line-height: 1.8;
+		margin-top: 8px;
+		max-width: 100%;
+		min-height: 0;
+		overflow: visible;
+	}
+
+	.post-list .entry-footer {
+		display: none;
+	}
+
+	.post-list hr {
+		margin-top: 26px;
+		width: 30%;
 	}
 }
