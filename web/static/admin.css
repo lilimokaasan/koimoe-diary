@@ -409,6 +409,11 @@ button.primary,
 	width: 100%;
 }
 
+.taxonomy-cover-preview {
+	margin: 0 0 16px;
+	max-width: 360px;
+}
+
 .form-note {
 	color: var(--muted);
 	font-size: 13px;

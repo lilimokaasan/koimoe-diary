@@ -2,7 +2,26 @@
 {{template "site_header" .}}
 <div id="primary" class="content-area with-sidebar">
 	<main id="main" class="site-main" role="main">
+		{{if .Category.ID}}
+		<section class="taxonomy-hero {{if .Category.CoverImage}}has-cover{{end}}">
+			{{if .Category.CoverImage}}<img src="{{.Category.CoverImage}}" alt="{{.Category.Name}}">{{end}}
+			<div>
+				<p class="home-kicker"><i class="fa fa-folder-o" aria-hidden="true"></i> Category</p>
+				<h1>{{.Category.Name}}</h1>
+				{{if .Category.Description}}<p>{{.Category.Description}}</p>{{else}}<p>Softly gathered diary fragments from this shelf.</p>{{end}}
+			</div>
+		</section>
+		{{else if .Tag.ID}}
+		<section class="taxonomy-hero">
+			<div>
+				<p class="home-kicker"><i class="iconfont icon-tags"></i> Tag</p>
+				<h1>{{.Tag.Name}}</h1>
+				<p>Small signals gathered from the diary.</p>
+			</div>
+		</section>
+		{{else}}
 		<h1 class="main-title" style="font-family:'Ubuntu',sans-serif"><i class="fa fa-archive" aria-hidden="true"></i> {{.SectionTitle}}</h1>
+		{{end}}
 		{{range .Posts}}{{template "post_card" .}}{{else}}
 		<article class="post post-list"><div class="post-entry"><h1 class="entry-title">No posts found</h1><p>There is no published content here yet.</p></div></article>
 		{{end}}

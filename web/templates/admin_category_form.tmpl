@@ -41,9 +41,14 @@
 			<label>Name<input type="text" name="name" value="{{.Category.Name}}" required></label>
 			<label>Slug<input type="text" name="slug" value="{{.Category.Slug}}" placeholder="auto-generated from name"></label>
 			<label>Description<textarea name="description" rows="5">{{.Category.Description}}</textarea></label>
+			<label>Cover Image<input type="text" name="cover_image" value="{{.Category.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+			{{if .Category.CoverImage}}
+			<div class="cover-box taxonomy-cover-preview">
+				<img src="{{.Category.CoverImage}}" alt="{{.Category.Name}}">
+			</div>
+			{{end}}
 			<p class="form-note">Deleting a category only removes the shelf. Posts inside it stay safe and become uncategorized.</p>
 		</form>
 	</main>
 </body>
 </html>
-

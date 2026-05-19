@@ -35,6 +35,7 @@ type CategoryInput struct {
 	Slug        string
 	Name        string
 	Description string
+	CoverImage  string
 }
 
 type TagInput struct {
@@ -114,6 +115,9 @@ CREATE TABLE IF NOT EXISTS comments (
 		return err
 	}
 	if err := s.ensurePostColumns(); err != nil {
+		return err
+	}
+	if err := s.ensureCategoryColumns(); err != nil {
 		return err
 	}
 	return s.ensureCommentColumns()
@@ -508,10 +512,10 @@ func (s *PostStore) AdjacentPublished(ctx context.Context, post models.Post) (mo
 func (s *PostStore) CategoryBySlug(ctx context.Context, slug string) (models.Category, error) {
 	var category models.Category
 	err := s.db.QueryRowContext(ctx, `
-SELECT id, slug, name, description
+SELECT id, slug, name, description, cover_image
 FROM categories
 WHERE slug = ?
-LIMIT 1`, slug).Scan(&category.ID, &category.Slug, &category.Name, &category.Description)
+LIMIT 1`, slug).Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.CoverImage)
 	return category, err
 }
 
@@ -575,10 +579,10 @@ ORDER BY t.name`)
 
 func (s *PostStore) ListCategoriesAdmin(ctx context.Context) ([]models.Category, error) {
 	rows, err := s.db.QueryContext(ctx, `
-SELECT c.id, c.slug, c.name, c.description, COUNT(p.id) AS post_count
+SELECT c.id, c.slug, c.name, c.description, c.cover_image, COUNT(p.id) AS post_count
 FROM categories c
 LEFT JOIN posts p ON p.category_id = c.id
-GROUP BY c.id, c.slug, c.name, c.description
+GROUP BY c.id, c.slug, c.name, c.description, c.cover_image
 ORDER BY c.name`)
 	if err != nil {
 		return nil, err
@@ -588,7 +592,7 @@ ORDER BY c.name`)
 	var categories []models.Category
 	for rows.Next() {
 		var category models.Category
-		if err := rows.Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.PostCount); err != nil {
+		if err := rows.Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.CoverImage, &category.PostCount); err != nil {
 			return nil, err
 		}
 		categories = append(categories, category)
@@ -622,12 +626,12 @@ ORDER BY t.name`)
 func (s *PostStore) CategoryByID(ctx context.Context, id int64) (models.Category, error) {
 	var category models.Category
 	err := s.db.QueryRowContext(ctx, `
-SELECT c.id, c.slug, c.name, c.description, COUNT(p.id) AS post_count
+SELECT c.id, c.slug, c.name, c.description, c.cover_image, COUNT(p.id) AS post_count
 FROM categories c
 LEFT JOIN posts p ON p.category_id = c.id
 WHERE c.id = ?
-GROUP BY c.id, c.slug, c.name, c.description
-LIMIT 1`, id).Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.PostCount)
+GROUP BY c.id, c.slug, c.name, c.description, c.cover_image
+LIMIT 1`, id).Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.CoverImage, &category.PostCount)
 	return category, err
 }
 
@@ -647,8 +651,8 @@ func (s *PostStore) SaveCategory(ctx context.Context, input CategoryInput) (int6
 	input = normalizeCategoryInput(input)
 	if input.ID == 0 {
 		result, err := s.db.ExecContext(ctx, `
-INSERT INTO categories (slug, name, description)
-VALUES (?, ?, ?)`, input.Slug, input.Name, input.Description)
+INSERT INTO categories (slug, name, description, cover_image)
+VALUES (?, ?, ?, ?)`, input.Slug, input.Name, input.Description, input.CoverImage)
 		if err != nil {
 			return 0, err
 		}
@@ -656,8 +660,8 @@ VALUES (?, ?, ?)`, input.Slug, input.Name, input.Description)
 	}
 	_, err := s.db.ExecContext(ctx, `
 UPDATE categories
-SET slug = ?, name = ?, description = ?
-WHERE id = ?`, input.Slug, input.Name, input.Description, input.ID)
+SET slug = ?, name = ?, description = ?, cover_image = ?
+WHERE id = ?`, input.Slug, input.Name, input.Description, input.CoverImage, input.ID)
 	return input.ID, err
 }
 
@@ -1120,6 +1124,10 @@ func (s *PostStore) ensurePostColumns() error {
 	return s.ensureColumn("posts", "likes", `ALTER TABLE posts ADD COLUMN likes BIGINT NOT NULL DEFAULT 0 AFTER views`)
 }
 
+func (s *PostStore) ensureCategoryColumns() error {
+	return s.ensureColumn("categories", "cover_image", `ALTER TABLE categories ADD COLUMN cover_image VARCHAR(500) NOT NULL DEFAULT '' AFTER description`)
+}
+
 func (s *PostStore) ensureCommentColumns() error {
 	return s.ensureColumn("comments", "is_private", `ALTER TABLE comments ADD COLUMN is_private BOOLEAN NOT NULL DEFAULT FALSE AFTER status`)
 }
@@ -1260,6 +1268,7 @@ func normalizeCategoryInput(input CategoryInput) CategoryInput {
 	input.Name = strings.TrimSpace(input.Name)
 	input.Slug = strings.TrimSpace(input.Slug)
 	input.Description = strings.TrimSpace(input.Description)
+	input.CoverImage = strings.TrimSpace(input.CoverImage)
 	if input.Slug == "" {
 		input.Slug = slugify(input.Name)
 	} else {

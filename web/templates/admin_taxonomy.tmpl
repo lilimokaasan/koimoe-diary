@@ -35,13 +35,14 @@
 				<a class="button primary" href="/admin/categories/new">New Category</a>
 			</div>
 			<table class="admin-table">
-				<thead><tr><th>Name</th><th>Slug</th><th>Posts</th><th>Description</th><th></th></tr></thead>
+				<thead><tr><th>Name</th><th>Slug</th><th>Posts</th><th>Cover</th><th>Description</th><th></th></tr></thead>
 				<tbody>
 					{{range .Categories}}
 					<tr>
 						<td><a href="/admin/categories/{{.ID}}/edit">{{.Name}}</a></td>
 						<td><span>{{.Slug}}</span></td>
 						<td>{{.PostCount}}</td>
+						<td>{{if .CoverImage}}<span>set</span>{{else}}<span>none</span>{{end}}</td>
 						<td>{{.Description}}</td>
 						<td class="table-actions">
 							<a href="/category/{{.Slug}}" target="_blank" rel="noopener noreferrer">View</a>
@@ -49,7 +50,7 @@
 						</td>
 					</tr>
 					{{else}}
-					<tr><td colspan="5">No categories yet.</td></tr>
+					<tr><td colspan="6">No categories yet.</td></tr>
 					{{end}}
 				</tbody>
 			</table>
@@ -81,4 +82,3 @@
 	</main>
 </body>
 </html>
-

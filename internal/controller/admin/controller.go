@@ -553,6 +553,7 @@ func (c *Controller) SaveCategory(r *ghttp.Request) {
 		Name:        r.GetForm("name").String(),
 		Slug:        r.GetForm("slug").String(),
 		Description: r.GetForm("description").String(),
+		CoverImage:  r.GetForm("cover_image").String(),
 	}
 	if strings.TrimSpace(input.Name) == "" {
 		c.render(r, "admin_category_form.tmpl", PageData{
@@ -880,6 +881,7 @@ func categoryFromInput(input store.CategoryInput) models.Category {
 		Slug:        strings.TrimSpace(input.Slug),
 		Name:        strings.TrimSpace(input.Name),
 		Description: strings.TrimSpace(input.Description),
+		CoverImage:  strings.TrimSpace(input.CoverImage),
 	}
 }
 

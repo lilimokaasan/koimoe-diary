@@ -44,6 +44,7 @@ type Category struct {
 	Slug        string
 	Name        string
 	Description string
+	CoverImage  string
 	PostCount   int
 }
 
