@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css?v=20260519-stable-link-cursor">
-	<link rel="stylesheet" href="/static/app.css?v=20260519-header-actions">
+	<link rel="stylesheet" href="/static/app.css?v=20260519-private-comments">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -178,7 +178,7 @@
 	}
 </script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260519-header-actions"></script>
+<script src="/static/app.js?v=20260519-private-comments"></script>
 </body>
 </html>
 {{end}}
@@ -266,8 +266,13 @@
 				<div class="comment-meta">
 					<strong>{{.Author}}</strong>
 					<span>{{since .CreatedAt}}</span>
+					{{if .IsPrivate}}<span class="comment-private-badge"><i class="fa fa-lock" aria-hidden="true"></i> Private</span>{{end}}
 				</div>
+				{{if .IsPrivate}}
+				<p class="comment-private-text"><i class="fa fa-heart-o" aria-hidden="true"></i> This whisper is tucked away for the site owner.</p>
+				{{else}}
 				<p>{{.Content}}</p>
+				{{end}}
 			</div>
 		</article>
 		{{else}}
@@ -286,7 +291,10 @@
 			<span class="input-label">Leave a comment</span>
 		</div>
 		<div class="comment-form-footer">
-			<span class="comment-tip">Click me OωO</span>
+			<label class="comment-private-option">
+				<input type="checkbox" name="is_private" value="1">
+				<span><i class="fa fa-lock" aria-hidden="true"></i> Private whisper</span>
+			</label>
 			<button type="submit">BiuBiuBiu~</button>
 		</div>
 	</form>

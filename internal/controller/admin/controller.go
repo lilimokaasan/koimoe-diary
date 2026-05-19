@@ -61,6 +61,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/admin/logout", c.Logout)
 	server.BindHandler("GET:/admin/comments", c.Comments)
 	server.BindHandler("POST:/admin/comments/{id}/status", c.UpdateCommentStatus)
+	server.BindHandler("POST:/admin/comments/{id}/private", c.UpdateCommentPrivacy)
 	server.BindHandler("POST:/admin/comments/{id}/delete", c.DeleteComment)
 	server.BindHandler("GET:/admin/settings", c.Settings)
 	server.BindHandler("POST:/admin/settings", c.SaveSettings)
@@ -211,6 +212,19 @@ func (c *Controller) UpdateCommentStatus(r *ghttp.Request) {
 	id := r.GetRouter("id").Int64()
 	status := r.GetForm("status").String()
 	if err := c.posts.UpdateCommentStatus(r.Context(), id, status); err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/comments?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) UpdateCommentPrivacy(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	isPrivate := r.GetForm("is_private").Bool()
+	if err := c.posts.UpdateCommentPrivacy(r.Context(), id, isPrivate); err != nil {
 		c.error(r, err)
 		return
 	}

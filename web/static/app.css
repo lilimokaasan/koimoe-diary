@@ -1567,8 +1567,25 @@ body.search-open {
 	font-size: 13px;
 }
 
+.comment-private-badge {
+	align-items: center;
+	background: rgba(251, 152, 192, 0.12);
+	border: 1px solid rgba(251, 152, 192, 0.24);
+	border-radius: 999px;
+	color: var(--sakura-rose) !important;
+	display: inline-flex;
+	gap: 5px;
+	padding: 3px 8px;
+}
+
 .comment-main p {
 	margin: 0;
+}
+
+.comment-private-text {
+	color: #9c8f98;
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 14px;
 }
 
 .comment-form {
@@ -1655,6 +1672,29 @@ body.search-open {
 .comment-tip {
 	color: var(--sakura-muted);
 	font-size: 13px;
+}
+
+.comment-private-option {
+	align-items: center;
+	color: var(--sakura-muted);
+	cursor: pointer;
+	display: inline-flex;
+	font-size: 13px;
+	gap: 8px;
+	margin: 0;
+}
+
+.comment-private-option input {
+	accent-color: var(--sakura-pink);
+	height: auto;
+	margin: 0;
+	width: auto;
+}
+
+.comment-private-option span {
+	align-items: center;
+	display: inline-flex;
+	gap: 6px;
 }
 
 .comment-form button {

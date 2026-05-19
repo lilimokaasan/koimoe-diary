@@ -372,6 +372,11 @@ button.primary,
 	color: #71717a;
 }
 
+.status.private {
+	background: rgba(251, 152, 192, 0.14);
+	color: var(--sakura-deep);
+}
+
 .editor-grid {
 	display: grid;
 	gap: 22px;

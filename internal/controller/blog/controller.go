@@ -193,11 +193,12 @@ func (c *Controller) CreateComment(r *ghttp.Request) {
 	}
 
 	comment := models.Comment{
-		PostID:  post.ID,
-		Author:  strings.TrimSpace(r.GetForm("author").String()),
-		Email:   strings.TrimSpace(r.GetForm("email").String()),
-		Website: strings.TrimSpace(r.GetForm("website").String()),
-		Content: strings.TrimSpace(r.GetForm("content").String()),
+		PostID:    post.ID,
+		Author:    strings.TrimSpace(r.GetForm("author").String()),
+		Email:     strings.TrimSpace(r.GetForm("email").String()),
+		Website:   strings.TrimSpace(r.GetForm("website").String()),
+		Content:   strings.TrimSpace(r.GetForm("content").String()),
+		IsPrivate: r.GetForm("is_private").Bool(),
 	}
 	if errText := validateComment(comment); errText != "" {
 		comments, listErr := c.posts.ListComments(r.Context(), post.ID)

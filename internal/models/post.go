@@ -35,6 +35,7 @@ type Comment struct {
 	Website   string
 	Content   string
 	Status    string
+	IsPrivate bool
 	CreatedAt time.Time
 }
 

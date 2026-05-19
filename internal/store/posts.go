@@ -91,6 +91,7 @@ CREATE TABLE IF NOT EXISTS comments (
 	website VARCHAR(255) NOT NULL DEFAULT '',
 	content TEXT NOT NULL,
 	status VARCHAR(20) NOT NULL DEFAULT 'approved',
+	is_private BOOLEAN NOT NULL DEFAULT FALSE,
 	ip VARCHAR(64) NOT NULL DEFAULT '',
 	user_agent VARCHAR(255) NOT NULL DEFAULT '',
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -98,7 +99,10 @@ CREATE TABLE IF NOT EXISTS comments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci`); err != nil {
 		return err
 	}
-	return s.ensurePostColumns()
+	if err := s.ensurePostColumns(); err != nil {
+		return err
+	}
+	return s.ensureCommentColumns()
 }
 
 func (s *PostStore) SeedDemo() error {
@@ -711,7 +715,7 @@ func (s *PostStore) IncrementLikes(ctx context.Context, id int64) (int64, error)
 
 func (s *PostStore) ListComments(ctx context.Context, postID int64) ([]models.Comment, error) {
 	rows, err := s.db.QueryContext(ctx, `
-SELECT id, post_id, author, email, website, content, status, created_at
+SELECT id, post_id, author, email, website, content, status, is_private, created_at
 FROM comments
 WHERE post_id = ? AND status = 'approved'
 ORDER BY created_at ASC`, postID)
@@ -725,7 +729,7 @@ ORDER BY created_at ASC`, postID)
 		var comment models.Comment
 		if err := rows.Scan(
 			&comment.ID, &comment.PostID, &comment.Author, &comment.Email,
-			&comment.Website, &comment.Content, &comment.Status, &comment.CreatedAt,
+			&comment.Website, &comment.Content, &comment.Status, &comment.IsPrivate, &comment.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -736,7 +740,7 @@ ORDER BY created_at ASC`, postID)
 
 func (s *PostStore) ListAllComments(ctx context.Context, limit int) ([]models.Comment, error) {
 	rows, err := s.db.QueryContext(ctx, `
-SELECT cm.id, cm.post_id, p.title, p.slug, cm.author, cm.email, cm.website, cm.content, cm.status, cm.created_at
+SELECT cm.id, cm.post_id, p.title, p.slug, cm.author, cm.email, cm.website, cm.content, cm.status, cm.is_private, cm.created_at
 FROM comments cm
 JOIN posts p ON p.id = cm.post_id
 ORDER BY cm.created_at DESC
@@ -752,7 +756,7 @@ LIMIT ?`, limit)
 		if err := rows.Scan(
 			&comment.ID, &comment.PostID, &comment.PostTitle, &comment.PostSlug,
 			&comment.Author, &comment.Email, &comment.Website, &comment.Content,
-			&comment.Status, &comment.CreatedAt,
+			&comment.Status, &comment.IsPrivate, &comment.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -763,9 +767,9 @@ LIMIT ?`, limit)
 
 func (s *PostStore) CreateComment(ctx context.Context, comment models.Comment, ip string, userAgent string) error {
 	_, err := s.db.ExecContext(ctx, `
-INSERT INTO comments (post_id, author, email, website, content, status, ip, user_agent)
-VALUES (?, ?, ?, ?, ?, 'approved', ?, ?)`,
-		comment.PostID, comment.Author, comment.Email, comment.Website, comment.Content, ip, userAgent,
+INSERT INTO comments (post_id, author, email, website, content, status, is_private, ip, user_agent)
+VALUES (?, ?, ?, ?, ?, 'approved', ?, ?, ?)`,
+		comment.PostID, comment.Author, comment.Email, comment.Website, comment.Content, comment.IsPrivate, ip, userAgent,
 	)
 	return err
 }
@@ -775,6 +779,11 @@ func (s *PostStore) UpdateCommentStatus(ctx context.Context, id int64, status st
 		status = "hidden"
 	}
 	_, err := s.db.ExecContext(ctx, `UPDATE comments SET status = ? WHERE id = ?`, status, id)
+	return err
+}
+
+func (s *PostStore) UpdateCommentPrivacy(ctx context.Context, id int64, isPrivate bool) error {
+	_, err := s.db.ExecContext(ctx, `UPDATE comments SET is_private = ? WHERE id = ?`, isPrivate, id)
 	return err
 }
 
@@ -949,6 +958,10 @@ func (s *PostStore) ensurePostColumns() error {
 		return err
 	}
 	return s.ensureColumn("posts", "likes", `ALTER TABLE posts ADD COLUMN likes BIGINT NOT NULL DEFAULT 0 AFTER views`)
+}
+
+func (s *PostStore) ensureCommentColumns() error {
+	return s.ensureColumn("comments", "is_private", `ALTER TABLE comments ADD COLUMN is_private BOOLEAN NOT NULL DEFAULT FALSE AFTER status`)
 }
 
 func (s *PostStore) ensureColumn(table string, column string, alter string) error {

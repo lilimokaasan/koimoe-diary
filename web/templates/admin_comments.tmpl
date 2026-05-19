@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-private-comments">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -40,6 +40,7 @@
 							<span>{{.Email}}</span>
 							<span>{{since .CreatedAt}}</span>
 							<span class="status {{.Status}}">{{.Status}}</span>
+							{{if .IsPrivate}}<span class="status private">private</span>{{end}}
 						</div>
 						<p>{{.Content}}</p>
 						<a href="/post/{{.PostSlug}}" target="_blank">{{.PostTitle}}</a>
@@ -54,6 +55,17 @@
 						<form method="post" action="/admin/comments/{{.ID}}/status">
 							<input type="hidden" name="status" value="approved">
 							<button type="submit">Approve</button>
+						</form>
+						{{end}}
+						{{if .IsPrivate}}
+						<form method="post" action="/admin/comments/{{.ID}}/private">
+							<input type="hidden" name="is_private" value="0">
+							<button type="submit">Make Public</button>
+						</form>
+						{{else}}
+						<form method="post" action="/admin/comments/{{.ID}}/private">
+							<input type="hidden" name="is_private" value="1">
+							<button type="submit">Make Private</button>
 						</form>
 						{{end}}
 						<form method="post" action="/admin/comments/{{.ID}}/delete">
