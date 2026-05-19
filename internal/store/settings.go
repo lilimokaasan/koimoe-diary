@@ -55,6 +55,12 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 	if values["site_avatar"] != "" {
 		site.Avatar = values["site_avatar"]
 	}
+	if values["footer_text"] != "" {
+		site.FooterText = values["footer_text"]
+	}
+	if values["footer_credit"] != "" {
+		site.FooterCredit = values["footer_credit"]
+	}
 	if values["navigation"] != "" {
 		var navigation []config.NavItem
 		if err := json.Unmarshal([]byte(values["navigation"]), &navigation); err == nil && len(navigation) > 0 {
@@ -77,6 +83,8 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"theme_color":      site.ThemeColor,
 		"hero_image":       site.HeroImage,
 		"site_avatar":      site.Avatar,
+		"footer_text":      site.FooterText,
+		"footer_credit":    site.FooterCredit,
 		"navigation":       string(navigation),
 	}
 	for key, value := range settings {
@@ -103,6 +111,8 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		"theme_color":      defaults.ThemeColor,
 		"hero_image":       defaults.HeroImage,
 		"site_avatar":      defaults.Avatar,
+		"footer_text":      defaults.FooterText,
+		"footer_credit":    defaults.FooterCredit,
 		"navigation":       string(navigation),
 	}
 	for key, value := range settings {

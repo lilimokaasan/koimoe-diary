@@ -138,10 +138,10 @@
 		<div class="site-info" theme-info="Sakurairo Go">
 			<div class="footertext">
 				<i class="iconfont icon-sakura rotating" style="color:{{.Site.ThemeColor}};display:inline-block;font-size:26px"></i>
-				<p style="color:#666">{{.Site.Description}}</p>
+				<p style="color:#666">{{.Site.FooterText}}</p>
 			</div>
 			<div class="footer-device">
-				<p style="font-family:'Ubuntu',sans-serif"><span style="color:#b9b9b9">A KoiMoe diary shaped with Sakurairo. &copy; {{year .Now}} {{.Site.Name}}</span></p>
+				<p style="font-family:'Ubuntu',sans-serif"><span style="color:#b9b9b9">{{.Site.FooterCredit}} &copy; {{year .Now}} {{.Site.Name}}</span></p>
 			</div>
 		</div>
 	</footer>

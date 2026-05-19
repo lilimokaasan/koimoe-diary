@@ -122,14 +122,16 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		return
 	}
 	site := config.Site{
-		Name:        strings.TrimSpace(r.GetForm("site_name").String()),
-		Description: strings.TrimSpace(r.GetForm("site_description").String()),
-		Author:      strings.TrimSpace(r.GetForm("site_author").String()),
-		Notice:      strings.TrimSpace(r.GetForm("site_notice").String()),
-		ThemeColor:  strings.TrimSpace(r.GetForm("theme_color").String()),
-		HeroImage:   strings.TrimSpace(r.GetForm("hero_image").String()),
-		Avatar:      strings.TrimSpace(r.GetForm("site_avatar").String()),
-		Navigation:  parseNavigation(r.GetForm("navigation").String()),
+		Name:         strings.TrimSpace(r.GetForm("site_name").String()),
+		Description:  strings.TrimSpace(r.GetForm("site_description").String()),
+		Author:       strings.TrimSpace(r.GetForm("site_author").String()),
+		Notice:       strings.TrimSpace(r.GetForm("site_notice").String()),
+		ThemeColor:   strings.TrimSpace(r.GetForm("theme_color").String()),
+		HeroImage:    strings.TrimSpace(r.GetForm("hero_image").String()),
+		Avatar:       strings.TrimSpace(r.GetForm("site_avatar").String()),
+		FooterText:   strings.TrimSpace(r.GetForm("footer_text").String()),
+		FooterCredit: strings.TrimSpace(r.GetForm("footer_credit").String()),
+		Navigation:   parseNavigation(r.GetForm("navigation").String()),
 	}
 	site = normalizeSiteSettings(site, c.cfg.GetSite())
 	if err := c.settings.SaveSite(r.Context(), site); err != nil {
@@ -933,6 +935,12 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	}
 	if site.Avatar == "" {
 		site.Avatar = fallback.Avatar
+	}
+	if site.FooterText == "" {
+		site.FooterText = fallback.FooterText
+	}
+	if site.FooterCredit == "" {
+		site.FooterCredit = fallback.FooterCredit
 	}
 	if len(site.Navigation) == 0 {
 		site.Navigation = fallback.Navigation

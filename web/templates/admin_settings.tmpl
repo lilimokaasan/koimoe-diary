@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-private-comments">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-footer-settings">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -43,6 +43,8 @@
 					<label>Description<textarea name="site_description" rows="3" required>{{.Settings.Description}}</textarea></label>
 					<label>Author<input type="text" name="site_author" value="{{.Settings.Author}}" required></label>
 					<label>Notice<textarea name="site_notice" rows="3">{{.Settings.Notice}}</textarea></label>
+					<label>Footer Text<textarea name="footer_text" rows="3">{{.Settings.FooterText}}</textarea></label>
+					<label>Footer Credit<input type="text" name="footer_credit" value="{{.Settings.FooterCredit}}" placeholder="A KoiMoe diary shaped with Sakurairo."></label>
 					<label>Navigation<textarea class="navigation-input" name="navigation" rows="7" placeholder="Home | /">{{.Navigation}}</textarea></label>
 				</section>
 				<section>
