@@ -547,6 +547,8 @@ textarea:disabled,
 }
 
 .post-list h1.entry-title {
+	line-height: 1.42;
+	margin-bottom: 8px;
 	max-width: calc(100% - 120px);
 	width: auto;
 }
@@ -577,7 +579,7 @@ textarea:disabled,
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px 12px;
-	margin: 8px 0 10px;
+	margin: 2px 0 12px;
 	font-size: 13px;
 	color: #888;
 }
@@ -2279,6 +2281,7 @@ body.search-open {
 		font-size: 17px;
 		grid-column: 2;
 		line-height: 1.45;
+		margin-bottom: 2px;
 		max-width: 100%;
 		overflow: visible;
 		text-overflow: clip;
@@ -2292,6 +2295,8 @@ body.search-open {
 		font-size: 12px;
 		grid-column: 2;
 		line-height: 1.4;
+		margin-bottom: 4px;
+		margin-top: 2px;
 		position: static;
 		right: auto;
 		top: auto;
