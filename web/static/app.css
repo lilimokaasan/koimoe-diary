@@ -481,6 +481,11 @@ textarea:disabled,
 	color: var(--sakura-rose);
 }
 
+.post-list .p-time {
+	right: 18px;
+	top: 22px;
+}
+
 .entry-content {
 	font-size: 17px;
 	line-height: 1.95;
