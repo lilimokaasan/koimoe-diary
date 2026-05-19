@@ -52,6 +52,10 @@
 		active.setAttribute("aria-current", "page");
 	}
 
+	moveTo(active || links[0]);
+	window.setTimeout(function () {
+		moveTo(active || links[0]);
+	}, 80);
 	window.requestAnimationFrame(function () {
 		moveTo(active || links[0]);
 	});
