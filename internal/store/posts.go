@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"math"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -27,6 +28,19 @@ type PostInput struct {
 	Status       string
 	CategoryName string
 	Tags         []string
+}
+
+type CategoryInput struct {
+	ID          int64
+	Slug        string
+	Name        string
+	Description string
+}
+
+type TagInput struct {
+	ID   int64
+	Slug string
+	Name string
 }
 
 func NewPostStore(db *sql.DB) *PostStore {
@@ -557,6 +571,152 @@ ORDER BY t.name`)
 		tags = append(tags, tag)
 	}
 	return tags, rows.Err()
+}
+
+func (s *PostStore) ListCategoriesAdmin(ctx context.Context) ([]models.Category, error) {
+	rows, err := s.db.QueryContext(ctx, `
+SELECT c.id, c.slug, c.name, c.description, COUNT(p.id) AS post_count
+FROM categories c
+LEFT JOIN posts p ON p.category_id = c.id
+GROUP BY c.id, c.slug, c.name, c.description
+ORDER BY c.name`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []models.Category
+	for rows.Next() {
+		var category models.Category
+		if err := rows.Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.PostCount); err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	return categories, rows.Err()
+}
+
+func (s *PostStore) ListTagsAdmin(ctx context.Context) ([]models.Tag, error) {
+	rows, err := s.db.QueryContext(ctx, `
+SELECT t.id, t.slug, t.name, COUNT(pt.post_id) AS post_count
+FROM tags t
+LEFT JOIN post_tags pt ON pt.tag_id = t.id
+GROUP BY t.id, t.slug, t.name
+ORDER BY t.name`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tags []models.Tag
+	for rows.Next() {
+		var tag models.Tag
+		if err := rows.Scan(&tag.ID, &tag.Slug, &tag.Name, &tag.PostCount); err != nil {
+			return nil, err
+		}
+		tags = append(tags, tag)
+	}
+	return tags, rows.Err()
+}
+
+func (s *PostStore) CategoryByID(ctx context.Context, id int64) (models.Category, error) {
+	var category models.Category
+	err := s.db.QueryRowContext(ctx, `
+SELECT c.id, c.slug, c.name, c.description, COUNT(p.id) AS post_count
+FROM categories c
+LEFT JOIN posts p ON p.category_id = c.id
+WHERE c.id = ?
+GROUP BY c.id, c.slug, c.name, c.description
+LIMIT 1`, id).Scan(&category.ID, &category.Slug, &category.Name, &category.Description, &category.PostCount)
+	return category, err
+}
+
+func (s *PostStore) TagByID(ctx context.Context, id int64) (models.Tag, error) {
+	var tag models.Tag
+	err := s.db.QueryRowContext(ctx, `
+SELECT t.id, t.slug, t.name, COUNT(pt.post_id) AS post_count
+FROM tags t
+LEFT JOIN post_tags pt ON pt.tag_id = t.id
+WHERE t.id = ?
+GROUP BY t.id, t.slug, t.name
+LIMIT 1`, id).Scan(&tag.ID, &tag.Slug, &tag.Name, &tag.PostCount)
+	return tag, err
+}
+
+func (s *PostStore) SaveCategory(ctx context.Context, input CategoryInput) (int64, error) {
+	input = normalizeCategoryInput(input)
+	if input.ID == 0 {
+		result, err := s.db.ExecContext(ctx, `
+INSERT INTO categories (slug, name, description)
+VALUES (?, ?, ?)`, input.Slug, input.Name, input.Description)
+		if err != nil {
+			return 0, err
+		}
+		return result.LastInsertId()
+	}
+	_, err := s.db.ExecContext(ctx, `
+UPDATE categories
+SET slug = ?, name = ?, description = ?
+WHERE id = ?`, input.Slug, input.Name, input.Description, input.ID)
+	return input.ID, err
+}
+
+func (s *PostStore) SaveTag(ctx context.Context, input TagInput) (int64, error) {
+	input = normalizeTagInput(input)
+	if input.ID == 0 {
+		result, err := s.db.ExecContext(ctx, `
+INSERT INTO tags (slug, name)
+VALUES (?, ?)`, input.Slug, input.Name)
+		if err != nil {
+			return 0, err
+		}
+		return result.LastInsertId()
+	}
+	_, err := s.db.ExecContext(ctx, `
+UPDATE tags
+SET slug = ?, name = ?
+WHERE id = ?`, input.Slug, input.Name, input.ID)
+	return input.ID, err
+}
+
+func (s *PostStore) DeleteCategory(ctx context.Context, id int64) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	if _, err = tx.ExecContext(ctx, `UPDATE posts SET category_id = NULL WHERE category_id = ?`, id); err != nil {
+		return err
+	}
+	if _, err = tx.ExecContext(ctx, `DELETE FROM categories WHERE id = ?`, id); err != nil {
+		return err
+	}
+	err = tx.Commit()
+	return err
+}
+
+func (s *PostStore) DeleteTag(ctx context.Context, id int64) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	if _, err = tx.ExecContext(ctx, `DELETE FROM post_tags WHERE tag_id = ?`, id); err != nil {
+		return err
+	}
+	if _, err = tx.ExecContext(ctx, `DELETE FROM tags WHERE id = ?`, id); err != nil {
+		return err
+	}
+	err = tx.Commit()
+	return err
 }
 
 func (s *PostStore) SearchCategories(ctx context.Context, query string, limit int) ([]models.Category, error) {
@@ -1092,6 +1252,43 @@ func normalizePostInput(input PostInput) PostInput {
 	input.CategoryName = strings.TrimSpace(input.CategoryName)
 	if input.CategoryName == "" {
 		input.CategoryName = "Blog"
+	}
+	return input
+}
+
+func normalizeCategoryInput(input CategoryInput) CategoryInput {
+	input.Name = strings.TrimSpace(input.Name)
+	input.Slug = strings.TrimSpace(input.Slug)
+	input.Description = strings.TrimSpace(input.Description)
+	if input.Slug == "" {
+		input.Slug = slugify(input.Name)
+	} else {
+		input.Slug = slugify(input.Slug)
+	}
+	if input.Slug == "" {
+		if input.ID > 0 {
+			input.Slug = "category-" + strconv.FormatInt(input.ID, 10)
+		} else {
+			input.Slug = "category-" + time.Now().Format("20060102150405")
+		}
+	}
+	return input
+}
+
+func normalizeTagInput(input TagInput) TagInput {
+	input.Name = strings.TrimSpace(input.Name)
+	input.Slug = strings.TrimSpace(input.Slug)
+	if input.Slug == "" {
+		input.Slug = slugify(input.Name)
+	} else {
+		input.Slug = slugify(input.Slug)
+	}
+	if input.Slug == "" {
+		if input.ID > 0 {
+			input.Slug = "tag-" + strconv.FormatInt(input.ID, 10)
+		} else {
+			input.Slug = "tag-" + time.Now().Format("20060102150405")
+		}
 	}
 	return input
 }

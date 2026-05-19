@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-taxonomy">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/admin/links">Links</a>
+			<a href="/admin/moments">Moments</a>
+			<a href="/admin/taxonomy">Taxonomy</a>
+			<a href="/admin/settings">Settings</a>
+			<a href="/" target="_blank">View Site</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero compact">
+		<div>
+			<p>{{if .IsNew}}New Tag{{else}}Tag Editor{{end}}</p>
+			<h1>{{if .IsNew}}Pin a small signal.{{else}}Shape this signal.{{end}}</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<form class="admin-panel editor-panel" method="post" action="{{if .IsNew}}/admin/tags{{else}}/admin/tags/{{.Tag.ID}}{{end}}">
+			<div class="panel-title">
+				<h1>{{if .IsNew}}New Tag{{else}}Edit Tag{{end}}</h1>
+				<div class="actions">
+					<a class="button" href="/admin/taxonomy">Cancel</a>
+					<button class="primary" type="submit">Save</button>
+				</div>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
+			<label>Name<input type="text" name="name" value="{{.Tag.Name}}" required></label>
+			<label>Slug<input type="text" name="slug" value="{{.Tag.Slug}}" placeholder="auto-generated from name"></label>
+			<p class="form-note">Deleting a tag removes its post connections, but the posts themselves stay untouched.</p>
+		</form>
+	</main>
+</body>
+</html>
+

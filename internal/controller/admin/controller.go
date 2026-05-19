@@ -45,10 +45,14 @@ type PageData struct {
 	FriendLink  models.FriendLink
 	Moments     []models.Moment
 	Moment      models.Moment
+	Categories  []models.Category
+	Category    models.Category
+	Tags        []models.Tag
+	Tag         models.Tag
 	Settings    config.Site
 	Navigation  string
 	ContentHTML string
-	Tags        string
+	PostTags    string
 	IsNew       bool
 	Now         time.Time
 }
@@ -80,6 +84,17 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/admin/moments/{id}/edit", c.EditMoment)
 	server.BindHandler("POST:/admin/moments/{id}", c.SaveMoment)
 	server.BindHandler("POST:/admin/moments/{id}/delete", c.DeleteMoment)
+	server.BindHandler("GET:/admin/taxonomy", c.Taxonomy)
+	server.BindHandler("GET:/admin/categories/new", c.NewCategory)
+	server.BindHandler("POST:/admin/categories", c.SaveCategory)
+	server.BindHandler("GET:/admin/categories/{id}/edit", c.EditCategory)
+	server.BindHandler("POST:/admin/categories/{id}", c.SaveCategory)
+	server.BindHandler("POST:/admin/categories/{id}/delete", c.DeleteCategory)
+	server.BindHandler("GET:/admin/tags/new", c.NewTag)
+	server.BindHandler("POST:/admin/tags", c.SaveTag)
+	server.BindHandler("GET:/admin/tags/{id}/edit", c.EditTag)
+	server.BindHandler("POST:/admin/tags/{id}", c.SaveTag)
+	server.BindHandler("POST:/admin/tags/{id}/delete", c.DeleteTag)
 	server.BindHandler("GET:/admin/posts/new", c.NewPost)
 	server.BindHandler("POST:/admin/posts", c.SavePost)
 	server.BindHandler("GET:/admin/posts/{id}/edit", c.EditPost)
@@ -469,6 +484,183 @@ func (c *Controller) DeleteMoment(r *ghttp.Request) {
 	r.Response.RedirectTo("/admin/moments?saved=1", http.StatusSeeOther)
 }
 
+func (c *Controller) Taxonomy(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	categories, err := c.posts.ListCategoriesAdmin(r.Context())
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	tags, err := c.posts.ListTagsAdmin(r.Context())
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_taxonomy.tmpl", PageData{
+		Site:       c.cfg.GetSite(),
+		Title:      "Taxonomy - " + c.cfg.GetSite().Name,
+		Message:    r.GetQuery("saved").String(),
+		Categories: categories,
+		Tags:       tags,
+		Now:        time.Now(),
+	})
+}
+
+func (c *Controller) NewCategory(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	c.render(r, "admin_category_form.tmpl", PageData{
+		Site:  c.cfg.GetSite(),
+		Title: "New Category - " + c.cfg.GetSite().Name,
+		IsNew: true,
+		Now:   time.Now(),
+	})
+}
+
+func (c *Controller) EditCategory(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	category, err := c.posts.CategoryByID(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.WriteStatus(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_category_form.tmpl", PageData{
+		Site:     c.cfg.GetSite(),
+		Title:    "Edit Category - " + c.cfg.GetSite().Name,
+		Message:  r.GetQuery("saved").String(),
+		Category: category,
+		Now:      time.Now(),
+	})
+}
+
+func (c *Controller) SaveCategory(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	input := store.CategoryInput{
+		ID:          id,
+		Name:        r.GetForm("name").String(),
+		Slug:        r.GetForm("slug").String(),
+		Description: r.GetForm("description").String(),
+	}
+	if strings.TrimSpace(input.Name) == "" {
+		c.render(r, "admin_category_form.tmpl", PageData{
+			Site:     c.cfg.GetSite(),
+			Title:    "Category Form - " + c.cfg.GetSite().Name,
+			Error:    "Name is required.",
+			Category: categoryFromInput(input),
+			IsNew:    id == 0,
+			Now:      time.Now(),
+		})
+		return
+	}
+	categoryID, err := c.posts.SaveCategory(r.Context(), input)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/categories/"+strconv.FormatInt(categoryID, 10)+"/edit?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) DeleteCategory(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	if err := c.posts.DeleteCategory(r.Context(), id); err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/taxonomy?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) NewTag(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	c.render(r, "admin_tag_form.tmpl", PageData{
+		Site:  c.cfg.GetSite(),
+		Title: "New Tag - " + c.cfg.GetSite().Name,
+		IsNew: true,
+		Now:   time.Now(),
+	})
+}
+
+func (c *Controller) EditTag(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	tag, err := c.posts.TagByID(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.WriteStatus(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_tag_form.tmpl", PageData{
+		Site:    c.cfg.GetSite(),
+		Title:   "Edit Tag - " + c.cfg.GetSite().Name,
+		Message: r.GetQuery("saved").String(),
+		Tag:     tag,
+		Now:     time.Now(),
+	})
+}
+
+func (c *Controller) SaveTag(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	input := store.TagInput{
+		ID:   id,
+		Name: r.GetForm("name").String(),
+		Slug: r.GetForm("slug").String(),
+	}
+	if strings.TrimSpace(input.Name) == "" {
+		c.render(r, "admin_tag_form.tmpl", PageData{
+			Site:  c.cfg.GetSite(),
+			Title: "Tag Form - " + c.cfg.GetSite().Name,
+			Error: "Name is required.",
+			Tag:   tagFromInput(input),
+			IsNew: id == 0,
+			Now:   time.Now(),
+		})
+		return
+	}
+	tagID, err := c.posts.SaveTag(r.Context(), input)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/tags/"+strconv.FormatInt(tagID, 10)+"/edit?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) DeleteTag(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	if err := c.posts.DeleteTag(r.Context(), id); err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/taxonomy?saved=1", http.StatusSeeOther)
+}
+
 func (c *Controller) NewPost(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
@@ -607,7 +799,7 @@ func (c *Controller) formData(post models.Post, title string, errText string) Pa
 		Message:     "",
 		Post:        post,
 		ContentHTML: string(post.ContentHTML),
-		Tags:        strings.Join(tags, ", "),
+		PostTags:    strings.Join(tags, ", "),
 		Now:         time.Now(),
 	}
 }
@@ -679,6 +871,23 @@ func momentFromInput(input store.MomentInput) models.Moment {
 		Content: strings.TrimSpace(input.Content),
 		Author:  strings.TrimSpace(input.Author),
 		Status:  status,
+	}
+}
+
+func categoryFromInput(input store.CategoryInput) models.Category {
+	return models.Category{
+		ID:          input.ID,
+		Slug:        strings.TrimSpace(input.Slug),
+		Name:        strings.TrimSpace(input.Name),
+		Description: strings.TrimSpace(input.Description),
+	}
+}
+
+func tagFromInput(input store.TagInput) models.Tag {
+	return models.Tag{
+		ID:   input.ID,
+		Slug: strings.TrimSpace(input.Slug),
+		Name: strings.TrimSpace(input.Name),
 	}
 }
 

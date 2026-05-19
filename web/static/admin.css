@@ -187,6 +187,11 @@ body.admin-page {
 	padding: 28px 20px 44px;
 }
 
+.taxonomy-shell {
+	display: grid;
+	gap: 22px;
+}
+
 .panel-title {
 	align-items: center;
 	display: flex;
