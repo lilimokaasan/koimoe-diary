@@ -515,6 +515,22 @@ button.primary,
 	padding: 16px;
 }
 
+.media-upload-panel {
+	align-items: end;
+	background: rgba(255, 255, 255, 0.58);
+	border: 1px solid rgba(231, 211, 222, 0.72);
+	border-radius: 8px;
+	display: grid;
+	gap: 14px;
+	grid-template-columns: minmax(0, 1fr) auto;
+	padding: 16px;
+}
+
+.media-count {
+	color: var(--muted);
+	font-size: 13px;
+}
+
 .curated-media-heading {
 	align-items: center;
 	display: flex;
@@ -583,10 +599,22 @@ button.primary,
 	overflow-wrap: anywhere;
 }
 
+.media-url-input {
+	font-family: "Source Code Pro", Consolas, monospace;
+	font-size: 11px;
+	margin-top: 8px;
+	padding: 9px 10px;
+}
+
 .curated-media-actions {
 	display: grid;
 	gap: 8px;
 	grid-template-columns: 1fr 1fr;
+}
+
+.curated-media-actions a.button {
+	min-height: 34px;
+	padding: 8px 10px;
 }
 
 .curated-media-actions button {
@@ -864,5 +892,14 @@ button.danger {
 	.table-actions {
 		align-items: flex-start;
 		display: grid;
+	}
+
+	.media-upload-panel {
+		display: block;
+	}
+
+	.media-upload-panel button {
+		margin-top: 12px;
+		width: 100%;
 	}
 }

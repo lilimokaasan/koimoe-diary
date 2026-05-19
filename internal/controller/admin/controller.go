@@ -11,7 +11,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -49,6 +51,7 @@ type PageData struct {
 	FriendLink    models.FriendLink
 	Moments       []models.Moment
 	Moment        models.Moment
+	MediaAssets   []MediaAsset
 	Categories    []models.Category
 	Category      models.Category
 	Tags          []models.Tag
@@ -69,6 +72,13 @@ type PageData struct {
 	ShowAdminNav  bool
 }
 
+type MediaAsset struct {
+	Name      string
+	URL       string
+	SizeLabel string
+	UpdatedAt time.Time
+}
+
 func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, moments *store.MomentStore, renderer *view.Renderer) *Controller {
 	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, moments: moments, renderer: renderer}
 }
@@ -84,6 +94,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/admin/comments/{id}/delete", c.DeleteComment)
 	server.BindHandler("GET:/admin/settings", c.Settings)
 	server.BindHandler("POST:/admin/settings", c.SaveSettings)
+	server.BindHandler("GET:/admin/media", c.Media)
+	server.BindHandler("POST:/admin/media", c.UploadMedia)
 	server.BindHandler("GET:/admin/links", c.Links)
 	server.BindHandler("GET:/admin/links/new", c.NewLink)
 	server.BindHandler("POST:/admin/links", c.SaveLink)
@@ -174,6 +186,53 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 	}
 	c.cfg.SetSite(site)
 	r.Response.RedirectTo("/admin/settings?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) Media(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	assets, err := c.listMediaAssets()
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_media.tmpl", PageData{
+		Site:        c.cfg.GetSite(),
+		Title:       "Media - " + c.cfg.GetSite().Name,
+		Message:     r.GetQuery("uploaded").String(),
+		Error:       r.GetQuery("error").String(),
+		MediaAssets: assets,
+		Now:         time.Now(),
+	})
+}
+
+func (c *Controller) UploadMedia(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	uploaded, uploadErr := c.saveImageUpload(r, "media_upload", "Media image")
+	if uploadErr != "" {
+		c.render(r, "admin_media.tmpl", PageData{
+			Site:        c.cfg.GetSite(),
+			Title:       "Media - " + c.cfg.GetSite().Name,
+			Error:       uploadErr,
+			MediaAssets: c.mustListMediaAssets(),
+			Now:         time.Now(),
+		})
+		return
+	}
+	if uploaded == "" {
+		c.render(r, "admin_media.tmpl", PageData{
+			Site:        c.cfg.GetSite(),
+			Title:       "Media - " + c.cfg.GetSite().Name,
+			Error:       "Choose an image to upload.",
+			MediaAssets: c.mustListMediaAssets(),
+			Now:         time.Now(),
+		})
+		return
+	}
+	r.Response.RedirectTo("/admin/media?uploaded=1", http.StatusSeeOther)
 }
 
 func (c *Controller) Login(r *ghttp.Request) {
@@ -932,6 +991,84 @@ func (c *Controller) saveImageUpload(r *ghttp.Request, field string, label strin
 		return "", "Could not save " + strings.ToLower(label) + "."
 	}
 	return "/static/uploads/" + month + "/" + filename, ""
+}
+
+func (c *Controller) mustListMediaAssets() []MediaAsset {
+	assets, err := c.listMediaAssets()
+	if err != nil {
+		log.Printf("list media assets: %v", err)
+		return nil
+	}
+	return assets
+}
+
+func (c *Controller) listMediaAssets() ([]MediaAsset, error) {
+	root := filepath.Join(c.cfg.StaticDir, "uploads")
+	if _, err := os.Stat(root); errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	var assets []MediaAsset
+	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if entry.IsDir() || !isImageFile(entry.Name()) {
+			return nil
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(c.cfg.StaticDir, path)
+		if err != nil {
+			return err
+		}
+		url := "/static/" + strings.ReplaceAll(filepath.ToSlash(rel), "//", "/")
+		assets = append(assets, MediaAsset{
+			Name:      entry.Name(),
+			URL:       url,
+			SizeLabel: humanFileSize(info.Size()),
+			UpdatedAt: info.ModTime(),
+		})
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	sort.SliceStable(assets, func(i, j int) bool {
+		return assets[i].UpdatedAt.After(assets[j].UpdatedAt)
+	})
+	if len(assets) > 120 {
+		assets = assets[:120]
+	}
+	return assets, nil
+}
+
+func humanFileSize(size int64) string {
+	if size < 1024 {
+		return strconv.FormatInt(size, 10) + " B"
+	}
+	units := []string{"KB", "MB", "GB"}
+	value := float64(size)
+	for _, unit := range units {
+		value = value / 1024
+		if value < 1024 {
+			return strconv.FormatFloat(value, 'f', 1, 64) + " " + unit
+		}
+	}
+	return strconv.FormatFloat(value, 'f', 1, 64) + " GB"
+}
+
+func isImageFile(name string) bool {
+	switch strings.ToLower(filepath.Ext(name)) {
+	case ".jpg", ".jpeg", ".png", ".gif", ".webp":
+		return true
+	default:
+		return false
+	}
 }
 
 func postFromInput(input store.PostInput) models.Post {
