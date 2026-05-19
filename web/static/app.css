@@ -127,6 +127,7 @@ textarea:disabled,
 		linear-gradient(90deg, rgba(255, 192, 211, 0.16), rgba(255, 255, 255, 0.04), rgba(254, 150, 0, 0.1));
 	content: "";
 	inset: 0;
+	opacity: var(--hero-overlay-opacity, 1);
 	pointer-events: none;
 	position: absolute;
 }

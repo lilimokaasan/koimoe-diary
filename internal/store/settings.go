@@ -52,6 +52,9 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 	if values["hero_image"] != "" {
 		site.HeroImage = values["hero_image"]
 	}
+	if values["hero_overlay_opacity"] != "" {
+		site.HeroOverlayOpacity = values["hero_overlay_opacity"]
+	}
 	if values["site_avatar"] != "" {
 		site.Avatar = values["site_avatar"]
 	}
@@ -76,16 +79,17 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		return err
 	}
 	settings := map[string]string{
-		"site_name":        site.Name,
-		"site_description": site.Description,
-		"site_author":      site.Author,
-		"site_notice":      site.Notice,
-		"theme_color":      site.ThemeColor,
-		"hero_image":       site.HeroImage,
-		"site_avatar":      site.Avatar,
-		"footer_text":      site.FooterText,
-		"footer_credit":    site.FooterCredit,
-		"navigation":       string(navigation),
+		"site_name":            site.Name,
+		"site_description":     site.Description,
+		"site_author":          site.Author,
+		"site_notice":          site.Notice,
+		"theme_color":          site.ThemeColor,
+		"hero_image":           site.HeroImage,
+		"hero_overlay_opacity": site.HeroOverlayOpacity,
+		"site_avatar":          site.Avatar,
+		"footer_text":          site.FooterText,
+		"footer_credit":        site.FooterCredit,
+		"navigation":           string(navigation),
 	}
 	for key, value := range settings {
 		if _, err := s.db.ExecContext(ctx, `
@@ -104,16 +108,17 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		return err
 	}
 	settings := map[string]string{
-		"site_name":        defaults.Name,
-		"site_description": defaults.Description,
-		"site_author":      defaults.Author,
-		"site_notice":      defaults.Notice,
-		"theme_color":      defaults.ThemeColor,
-		"hero_image":       defaults.HeroImage,
-		"site_avatar":      defaults.Avatar,
-		"footer_text":      defaults.FooterText,
-		"footer_credit":    defaults.FooterCredit,
-		"navigation":       string(navigation),
+		"site_name":            defaults.Name,
+		"site_description":     defaults.Description,
+		"site_author":          defaults.Author,
+		"site_notice":          defaults.Notice,
+		"theme_color":          defaults.ThemeColor,
+		"hero_image":           defaults.HeroImage,
+		"hero_overlay_opacity": defaults.HeroOverlayOpacity,
+		"site_avatar":          defaults.Avatar,
+		"footer_text":          defaults.FooterText,
+		"footer_credit":        defaults.FooterCredit,
+		"navigation":           string(navigation),
 	}
 	for key, value := range settings {
 		if _, err := s.db.Exec(`

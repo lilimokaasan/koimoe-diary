@@ -122,16 +122,17 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		return
 	}
 	site := config.Site{
-		Name:         strings.TrimSpace(r.GetForm("site_name").String()),
-		Description:  strings.TrimSpace(r.GetForm("site_description").String()),
-		Author:       strings.TrimSpace(r.GetForm("site_author").String()),
-		Notice:       strings.TrimSpace(r.GetForm("site_notice").String()),
-		ThemeColor:   strings.TrimSpace(r.GetForm("theme_color").String()),
-		HeroImage:    strings.TrimSpace(r.GetForm("hero_image").String()),
-		Avatar:       strings.TrimSpace(r.GetForm("site_avatar").String()),
-		FooterText:   strings.TrimSpace(r.GetForm("footer_text").String()),
-		FooterCredit: strings.TrimSpace(r.GetForm("footer_credit").String()),
-		Navigation:   parseNavigation(r.GetForm("navigation").String()),
+		Name:               strings.TrimSpace(r.GetForm("site_name").String()),
+		Description:        strings.TrimSpace(r.GetForm("site_description").String()),
+		Author:             strings.TrimSpace(r.GetForm("site_author").String()),
+		Notice:             strings.TrimSpace(r.GetForm("site_notice").String()),
+		ThemeColor:         strings.TrimSpace(r.GetForm("theme_color").String()),
+		HeroImage:          strings.TrimSpace(r.GetForm("hero_image").String()),
+		HeroOverlayOpacity: strings.TrimSpace(r.GetForm("hero_overlay_opacity").String()),
+		Avatar:             strings.TrimSpace(r.GetForm("site_avatar").String()),
+		FooterText:         strings.TrimSpace(r.GetForm("footer_text").String()),
+		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
+		Navigation:         parseNavigation(r.GetForm("navigation").String()),
 	}
 	site = normalizeSiteSettings(site, c.cfg.GetSite())
 	if err := c.settings.SaveSite(r.Context(), site); err != nil {
@@ -933,6 +934,7 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	if site.HeroImage == "" {
 		site.HeroImage = fallback.HeroImage
 	}
+	site.HeroOverlayOpacity = normalizeHeroOverlayOpacity(site.HeroOverlayOpacity, fallback.HeroOverlayOpacity)
 	if site.Avatar == "" {
 		site.Avatar = fallback.Avatar
 	}
@@ -946,6 +948,27 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 		site.Navigation = fallback.Navigation
 	}
 	return site
+}
+
+func normalizeHeroOverlayOpacity(value string, fallback string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		value = fallback
+	}
+	opacity, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		opacity, err = strconv.ParseFloat(fallback, 64)
+		if err != nil {
+			return "1"
+		}
+	}
+	if opacity < 0 {
+		opacity = 0
+	}
+	if opacity > 1 {
+		opacity = 1
+	}
+	return strconv.FormatFloat(opacity, 'f', -1, 64)
 }
 
 func parseNavigation(value string) []config.NavItem {
