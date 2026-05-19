@@ -300,6 +300,17 @@ textarea {
 	font-size: 13px;
 }
 
+.field-with-action {
+	display: grid;
+	gap: 8px;
+}
+
+.soft-tool {
+	justify-self: end;
+	min-height: 34px;
+	padding: 8px 12px;
+}
+
 .navigation-input {
 	font-family: "Source Code Pro", Consolas, monospace;
 	font-size: 13px;

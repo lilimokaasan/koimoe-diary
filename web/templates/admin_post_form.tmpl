@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-admin-nav">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-excerpt-helper">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -43,7 +43,12 @@
 				<section class="editor-main">
 					<label>Title<input type="text" name="title" value="{{.Post.Title}}" required></label>
 					<label>Slug<input type="text" name="slug" value="{{.Post.Slug}}" placeholder="auto-generated from title"></label>
-					<label>Excerpt<textarea name="excerpt" rows="3">{{.Post.Excerpt}}</textarea></label>
+					<label>Excerpt
+						<span class="field-with-action">
+							<textarea name="excerpt" rows="3">{{.Post.Excerpt}}</textarea>
+							<button class="soft-tool" type="button" data-generate-excerpt>Use content</button>
+						</span>
+					</label>
 					<label>Content HTML<textarea class="content-input" name="content_html" rows="18" required>{{.ContentHTML}}</textarea></label>
 				</section>
 				<aside class="editor-side">
@@ -65,5 +70,23 @@
 			</div>
 		</form>
 	</main>
+	<script>
+		(function () {
+			var trigger = document.querySelector("[data-generate-excerpt]");
+			var excerpt = document.querySelector("textarea[name='excerpt']");
+			var content = document.querySelector("textarea[name='content_html']");
+			if (!trigger || !excerpt || !content) return;
+			trigger.addEventListener("click", function () {
+				var holder = document.createElement("div");
+				holder.innerHTML = content.value || "";
+				var text = (holder.textContent || holder.innerText || "")
+					.replace(/\s+/g, " ")
+					.trim();
+				if (text.length > 128) text = text.slice(0, 128).replace(/[，。！？、,.!?\s]+$/, "") + "...";
+				excerpt.value = text;
+				excerpt.focus();
+			});
+		})();
+	</script>
 </body>
 </html>
