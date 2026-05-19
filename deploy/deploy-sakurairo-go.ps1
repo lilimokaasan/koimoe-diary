@@ -120,7 +120,8 @@ else
 fi
 cd '$ServerCheckout'
 go test ./...
-go build -o /tmp/sakurairo-built ./cmd/server
+build_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+go build -ldflags "-X sakurairo-go/internal/buildinfo.Version=$head -X sakurairo-go/internal/buildinfo.Commit=$head -X sakurairo-go/internal/buildinfo.BuiltAt=$build_time" -o /tmp/sakurairo-built ./cmd/server
 cd '$AppDir'
 sudo cp sakurairo sakurairo.bak.$stamp
 sudo tar -czf web.bak.$stamp.tar.gz web

@@ -10,6 +10,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 
+	"sakurairo-go/internal/buildinfo"
 	"sakurairo-go/internal/config"
 	"sakurairo-go/internal/controller/admin"
 	"sakurairo-go/internal/controller/blog"
@@ -82,8 +83,9 @@ func New() (*App, error) {
 	server.AddStaticPath("/static", cfg.StaticDir)
 	server.BindHandler("GET:/api/health", func(r *ghttp.Request) {
 		r.Response.WriteJson(g.Map{
-			"ok":   true,
-			"name": cfg.GetSite().Name,
+			"ok":         true,
+			"name":       cfg.GetSite().Name,
+			"build_info": buildinfo.Snapshot(),
 		})
 	})
 

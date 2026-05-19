@@ -15,6 +15,7 @@ The script:
 - asks the server checkout to fetch and reset to `origin/master`;
 - acquires a remote `flock` lock at `/tmp/sakurairo-go-deploy.lock` before touching the server checkout or active app;
 - runs server-side `go test ./...` and `go build`;
+- stamps the built binary with the deployed commit and UTC build time for `/api/health`;
 - backs up `/opt/sakurairo-go/sakurairo` and `/opt/sakurairo-go/web`;
 - replaces the active binary and `web` directory;
 - restarts `sakurairo-go.service`;
