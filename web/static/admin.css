@@ -105,38 +105,45 @@ body.admin-page {
 }
 
 .admin-topbar {
-	align-items: center;
+	align-items: stretch;
 	backdrop-filter: blur(16px);
 	background:
-		linear-gradient(90deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 251, 0.9)),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 247, 251, 0.88)),
 		rgba(255, 255, 255, 0.86);
-	border-bottom: 1px solid var(--line);
+	border-right: 1px solid var(--line);
+	bottom: 0;
 	box-sizing: border-box;
 	display: flex;
-	justify-content: space-between;
+	flex-direction: column;
+	gap: 24px;
+	justify-content: flex-start;
 	left: 0;
-	padding: 12px 26px;
-	position: sticky;
-	right: 0;
+	padding: 26px 18px;
+	position: fixed;
 	top: 0;
+	width: 244px;
 	z-index: 20;
 }
 
 .brand {
 	color: var(--ink) !important;
+	display: block;
 	font-family: "Noto Serif SC", Georgia, serif;
 	font-size: 20px;
 	font-weight: 600;
 	letter-spacing: 0;
+	line-height: 1.25;
+	padding: 0 10px;
 	white-space: nowrap;
 }
 
 .admin-topbar nav {
-	align-items: center;
+	align-items: stretch;
 	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	justify-content: flex-end;
+	flex: 1;
+	flex-direction: column;
+	gap: 7px;
+	justify-content: flex-start;
 	min-width: 0;
 }
 
@@ -153,6 +160,7 @@ body.admin-page {
 	padding: 10px 12px;
 	transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease, transform 0.18s ease;
 	white-space: nowrap;
+	width: 100%;
 }
 
 .admin-topbar nav > a:not(.button):hover,
@@ -168,16 +176,18 @@ body.admin-page {
 	background: rgba(255, 255, 255, 0.72);
 	border-color: rgba(205, 181, 194, 0.58);
 	color: #6e6670;
+	margin-top: 10px;
 }
 
 .admin-topbar nav > .button,
 .admin-topbar nav button {
 	min-height: 42px;
 	padding: 11px 16px;
+	width: 100%;
 }
 
 .admin-topbar form {
-	margin: 0;
+	margin: auto 0 0;
 }
 
 .admin-hero {
@@ -190,7 +200,8 @@ body.admin-page {
 	display: flex;
 	justify-content: space-between;
 	min-height: 174px;
-	padding: 34px max(28px, calc((100vw - 1180px) / 2 + 28px));
+	margin-left: 244px;
+	padding: 34px 36px;
 }
 
 .admin-hero.compact {
@@ -225,8 +236,8 @@ body.admin-page {
 
 .admin-shell {
 	box-sizing: border-box;
-	margin: 0 auto;
-	max-width: 1180px;
+	margin: 0 0 0 244px;
+	max-width: none;
 	padding: 28px 20px 44px;
 }
 
@@ -764,12 +775,23 @@ button.danger {
 		display: block;
 	}
 
+	.admin-topbar {
+		border-bottom: 1px solid var(--line);
+		border-right: 0;
+		padding: 14px 18px;
+		position: sticky;
+		width: auto;
+	}
+
 	.admin-topbar nav,
 	.actions {
 		margin-top: 14px;
 	}
 
 	.admin-topbar nav {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
 		justify-content: flex-start;
 	}
 
@@ -779,10 +801,24 @@ button.danger {
 		font-size: 13px;
 		min-height: 36px;
 		padding: 9px 11px;
+		width: auto;
+	}
+
+	.admin-topbar nav > a[href="/"] {
+		margin-top: 0;
+	}
+
+	.admin-topbar form {
+		margin: 0;
 	}
 
 	.admin-hero {
+		margin-left: 0;
 		padding: 26px 20px;
+	}
+
+	.admin-shell {
+		margin-left: 0;
 	}
 
 	.admin-hero h1 {

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-editor-image-helper">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-admin-sidebar">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -89,7 +89,7 @@
 				var text = (holder.textContent || holder.innerText || "")
 					.replace(/\s+/g, " ")
 					.trim();
-				if (text.length > 128) text = text.slice(0, 128).replace(/[，。！？、,.!?\s]+$/, "") + "...";
+				if (text.length > 128) text = text.slice(0, 128).replace(/[锛屻€傦紒锛熴€?.!?\s]+$/, "") + "...";
 				excerpt.value = text;
 				excerpt.focus();
 			});
