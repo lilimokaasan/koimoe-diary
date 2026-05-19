@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-excerpt-helper">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-editor-image-helper">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -49,7 +49,12 @@
 							<button class="soft-tool" type="button" data-generate-excerpt>Use content</button>
 						</span>
 					</label>
-					<label>Content HTML<textarea class="content-input" name="content_html" rows="18" required>{{.ContentHTML}}</textarea></label>
+					<label>Content HTML
+						<span class="editor-tools">
+							<button class="soft-tool" type="button" data-insert-cover>Insert cover image</button>
+						</span>
+						<textarea class="content-input" name="content_html" rows="18" required>{{.ContentHTML}}</textarea>
+					</label>
 				</section>
 				<aside class="editor-side">
 					<label>Status
@@ -73,10 +78,12 @@
 	<script>
 		(function () {
 			var trigger = document.querySelector("[data-generate-excerpt]");
+			var imageTrigger = document.querySelector("[data-insert-cover]");
 			var excerpt = document.querySelector("textarea[name='excerpt']");
 			var content = document.querySelector("textarea[name='content_html']");
-			if (!trigger || !excerpt || !content) return;
-			trigger.addEventListener("click", function () {
+			var cover = document.querySelector("input[name='cover_image']");
+			if (!content) return;
+			if (trigger && excerpt) trigger.addEventListener("click", function () {
 				var holder = document.createElement("div");
 				holder.innerHTML = content.value || "";
 				var text = (holder.textContent || holder.innerText || "")
@@ -85,6 +92,24 @@
 				if (text.length > 128) text = text.slice(0, 128).replace(/[，。！？、,.!?\s]+$/, "") + "...";
 				excerpt.value = text;
 				excerpt.focus();
+			});
+			if (imageTrigger && cover) imageTrigger.addEventListener("click", function () {
+				var url = (cover.value || "").trim();
+				if (!url) {
+					cover.focus();
+					return;
+				}
+				var titleInput = document.querySelector("input[name='title']");
+				var alt = ((titleInput && titleInput.value) || "Post image").replace(/"/g, "&quot;");
+				var snippet = '<figure><img src="' + url + '" alt="' + alt + '"></figure>';
+				var start = typeof content.selectionStart === "number" ? content.selectionStart : content.value.length;
+				var end = typeof content.selectionEnd === "number" ? content.selectionEnd : start;
+				var before = content.value.slice(0, start).replace(/\s*$/, "");
+				var after = content.value.slice(end).replace(/^\s*/, "");
+				content.value = before + "\n\n" + snippet + "\n\n" + after;
+				var cursor = before.length + snippet.length + 4;
+				content.focus();
+				content.setSelectionRange(cursor, cursor);
 			});
 		})();
 	</script>

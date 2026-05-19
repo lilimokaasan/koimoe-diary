@@ -305,6 +305,12 @@ textarea {
 	gap: 8px;
 }
 
+.editor-tools {
+	display: flex;
+	justify-content: flex-end;
+	margin: 0 0 8px;
+}
+
 .soft-tool {
 	justify-self: end;
 	min-height: 34px;
