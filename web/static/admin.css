@@ -506,6 +506,70 @@ button.primary,
 	margin: -4px 0 0;
 }
 
+.editor-media-picker {
+	background: rgba(255, 255, 255, 0.46);
+	border: 1px solid rgba(251, 152, 192, 0.18);
+	border-radius: 8px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.66);
+	margin-top: 18px;
+	padding: 14px;
+}
+
+.editor-media-strip {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	max-height: 390px;
+	overflow: auto;
+	padding-right: 4px;
+}
+
+.editor-media-item {
+	background: rgba(255, 255, 255, 0.68);
+	border: 1px solid rgba(231, 211, 222, 0.72);
+	border-radius: 8px;
+	display: grid;
+	gap: 8px;
+	padding: 8px;
+}
+
+.editor-media-item img {
+	aspect-ratio: 16 / 10;
+	border-radius: 6px;
+	display: block;
+	object-fit: cover;
+	width: 100%;
+}
+
+.editor-media-item strong {
+	color: var(--ink);
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.editor-media-item span {
+	color: var(--muted);
+	display: block;
+	font-family: "Source Code Pro", Consolas, monospace;
+	font-size: 11px;
+	margin-top: 3px;
+}
+
+.editor-media-actions {
+	display: grid;
+	gap: 7px;
+	grid-template-columns: 1fr 1fr;
+}
+
+.editor-media-actions button {
+	min-height: 32px;
+	padding: 7px 8px;
+}
+
 .curated-media-panel {
 	background: rgba(255, 255, 255, 0.48);
 	border: 1px solid rgba(251, 152, 192, 0.2);

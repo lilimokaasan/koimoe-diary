@@ -762,8 +762,9 @@ func (c *Controller) NewPost(r *ghttp.Request) {
 		return
 	}
 	c.render(r, "admin_post_form.tmpl", PageData{
-		Site:  c.cfg.GetSite(),
-		Title: "New Post - " + c.cfg.GetSite().Name,
+		Site:        c.cfg.GetSite(),
+		Title:       "New Post - " + c.cfg.GetSite().Name,
+		MediaAssets: c.mustListMediaAssets(),
 		Post: models.Post{
 			Status:     "published",
 			CoverImage: "/static/theme/content-image/d-1.jpg",
@@ -921,6 +922,7 @@ func (c *Controller) formData(post models.Post, title string, errText string) Pa
 		Post:        post,
 		ContentHTML: string(post.ContentHTML),
 		PostTags:    strings.Join(tags, ", "),
+		MediaAssets: c.mustListMediaAssets(),
 		Now:         time.Now(),
 	}
 }
