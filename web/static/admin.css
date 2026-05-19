@@ -126,15 +126,17 @@ body.admin-page {
 }
 
 .brand {
+	align-items: center;
 	color: var(--ink) !important;
 	display: block;
-	font-family: "Noto Serif SC", Georgia, serif;
-	font-size: 20px;
-	font-weight: 600;
-	letter-spacing: 0;
-	line-height: 1.25;
-	padding: 0 10px;
-	white-space: nowrap;
+	padding: 2px 8px 0;
+}
+
+.brand img {
+	display: block;
+	height: auto;
+	max-width: 168px;
+	width: 100%;
 }
 
 .admin-topbar nav {
