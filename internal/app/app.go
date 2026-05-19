@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"net/http"
+	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -81,6 +83,7 @@ func New() (*App, error) {
 
 	server := g.Server()
 	server.SetAddr(cfg.Addr)
+	server.Use(requestLogger)
 	server.AddStaticPath("/static", cfg.StaticDir)
 	server.BindHandler("GET:/api/health", func(r *ghttp.Request) {
 		r.Response.WriteJson(g.Map{
@@ -106,4 +109,32 @@ func (a *App) Run() {
 
 	log.Printf("Sakurairo GoFrame listening on %s", a.cfg.Addr)
 	a.server.Run()
+}
+
+func requestLogger(r *ghttp.Request) {
+	if isQuietAssetPath(r.URL.Path) {
+		r.Middleware.Next()
+		return
+	}
+
+	started := time.Now()
+	r.Middleware.Next()
+
+	status := r.Response.Status
+	if status == 0 {
+		status = http.StatusOK
+	}
+	log.Printf(
+		"request method=%s path=%s status=%d duration=%s ip=%s ua=%q",
+		r.Method,
+		r.URL.RequestURI(),
+		status,
+		time.Since(started).Round(time.Millisecond),
+		r.GetClientIp(),
+		r.UserAgent(),
+	)
+}
+
+func isQuietAssetPath(path string) bool {
+	return strings.HasPrefix(path, "/static/") || path == "/favicon.ico" || path == "/favicon.png"
 }
