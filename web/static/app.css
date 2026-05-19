@@ -540,6 +540,10 @@ textarea:disabled,
 	overflow: hidden;
 }
 
+.post-list .feature .overlay {
+	display: none;
+}
+
 .post-list h1.entry-title,
 .post-list p,
 .post-list .entry-footer {
