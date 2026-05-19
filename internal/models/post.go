@@ -26,17 +26,18 @@ type Post struct {
 }
 
 type Comment struct {
-	ID        int64
-	PostID    int64
-	PostTitle string
-	PostSlug  string
-	Author    string
-	Email     string
-	Website   string
-	Content   string
-	Status    string
-	IsPrivate bool
-	CreatedAt time.Time
+	ID         int64
+	PostID     int64
+	PostTitle  string
+	PostSlug   string
+	Author     string
+	Email      string
+	Website    string
+	Content    string
+	Status     string
+	IsPrivate  bool
+	MailNotify bool
+	CreatedAt  time.Time
 }
 
 type Category struct {

@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-nav-motion">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-mail-system">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -37,7 +37,7 @@
 					<button class="primary" type="submit">Save</button>
 				</div>
 			</div>
-			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			{{if .Message}}<div class="admin-alert success">{{if eq .Message "1"}}Saved.{{else}}{{.Message}}{{end}}</div>{{end}}
 			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
 			<div class="settings-grid">
 				<section>
@@ -67,9 +67,19 @@
 						<strong>{{.Settings.Name}}</strong>
 						<span>{{.Settings.Description}}</span>
 					</div>
+					<div class="mail-status-panel">
+						<div>
+							<p>Mail System</p>
+							<strong>{{if .MailReady}}Enabled{{else}}Not configured{{end}}</strong>
+							<span>Host: {{if .Mail.Host}}{{.Mail.Host}}:{{.Mail.Port}}{{else}}Set SMTP_HOST and SMTP_PORT{{end}}</span>
+							<span>Admin: {{if .Mail.AdminEmail}}{{.Mail.AdminEmail}}{{else}}Set MAIL_ADMIN_EMAIL{{end}}</span>
+						</div>
+						<button type="submit" form="mail-test-form" {{if not .MailReady}}disabled{{end}}>Send test mail</button>
+					</div>
 				</section>
 			</div>
 		</form>
+		<form id="mail-test-form" method="post" action="/admin/mail/test"></form>
 	</main>
 	<script src="/static/admin.js?v=20260519-nav-motion"></script>
 </body>

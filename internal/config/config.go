@@ -35,6 +35,18 @@ type FocusCard struct {
 	Image string `json:"image"`
 }
 
+type Mail struct {
+	Enabled    bool
+	Host       string
+	Port       int
+	Username   string
+	Password   string
+	From       string
+	FromName   string
+	AdminEmail string
+	TLSMode    string
+}
+
 type Config struct {
 	siteMu           sync.RWMutex
 	Addr             string
@@ -47,6 +59,7 @@ type Config struct {
 	DBMaxOpenConns   int
 	DBMaxIdleConns   int
 	DBConnMaxMinutes int
+	Mail             Mail
 	Site             Site
 }
 
@@ -65,6 +78,7 @@ func (c *Config) SetSite(site Site) {
 func FromEnv() Config {
 	loadDotEnv(".env")
 
+	siteName := env("SITE_NAME", "KoiMoe Diary")
 	return Config{
 		Addr:             env("APP_ADDR", "127.0.0.1:8080"),
 		DSN:              env("MYSQL_DSN", "sakurairo_app:change-me@tcp(127.0.0.1:3306)/sakurairo?charset=utf8mb4&parseTime=True&loc=Local"),
@@ -76,8 +90,19 @@ func FromEnv() Config {
 		DBMaxOpenConns:   envInt("DB_MAX_OPEN_CONNS", 10),
 		DBMaxIdleConns:   envInt("DB_MAX_IDLE_CONNS", 5),
 		DBConnMaxMinutes: envInt("DB_CONN_MAX_MINUTES", 30),
+		Mail: Mail{
+			Enabled:    env("MAIL_ENABLED", "0") == "1",
+			Host:       env("SMTP_HOST", ""),
+			Port:       envInt("SMTP_PORT", 587),
+			Username:   env("SMTP_USERNAME", ""),
+			Password:   env("SMTP_PASSWORD", ""),
+			From:       env("SMTP_FROM", ""),
+			FromName:   env("SMTP_FROM_NAME", siteName),
+			AdminEmail: env("MAIL_ADMIN_EMAIL", env("SMTP_FROM", "")),
+			TLSMode:    env("SMTP_TLS_MODE", "starttls"),
+		},
 		Site: Site{
-			Name:               env("SITE_NAME", "KoiMoe Diary"),
+			Name:               siteName,
 			Description:        env("SITE_DESCRIPTION", "恋と萌えの小さな場所"),
 			Author:             env("SITE_AUTHOR", "莉莉姆"),
 			Notice:             env("SITE_NOTICE", "A soft diary for tiny heartbeats, cute things, and everyday fragments."),

@@ -14,6 +14,7 @@ import (
 	"sakurairo-go/internal/config"
 	"sakurairo-go/internal/controller/admin"
 	"sakurairo-go/internal/controller/blog"
+	"sakurairo-go/internal/mailer"
 	"sakurairo-go/internal/store"
 	"sakurairo-go/internal/view"
 )
@@ -89,8 +90,9 @@ func New() (*App, error) {
 		})
 	})
 
-	admin.New(&cfg, postStore, settingsStore, linkStore, momentStore, renderer).Register(server)
-	blog.New(&cfg, postStore, linkStore, momentStore, renderer).Register(server)
+	mailSender := mailer.NewSMTP(cfg.Mail)
+	admin.New(&cfg, postStore, settingsStore, linkStore, momentStore, mailSender, renderer).Register(server)
+	blog.New(&cfg, postStore, linkStore, momentStore, mailSender, renderer).Register(server)
 
 	return &App{cfg: &cfg, db: db, server: server}, nil
 }

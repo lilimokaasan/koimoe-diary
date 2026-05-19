@@ -24,6 +24,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"sakurairo-go/internal/config"
+	"sakurairo-go/internal/mailer"
 	"sakurairo-go/internal/models"
 	"sakurairo-go/internal/store"
 	"sakurairo-go/internal/view"
@@ -34,6 +35,7 @@ type Controller struct {
 	posts    *store.PostStore
 	links    *store.LinkStore
 	moments  *store.MomentStore
+	mailer   mailer.Sender
 	renderer *view.Renderer
 }
 
@@ -79,8 +81,8 @@ type PageData struct {
 	ErrorActionURL   string
 }
 
-func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, moments *store.MomentStore, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, links: links, moments: moments, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, moments *store.MomentStore, mailer mailer.Sender, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, links: links, moments: moments, mailer: mailer, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -199,12 +201,13 @@ func (c *Controller) CreateComment(r *ghttp.Request) {
 	}
 
 	comment := models.Comment{
-		PostID:    post.ID,
-		Author:    strings.TrimSpace(r.GetForm("author").String()),
-		Email:     strings.TrimSpace(r.GetForm("email").String()),
-		Website:   strings.TrimSpace(r.GetForm("website").String()),
-		Content:   strings.TrimSpace(r.GetForm("content").String()),
-		IsPrivate: r.GetForm("is_private").Bool(),
+		PostID:     post.ID,
+		Author:     strings.TrimSpace(r.GetForm("author").String()),
+		Email:      strings.TrimSpace(r.GetForm("email").String()),
+		Website:    strings.TrimSpace(r.GetForm("website").String()),
+		Content:    strings.TrimSpace(r.GetForm("content").String()),
+		IsPrivate:  r.GetForm("is_private").Bool(),
+		MailNotify: r.GetForm("mail_notify").Bool(),
 	}
 	if errText := validateComment(comment); errText != "" {
 		comments, listErr := c.posts.ListComments(r.Context(), post.ID)
@@ -228,6 +231,7 @@ func (c *Controller) CreateComment(r *ghttp.Request) {
 		c.error(r, err)
 		return
 	}
+	c.notifyNewComment(comment, post, requestBaseURL(r)+"/post/"+post.Slug+"#comments")
 	r.Response.RedirectTo("/post/"+slug+"?comment=ok#comments", http.StatusSeeOther)
 }
 
@@ -639,6 +643,17 @@ func (c *Controller) renderStatus(r *ghttp.Request, status int, name string, dat
 	c.withUserEntry(r, &data)
 	c.withSidebar(r.Context(), &data)
 	c.renderer.HTMLStatus(r, status, name, data)
+}
+
+func (c *Controller) notifyNewComment(comment models.Comment, post models.Post, postURL string) {
+	if c.mailer == nil {
+		return
+	}
+	go func() {
+		if err := c.mailer.SendNewComment(comment, post, c.cfg.GetSite(), postURL); err != nil && c.cfg.Mail.Enabled {
+			log.Printf("send comment notification: %v", err)
+		}
+	}()
 }
 
 func (c *Controller) withMeta(r *ghttp.Request, data *PageData) {

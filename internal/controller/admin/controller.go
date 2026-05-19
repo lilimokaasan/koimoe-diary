@@ -21,6 +21,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 
 	"sakurairo-go/internal/config"
+	"sakurairo-go/internal/mailer"
 	"sakurairo-go/internal/models"
 	"sakurairo-go/internal/store"
 	"sakurairo-go/internal/view"
@@ -32,6 +33,7 @@ type Controller struct {
 	settings *store.SettingsStore
 	links    *store.LinkStore
 	moments  *store.MomentStore
+	mailer   mailer.Sender
 	renderer *view.Renderer
 }
 
@@ -62,6 +64,8 @@ type PageData struct {
 	PostTotal     int
 	CommentTotal  int
 	Settings      config.Site
+	Mail          config.Mail
+	MailReady     bool
 	Navigation    string
 	FocusCards    string
 	ContentHTML   string
@@ -79,8 +83,8 @@ type MediaAsset struct {
 	UpdatedAt time.Time
 }
 
-func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, moments *store.MomentStore, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, moments: moments, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, moments *store.MomentStore, mailer mailer.Sender, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, moments: moments, mailer: mailer, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -94,6 +98,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/admin/comments/{id}/delete", c.DeleteComment)
 	server.BindHandler("GET:/admin/settings", c.Settings)
 	server.BindHandler("POST:/admin/settings", c.SaveSettings)
+	server.BindHandler("POST:/admin/mail/test", c.TestMail)
 	server.BindHandler("GET:/admin/media", c.Media)
 	server.BindHandler("POST:/admin/media", c.UploadMedia)
 	server.BindHandler("GET:/admin/links", c.Links)
@@ -141,7 +146,9 @@ func (c *Controller) Settings(r *ghttp.Request) {
 		FocusCards: formatFocusCards(
 			c.cfg.GetSite().FocusCards,
 		),
-		Now: time.Now(),
+		Mail:      c.cfg.Mail,
+		MailReady: mailReady(c.cfg.Mail),
+		Now:       time.Now(),
 	})
 }
 
@@ -174,6 +181,8 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 			Settings:   site,
 			Navigation: formatNavigation(site.Navigation),
 			FocusCards: formatFocusCards(site.FocusCards),
+			Mail:       c.cfg.Mail,
+			MailReady:  mailReady(c.cfg.Mail),
 			Now:        time.Now(),
 		})
 		return
@@ -186,6 +195,45 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 	}
 	c.cfg.SetSite(site)
 	r.Response.RedirectTo("/admin/settings?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) TestMail(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	if c.mailer == nil || !mailReady(c.cfg.Mail) {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("Mail is not configured yet.", ""))
+		return
+	}
+	if err := c.mailer.Send(mailer.Message{
+		To:      c.cfg.Mail.AdminEmail,
+		Subject: "[" + c.cfg.GetSite().Name + "] Test mail",
+		Text:    "KoiMoe Diary mail is working.",
+		HTML:    `<p style="color:#4b4350">KoiMoe Diary mail is working.</p>`,
+	}); err != nil {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("Could not send test mail: "+err.Error(), ""))
+		return
+	}
+	c.render(r, "admin_settings.tmpl", c.settingsPageData("", "Test mail sent."))
+}
+
+func (c *Controller) settingsPageData(errText string, message string) PageData {
+	return PageData{
+		Site:       c.cfg.GetSite(),
+		Title:      "Settings - " + c.cfg.GetSite().Name,
+		Error:      errText,
+		Message:    message,
+		Settings:   c.cfg.GetSite(),
+		Navigation: formatNavigation(c.cfg.GetSite().Navigation),
+		FocusCards: formatFocusCards(c.cfg.GetSite().FocusCards),
+		Mail:       c.cfg.Mail,
+		MailReady:  mailReady(c.cfg.Mail),
+		Now:        time.Now(),
+	}
+}
+
+func mailReady(mail config.Mail) bool {
+	return mail.Enabled && mail.Host != "" && mail.Port > 0 && mail.From != "" && mail.AdminEmail != ""
 }
 
 func (c *Controller) Media(r *ghttp.Request) {
