@@ -24,3 +24,14 @@ func TestNormalizeHeroOverlayOpacity(t *testing.T) {
 		})
 	}
 }
+
+func TestParseFocusCards(t *testing.T) {
+	cards := parseFocusCards("Archive | /archives | /static/theme/content-image/d-1.jpg\nBroken line\nSearch | /search | /static/theme/content-image/d-2.jpg\nRemote | https://example.com | https://example.com/card.jpg")
+
+	if len(cards) != 3 {
+		t.Fatalf("len(parseFocusCards) = %d, want 3", len(cards))
+	}
+	if cards[0].Title != "Archive" || cards[0].URL != "/archives" || cards[0].Image != "/static/theme/content-image/d-1.jpg" {
+		t.Fatalf("first focus card = %#v", cards[0])
+	}
+}

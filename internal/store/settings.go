@@ -58,6 +58,12 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 	if values["site_avatar"] != "" {
 		site.Avatar = values["site_avatar"]
 	}
+	if values["default_post_cover"] != "" {
+		site.DefaultPostCover = values["default_post_cover"]
+	}
+	if values["sakura_effects"] != "" {
+		site.SakuraEffects = values["sakura_effects"]
+	}
 	if values["footer_text"] != "" {
 		site.FooterText = values["footer_text"]
 	}
@@ -70,11 +76,21 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 			site.Navigation = navigation
 		}
 	}
+	if values["focus_cards"] != "" {
+		var focusCards []config.FocusCard
+		if err := json.Unmarshal([]byte(values["focus_cards"]), &focusCards); err == nil && len(focusCards) > 0 {
+			site.FocusCards = focusCards
+		}
+	}
 	return site, nil
 }
 
 func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 	navigation, err := json.Marshal(site.Navigation)
+	if err != nil {
+		return err
+	}
+	focusCards, err := json.Marshal(site.FocusCards)
 	if err != nil {
 		return err
 	}
@@ -87,9 +103,12 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"hero_image":           site.HeroImage,
 		"hero_overlay_opacity": site.HeroOverlayOpacity,
 		"site_avatar":          site.Avatar,
+		"default_post_cover":   site.DefaultPostCover,
+		"sakura_effects":       site.SakuraEffects,
 		"footer_text":          site.FooterText,
 		"footer_credit":        site.FooterCredit,
 		"navigation":           string(navigation),
+		"focus_cards":          string(focusCards),
 	}
 	for key, value := range settings {
 		if _, err := s.db.ExecContext(ctx, `
@@ -107,6 +126,10 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 	if err != nil {
 		return err
 	}
+	focusCards, err := json.Marshal(defaults.FocusCards)
+	if err != nil {
+		return err
+	}
 	settings := map[string]string{
 		"site_name":            defaults.Name,
 		"site_description":     defaults.Description,
@@ -116,9 +139,12 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		"hero_image":           defaults.HeroImage,
 		"hero_overlay_opacity": defaults.HeroOverlayOpacity,
 		"site_avatar":          defaults.Avatar,
+		"default_post_cover":   defaults.DefaultPostCover,
+		"sakura_effects":       defaults.SakuraEffects,
 		"footer_text":          defaults.FooterText,
 		"footer_credit":        defaults.FooterCredit,
 		"navigation":           string(navigation),
+		"focus_cards":          string(focusCards),
 	}
 	for key, value := range settings {
 		if _, err := s.db.Exec(`

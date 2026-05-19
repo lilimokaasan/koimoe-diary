@@ -16,14 +16,23 @@ type Site struct {
 	HeroImage          string
 	HeroOverlayOpacity string
 	Avatar             string
+	DefaultPostCover   string
+	SakuraEffects      string
 	FooterText         string
 	FooterCredit       string
 	Navigation         []NavItem
+	FocusCards         []FocusCard
 }
 
 type NavItem struct {
 	Label string `json:"label"`
 	URL   string `json:"url"`
+}
+
+type FocusCard struct {
+	Title string `json:"title"`
+	URL   string `json:"url"`
+	Image string `json:"image"`
 }
 
 type Config struct {
@@ -76,6 +85,8 @@ func FromEnv() Config {
 			HeroImage:          env("HERO_IMAGE", "/static/theme/screenshot.jpg"),
 			HeroOverlayOpacity: env("HERO_OVERLAY_OPACITY", "1"),
 			Avatar:             env("SITE_AVATAR", "/static/theme/content-image/d-1.jpg"),
+			DefaultPostCover:   env("DEFAULT_POST_COVER", "/static/theme/content-image/d-1.jpg"),
+			SakuraEffects:      env("SAKURA_EFFECTS", "0"),
 			FooterText:         env("SITE_FOOTER_TEXT", "A soft diary for tiny heartbeats, cute things, and everyday fragments."),
 			FooterCredit:       env("SITE_FOOTER_CREDIT", "A KoiMoe diary shaped with Sakurairo."),
 			Navigation: []NavItem{
@@ -85,6 +96,11 @@ func FromEnv() Config {
 				{Label: "Moments", URL: "/moments"},
 				{Label: "Search", URL: "/search"},
 				{Label: "Admin Login", URL: "/admin/login"},
+			},
+			FocusCards: []FocusCard{
+				{Title: "Archive", URL: "/archives", Image: "/static/theme/content-image/d-1.jpg"},
+				{Title: "Search", URL: "/search", Image: "/static/theme/content-image/d-2.jpg"},
+				{Title: "KoiMoe Diary", URL: "/", Image: "/static/theme/content-image/d-3.jpg"},
 			},
 		},
 	}

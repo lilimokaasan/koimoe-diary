@@ -53,6 +53,7 @@ type PageData struct {
 	LinkCategories   []models.FriendLinkCategory
 	Moments          []models.Moment
 	FeaturedImages   []string
+	FeaturedCards    []config.FocusCard
 	Comments         []models.Comment
 	CommentOK        bool
 	CommentErr       string
@@ -130,6 +131,7 @@ func (c *Controller) Home(r *ghttp.Request) {
 		SectionTitle:   "Latest Posts",
 		Posts:          posts,
 		FeaturedImages: c.randomFeatureImages(r.Context(), 3),
+		FeaturedCards:  c.focusCards(r.Context()),
 		Page:           store.PageInfo(page, pageSize, total, "/", ""),
 		Notice:         c.cfg.GetSite().Notice,
 		Now:            time.Now(),
@@ -760,11 +762,44 @@ func (c *Controller) featureImagePool(ctx context.Context) []string {
 	if err != nil {
 		log.Printf("load feature images: %v", err)
 	}
+	images = append(images, c.cfg.GetSite().DefaultPostCover)
 	images = append(images, c.curatedImages("square")...)
 	if len(images) == 0 {
 		images = c.coverImagePool()
 	}
 	return compactImageURLs(images)
+}
+
+func (c *Controller) focusCards(ctx context.Context) []config.FocusCard {
+	site := c.cfg.GetSite()
+	images := c.randomFeatureImages(ctx, 3)
+	cards := make([]config.FocusCard, 0, 3)
+	for i, card := range site.FocusCards {
+		if len(cards) == 3 {
+			break
+		}
+		card.Title = strings.TrimSpace(card.Title)
+		card.URL = strings.TrimSpace(card.URL)
+		card.Image = strings.TrimSpace(card.Image)
+		if card.Title == "" || card.URL == "" {
+			continue
+		}
+		if card.Image == "" && i < len(images) {
+			card.Image = images[i]
+		}
+		cards = append(cards, card)
+	}
+	for len(cards) < 3 && len(images) > 0 {
+		defaults := []config.FocusCard{
+			{Title: "Archive", URL: "/archives"},
+			{Title: "Search", URL: "/search"},
+			{Title: site.Name, URL: "/"},
+		}
+		card := defaults[len(cards)%len(defaults)]
+		card.Image = images[len(cards)%len(images)]
+		cards = append(cards, card)
+	}
+	return cards
 }
 
 func (c *Controller) randomFeatureImages(ctx context.Context, count int) []string {

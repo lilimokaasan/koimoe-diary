@@ -83,6 +83,43 @@ html {
 	z-index: 99999;
 }
 
+.sakura-petal-layer {
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+	position: fixed;
+	z-index: 12;
+}
+
+.sakura-petal {
+	animation: koimoe-petal-fall var(--petal-duration, 12s) linear forwards;
+	background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.95), rgba(251, 152, 192, 0.74) 52%, rgba(251, 152, 192, 0.08) 72%);
+	border-radius: 70% 18% 70% 22%;
+	box-shadow: 0 4px 10px rgba(251, 152, 192, 0.16);
+	height: var(--petal-size, 10px);
+	left: var(--petal-left, 50vw);
+	opacity: 0.78;
+	position: absolute;
+	top: -24px;
+	transform: rotate(var(--petal-rotate, 0deg));
+	width: calc(var(--petal-size, 10px) * 0.78);
+}
+
+@keyframes koimoe-petal-fall {
+	0% {
+		transform: translate3d(0, -24px, 0) rotate(var(--petal-rotate, 0deg));
+	}
+	100% {
+		transform: translate3d(var(--petal-drift, 80px), 105vh, 0) rotate(calc(var(--petal-rotate, 0deg) + 360deg));
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sakura-petal-layer {
+		display: none;
+	}
+}
+
 a,
 button,
 .searchbox,

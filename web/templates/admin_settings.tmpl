@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-admin-brand-logo">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-visual-settings">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -52,6 +52,12 @@
 					<label>Hero Image<input type="text" name="hero_image" value="{{.Settings.HeroImage}}" placeholder="/static/theme/screenshot.jpg"></label>
 					<label>Hero Overlay Opacity<input type="number" name="hero_overlay_opacity" value="{{.Settings.HeroOverlayOpacity}}" min="0" max="1" step="0.05"></label>
 					<label>Avatar<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<label>Default Post Cover<input type="text" name="default_post_cover" value="{{.Settings.DefaultPostCover}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<label class="toggle-field">
+						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
+						<span>Enable subtle sakura petals</span>
+					</label>
+					<label>Focus Cards<textarea class="navigation-input" name="focus_cards" rows="5" placeholder="Archive | /archives | /static/theme/content-image/d-1.jpg">{{.FocusCards}}</textarea></label>
 					<div class="settings-preview">
 						<div class="preview-hero" style="background-image:url('{{.Settings.HeroImage}}')"></div>
 						<img src="{{.Settings.Avatar}}" alt="{{.Settings.Author}}">

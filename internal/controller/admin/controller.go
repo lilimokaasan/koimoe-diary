@@ -60,6 +60,7 @@ type PageData struct {
 	CommentTotal  int
 	Settings      config.Site
 	Navigation    string
+	FocusCards    string
 	ContentHTML   string
 	PostTags      string
 	IsNew         bool
@@ -125,6 +126,9 @@ func (c *Controller) Settings(r *ghttp.Request) {
 		Navigation: formatNavigation(
 			c.cfg.GetSite().Navigation,
 		),
+		FocusCards: formatFocusCards(
+			c.cfg.GetSite().FocusCards,
+		),
 		Now: time.Now(),
 	})
 }
@@ -142,9 +146,12 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		HeroImage:          strings.TrimSpace(r.GetForm("hero_image").String()),
 		HeroOverlayOpacity: strings.TrimSpace(r.GetForm("hero_overlay_opacity").String()),
 		Avatar:             strings.TrimSpace(r.GetForm("site_avatar").String()),
+		DefaultPostCover:   strings.TrimSpace(r.GetForm("default_post_cover").String()),
+		SakuraEffects:      strings.TrimSpace(r.GetForm("sakura_effects").String()),
 		FooterText:         strings.TrimSpace(r.GetForm("footer_text").String()),
 		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
 		Navigation:         parseNavigation(r.GetForm("navigation").String()),
+		FocusCards:         parseFocusCards(r.GetForm("focus_cards").String()),
 	}
 	site = normalizeSiteSettings(site, c.cfg.GetSite())
 	if err := c.settings.SaveSite(r.Context(), site); err != nil {
@@ -758,6 +765,9 @@ func (c *Controller) SavePost(r *ghttp.Request) {
 	} else if uploadedCover != "" {
 		input.CoverImage = uploadedCover
 	}
+	if strings.TrimSpace(input.CoverImage) == "" {
+		input.CoverImage = c.cfg.GetSite().DefaultPostCover
+	}
 	if input.Title == "" || input.ContentHTML == "" {
 		post := postFromInput(input)
 		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.GetSite().Name, "Title and content are required."))
@@ -1012,6 +1022,12 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	if site.Avatar == "" {
 		site.Avatar = fallback.Avatar
 	}
+	if site.DefaultPostCover == "" {
+		site.DefaultPostCover = fallback.DefaultPostCover
+	}
+	if site.SakuraEffects != "1" {
+		site.SakuraEffects = "0"
+	}
 	if site.FooterText == "" {
 		site.FooterText = fallback.FooterText
 	}
@@ -1020,6 +1036,9 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	}
 	if len(site.Navigation) == 0 {
 		site.Navigation = fallback.Navigation
+	}
+	if len(site.FocusCards) == 0 {
+		site.FocusCards = fallback.FocusCards
 	}
 	return site
 }
@@ -1073,6 +1092,42 @@ func formatNavigation(items []config.NavItem) string {
 			continue
 		}
 		lines = append(lines, item.Label+" | "+item.URL)
+	}
+	return strings.Join(lines, "\n")
+}
+
+func parseFocusCards(value string) []config.FocusCard {
+	var cards []config.FocusCard
+	for _, line := range strings.Split(value, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		parts := strings.Split(line, "|")
+		if len(parts) < 3 {
+			continue
+		}
+		title := strings.TrimSpace(parts[0])
+		url := strings.TrimSpace(parts[1])
+		image := strings.TrimSpace(strings.Join(parts[2:], "|"))
+		if title == "" || !isAllowedNavURL(url) || image == "" {
+			continue
+		}
+		cards = append(cards, config.FocusCard{Title: title, URL: url, Image: image})
+		if len(cards) == 3 {
+			break
+		}
+	}
+	return cards
+}
+
+func formatFocusCards(cards []config.FocusCard) string {
+	lines := make([]string, 0, len(cards))
+	for _, card := range cards {
+		if card.Title == "" || card.URL == "" || card.Image == "" {
+			continue
+		}
+		lines = append(lines, card.Title+" | "+card.URL+" | "+card.Image)
 	}
 	return strings.Join(lines, "\n")
 }

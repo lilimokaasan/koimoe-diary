@@ -34,6 +34,29 @@
 	window.addEventListener("scroll", requestReadingProgressUpdate, { passive: true });
 	window.addEventListener("resize", requestReadingProgressUpdate);
 
+	if (document.body.classList.contains("sakura-effects-on") && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		var petalLayer = document.createElement("div");
+		petalLayer.className = "sakura-petal-layer";
+		petalLayer.setAttribute("aria-hidden", "true");
+		document.body.appendChild(petalLayer);
+		window.setInterval(function () {
+			if (document.hidden || petalLayer.childElementCount > 18) {
+				return;
+			}
+			var petal = document.createElement("span");
+			petal.className = "sakura-petal";
+			petal.style.setProperty("--petal-left", Math.round(Math.random() * 100) + "vw");
+			petal.style.setProperty("--petal-size", Math.round(7 + Math.random() * 8) + "px");
+			petal.style.setProperty("--petal-drift", Math.round(-70 + Math.random() * 140) + "px");
+			petal.style.setProperty("--petal-rotate", Math.round(Math.random() * 180) + "deg");
+			petal.style.setProperty("--petal-duration", Math.round(9 + Math.random() * 8) + "s");
+			petal.addEventListener("animationend", function () {
+				petal.remove();
+			});
+			petalLayer.appendChild(petal);
+		}, 900);
+	}
+
 	userToggle && userToggle.addEventListener("click", function (event) {
 		event.preventDefault();
 		event.stopPropagation();
