@@ -135,7 +135,10 @@ systemctl is-active '$ServiceName'
 curl -fsS http://127.0.0.1:8081/api/health
 curl -s -o /dev/null -w '%{http_code} %{content_type}\n' https://blog.koimoe.com/
 "@
-		Invoke-Checked -FilePath "ssh" -ArgumentList @("-i", $SshKey, "-p", "$Port", $Server, $remoteScript)
+		$remoteScript | & ssh -i $SshKey -p "$Port" $Server "bash -s"
+		if ($LASTEXITCODE -ne 0) {
+			throw "ssh exited with code $LASTEXITCODE"
+		}
 	}
 }
 
