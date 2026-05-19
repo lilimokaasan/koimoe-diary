@@ -158,15 +158,26 @@ func (c *Controller) LoginPost(r *ghttp.Request) {
 }
 
 func (c *Controller) Logout(r *ghttp.Request) {
-	r.Cookie.SetCookie("sakurairo_admin", "", "", "/", -24*time.Hour, ghttp.CookieOptions{
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-	})
-	r.Cookie.SetCookie("sakurairo_admin", "", "", "/admin", -24*time.Hour, ghttp.CookieOptions{
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-	})
+	c.clearAdminCookies(r)
 	r.Response.RedirectTo("/admin/login", http.StatusSeeOther)
+}
+
+func (c *Controller) clearAdminCookies(r *ghttp.Request) {
+	expiredAt := time.Unix(0, 0).UTC()
+	for _, domain := range []string{"", "blog.koimoe.com", ".koimoe.com"} {
+		for _, path := range []string{"/", "/admin"} {
+			http.SetCookie(r.Response.Writer, &http.Cookie{
+				Name:     "sakurairo_admin",
+				Value:    "",
+				Path:     path,
+				Domain:   domain,
+				Expires:  expiredAt,
+				MaxAge:   -1,
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+			})
+		}
+	}
 }
 
 func (c *Controller) Dashboard(r *ghttp.Request) {
