@@ -67,7 +67,7 @@ func FromEnv() Config {
 		Site: Site{
 			Name:        env("SITE_NAME", "KoiMoe Diary"),
 			Description: env("SITE_DESCRIPTION", "恋と萌えの小さな場所"),
-			Author:      env("SITE_AUTHOR", "KoiMoe"),
+			Author:      env("SITE_AUTHOR", "莉莉姆"),
 			Notice:      env("SITE_NOTICE", "A soft diary for tiny heartbeats, cute things, and everyday fragments."),
 			ThemeColor:  env("THEME_COLOR", "#fb98c0"),
 			HeroImage:   env("HERO_IMAGE", "/static/theme/screenshot.jpg"),
