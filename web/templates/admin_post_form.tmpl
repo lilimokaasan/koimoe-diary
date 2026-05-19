@@ -130,7 +130,7 @@
 				var text = (holder.textContent || holder.innerText || "")
 					.replace(/\s+/g, " ")
 					.trim();
-				if (text.length > 128) text = text.slice(0, 128).replace(/[锛屻€傦紒锛熴€?.!?\s]+$/, "") + "...";
+				if (text.length > 128) text = text.slice(0, 128).replace(/[,.!?;:\s]+$/, "") + "...";
 				excerpt.value = text;
 				excerpt.focus();
 			});
