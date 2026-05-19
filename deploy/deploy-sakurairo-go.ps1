@@ -133,14 +133,7 @@ sudo systemctl restart '$ServiceName'
 sleep 1
 systemctl is-active '$ServiceName'
 curl -fsS http://127.0.0.1:8081/api/health
-for attempt in 1 2 3; do
-  public_status=`$(curl -s -o /dev/null -w '%{http_code} %{content_type}\n' https://blog.koimoe.com/ || true)
-  echo "`$public_status"
-  case "`$public_status" in
-    200*) break ;;
-    *) sleep 2 ;;
-  esac
-done
+curl -s -o /dev/null -w '%{http_code} %{content_type}\n' https://blog.koimoe.com/ || true
 "@
 		$remoteScript | & ssh -i $SshKey -p "$Port" $Server "bash -s"
 		if ($LASTEXITCODE -ne 0) {
