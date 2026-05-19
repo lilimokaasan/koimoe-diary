@@ -623,7 +623,7 @@ func (c *Controller) NotFound(r *ghttp.Request) {
 }
 
 func (c *Controller) error(r *ghttp.Request, err error) {
-	log.Println(err)
+	logRequestError("blog", r, err)
 	c.renderStatus(r, http.StatusInternalServerError, "error.tmpl", PageData{
 		Site:           c.cfg.GetSite(),
 		Title:          "Something went softly wrong - " + c.cfg.GetSite().Name,
@@ -638,8 +638,19 @@ func (c *Controller) error(r *ghttp.Request, err error) {
 }
 
 func (c *Controller) apiError(r *ghttp.Request, err error) {
-	log.Println(err)
+	logRequestError("blog-api", r, err)
 	r.Response.WriteStatus(500, "Internal Server Error")
+}
+
+func logRequestError(scope string, r *ghttp.Request, err error) {
+	log.Printf(
+		"%s error method=%s path=%s ip=%s err=%v",
+		scope,
+		r.Method,
+		r.URL.RequestURI(),
+		r.GetClientIp(),
+		err,
+	)
 }
 
 func (c *Controller) render(r *ghttp.Request, name string, data PageData) {

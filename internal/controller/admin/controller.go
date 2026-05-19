@@ -1190,7 +1190,13 @@ func (c *Controller) render(r *ghttp.Request, name string, data PageData) {
 }
 
 func (c *Controller) error(r *ghttp.Request, err error) {
-	log.Println(err)
+	log.Printf(
+		"admin error method=%s path=%s ip=%s err=%v",
+		r.Method,
+		r.URL.RequestURI(),
+		r.GetClientIp(),
+		err,
+	)
 	r.Response.WriteStatus(500, "Internal Server Error")
 }
 
