@@ -7,9 +7,9 @@ Sakurairo Go has a lightweight SMTP mail foundation for comment notifications.
 - Sends an asynchronous admin notification when a new public comment is saved.
 - Shows mail status on `/admin/settings`.
 - Provides a `Send test mail` action on `/admin/settings`.
-- Stores `comments.mail_notify` for future reply notifications.
+- Keeps `comments.mail_notify` in the database for future reply notifications.
 
-Nested comment replies are not implemented yet, so visitor reply-notification emails are only prepared at the data-model level.
+Nested comment replies are not implemented yet, so visitor reply-notification emails are only prepared at the data-model level. The public comment form does not show a reply-notice checkbox until replies can actually send mail.
 
 ## Environment Variables
 
