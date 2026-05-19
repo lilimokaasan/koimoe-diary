@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -937,6 +938,7 @@ func currentPage(r *ghttp.Request) int {
 }
 
 func validateComment(comment models.Comment) string {
+	spamReason := detectCommentSpam(comment)
 	switch {
 	case comment.Author == "":
 		return "Name is required."
@@ -950,9 +952,74 @@ func validateComment(comment models.Comment) string {
 		return "Name is too long."
 	case len([]rune(comment.Content)) > 2000:
 		return "Comment is too long."
+	case spamReason != "":
+		return spamReason
 	default:
 		return ""
 	}
+}
+
+var (
+	commentURLPattern     = regexp.MustCompile(`(?i)(https?://|www\.|href=|\[url|\[img)`)
+	commentContactPattern = regexp.MustCompile(`(?i)(telegram|whatsapp|wechat|weixin|line|skype|qq[:：]?\s*\d|vx[:：]?\s*[\w-]+|\+?\d[\d\s-]{7,}\d)`)
+	commentSpamKeywords   = []string{
+		"casino",
+		"viagra",
+		"loan",
+		"crypto",
+		"seo",
+		"backlink",
+		"traffic",
+		"followers",
+		"代办",
+		"发票",
+		"贷款",
+		"博彩",
+		"推广",
+		"加微信",
+	}
+)
+
+func detectCommentSpam(comment models.Comment) string {
+	content := strings.ToLower(strings.TrimSpace(comment.Content + " " + comment.Author + " " + comment.Website))
+	if content == "" {
+		return ""
+	}
+	if len(commentURLPattern.FindAllStringIndex(content, -1)) > 2 {
+		return "This comment has too many links. Please keep only the link that matters."
+	}
+	if comment.Website != "" && len(commentURLPattern.FindAllStringIndex(strings.ToLower(comment.Content), -1)) > 0 {
+		return "Comments with a website can include text, but not extra promotional links."
+	}
+	if len(commentContactPattern.FindAllStringIndex(content, -1)) > 1 {
+		return "This looks like contact-info advertising, so it was not posted."
+	}
+	if hasLongRepeatedRun(content, 9) {
+		return "This comment looks repeated. Please write it a little more naturally."
+	}
+	for _, keyword := range commentSpamKeywords {
+		if strings.Contains(content, keyword) {
+			return "This looks like advertising, so it was not posted."
+		}
+	}
+	return ""
+}
+
+func hasLongRepeatedRun(value string, limit int) bool {
+	var previous rune
+	run := 0
+	for _, current := range value {
+		if current == previous {
+			run++
+		} else {
+			previous = current
+			run = 1
+		}
+		if run >= limit {
+			return true
+		}
+	}
+	return false
 }
 
 type atomFeed struct {
