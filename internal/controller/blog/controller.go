@@ -99,6 +99,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("HEAD:/feed.xml", c.Feed)
 	server.BindHandler("GET:/sitemap.xml", c.Sitemap)
 	server.BindHandler("HEAD:/sitemap.xml", c.Sitemap)
+	server.BindHandler("GET:/robots.txt", c.Robots)
+	server.BindHandler("HEAD:/robots.txt", c.Robots)
 	server.BindHandler("GET:/category/{slug}", c.Category)
 	server.BindHandler("GET:/tag/{slug}", c.Tag)
 	server.BindHandler("GET:/search", c.Search)
@@ -426,6 +428,15 @@ func (c *Controller) Sitemap(r *ghttp.Request) {
 	r.Response.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	r.Response.Write([]byte(xml.Header))
 	r.Response.Write(output)
+}
+
+func (c *Controller) Robots(r *ghttp.Request) {
+	baseURL := requestBaseURL(r)
+	r.Response.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	r.Response.Writef("User-agent: *\n")
+	r.Response.Writef("Disallow: /admin/\n")
+	r.Response.Writef("Allow: /\n\n")
+	r.Response.Writef("Sitemap: %s/sitemap.xml\n", baseURL)
 }
 
 func (c *Controller) Search(r *ghttp.Request) {
