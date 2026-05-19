@@ -154,6 +154,20 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		FocusCards:         parseFocusCards(r.GetForm("focus_cards").String()),
 	}
 	site = normalizeSiteSettings(site, c.cfg.GetSite())
+	if uploadedAvatar, uploadErr := c.saveImageUpload(r, "avatar_upload", "Avatar"); uploadErr != "" {
+		c.render(r, "admin_settings.tmpl", PageData{
+			Site:       c.cfg.GetSite(),
+			Title:      "Settings - " + c.cfg.GetSite().Name,
+			Error:      uploadErr,
+			Settings:   site,
+			Navigation: formatNavigation(site.Navigation),
+			FocusCards: formatFocusCards(site.FocusCards),
+			Now:        time.Now(),
+		})
+		return
+	} else if uploadedAvatar != "" {
+		site.Avatar = uploadedAvatar
+	}
 	if err := c.settings.SaveSite(r.Context(), site); err != nil {
 		c.error(r, err)
 		return
@@ -893,25 +907,29 @@ func (c *Controller) previewData(r *ghttp.Request, post models.Post) (PageData, 
 }
 
 func (c *Controller) saveCoverUpload(r *ghttp.Request) (string, string) {
-	file := r.GetUploadFile("cover_upload")
+	return c.saveImageUpload(r, "cover_upload", "Cover image")
+}
+
+func (c *Controller) saveImageUpload(r *ghttp.Request, field string, label string) (string, string) {
+	file := r.GetUploadFile(field)
 	if file == nil || file.Filename == "" {
 		return "", ""
 	}
 	if file.Size > 5*1024*1024 {
-		return "", "Cover image must be smaller than 5 MB."
+		return "", label + " must be smaller than 5 MB."
 	}
 	ext := strings.ToLower(filepath.Ext(file.Filename))
 	switch ext {
 	case ".jpg", ".jpeg", ".png", ".gif", ".webp":
 	default:
-		return "", "Cover image must be jpg, png, gif, or webp."
+		return "", label + " must be jpg, png, gif, or webp."
 	}
 	month := time.Now().Format("2006/01")
 	targetDir := filepath.Join(c.cfg.StaticDir, "uploads", month)
 	filename, err := file.Save(targetDir, true)
 	if err != nil {
-		log.Printf("save cover upload: %v", err)
-		return "", "Could not save cover image."
+		log.Printf("save image upload: %v", err)
+		return "", "Could not save " + strings.ToLower(label) + "."
 	}
 	return "/static/uploads/" + month + "/" + filename, ""
 }

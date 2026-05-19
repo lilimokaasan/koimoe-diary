@@ -28,7 +28,7 @@
 		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
 	</section>
 	<main class="admin-shell">
-		<form class="admin-panel settings-panel" method="post" action="/admin/settings">
+		<form class="admin-panel settings-panel" method="post" enctype="multipart/form-data" action="/admin/settings">
 			<div class="panel-title">
 				<h1>Site Settings</h1>
 				<div class="actions">
@@ -37,11 +37,12 @@
 				</div>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
 			<div class="settings-grid">
 				<section>
 					<label>Site Name<input type="text" name="site_name" value="{{.Settings.Name}}" required></label>
 					<label>Description<textarea name="site_description" rows="3" required>{{.Settings.Description}}</textarea></label>
-					<label>Author<input type="text" name="site_author" value="{{.Settings.Author}}" required></label>
+					<label>Profile Name<input type="text" name="site_author" value="{{.Settings.Author}}" required></label>
 					<label>Notice<textarea name="site_notice" rows="3">{{.Settings.Notice}}</textarea></label>
 					<label>Footer Text<textarea name="footer_text" rows="3">{{.Settings.FooterText}}</textarea></label>
 					<label>Footer Credit<input type="text" name="footer_credit" value="{{.Settings.FooterCredit}}" placeholder="A KoiMoe diary shaped with Sakurairo."></label>
@@ -51,7 +52,8 @@
 					<label>Theme Color<input type="text" name="theme_color" value="{{.Settings.ThemeColor}}" placeholder="#fe9600"></label>
 					<label>Hero Image<input type="text" name="hero_image" value="{{.Settings.HeroImage}}" placeholder="/static/theme/screenshot.jpg"></label>
 					<label>Hero Overlay Opacity<input type="number" name="hero_overlay_opacity" value="{{.Settings.HeroOverlayOpacity}}" min="0" max="1" step="0.05"></label>
-					<label>Avatar<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<label>Profile Avatar URL<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<label>Upload Profile Avatar<input type="file" name="avatar_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
 					<label>Default Post Cover<input type="text" name="default_post_cover" value="{{.Settings.DefaultPostCover}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
 					<label class="toggle-field">
 						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
