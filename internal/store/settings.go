@@ -121,6 +121,28 @@ ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`, key, value); err
 	return nil
 }
 
+func (s *SettingsStore) Setting(ctx context.Context, key string) (string, error) {
+	var value string
+	err := s.db.QueryRowContext(ctx, `SELECT setting_value FROM site_settings WHERE setting_key = ?`, key).Scan(&value)
+	if err == sql.ErrNoRows {
+		return "", nil
+	}
+	return value, err
+}
+
+func (s *SettingsStore) SaveSetting(ctx context.Context, key string, value string) error {
+	_, err := s.db.ExecContext(ctx, `
+INSERT INTO site_settings (setting_key, setting_value)
+VALUES (?, ?)
+ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`, key, value)
+	return err
+}
+
+func (s *SettingsStore) DeleteSetting(ctx context.Context, key string) error {
+	_, err := s.db.ExecContext(ctx, `DELETE FROM site_settings WHERE setting_key = ?`, key)
+	return err
+}
+
 func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 	navigation, err := json.Marshal(defaults.Navigation)
 	if err != nil {

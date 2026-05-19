@@ -1,7 +1,9 @@
 package admin
 
 import (
+	"context"
 	"crypto/hmac"
+	crand "crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
 	"database/sql"
@@ -10,6 +12,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"math/big"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -20,11 +23,18 @@ import (
 
 	"github.com/gogf/gf/v2/net/ghttp"
 
+	"sakurairo-go/internal/auth"
 	"sakurairo-go/internal/config"
 	"sakurairo-go/internal/mailer"
 	"sakurairo-go/internal/models"
 	"sakurairo-go/internal/store"
 	"sakurairo-go/internal/view"
+)
+
+const (
+	adminPasswordHashKey       = "admin_password_hash"
+	adminPasswordCodeHashKey   = "admin_password_code_hash"
+	adminPasswordCodeExpiryKey = "admin_password_code_expires_at"
 )
 
 type Controller struct {
@@ -99,6 +109,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/admin/settings", c.Settings)
 	server.BindHandler("POST:/admin/settings", c.SaveSettings)
 	server.BindHandler("POST:/admin/mail/test", c.TestMail)
+	server.BindHandler("POST:/admin/password/code", c.RequestPasswordCode)
+	server.BindHandler("POST:/admin/password", c.ChangePassword)
 	server.BindHandler("GET:/admin/media", c.Media)
 	server.BindHandler("POST:/admin/media", c.UploadMedia)
 	server.BindHandler("GET:/admin/links", c.Links)
@@ -217,6 +229,98 @@ func (c *Controller) TestMail(r *ghttp.Request) {
 	c.render(r, "admin_settings.tmpl", c.settingsPageData("", "Test mail sent."))
 }
 
+func (c *Controller) RequestPasswordCode(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	if c.mailer == nil || !mailReady(c.cfg.Mail) {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("Mail is not configured yet.", ""))
+		return
+	}
+	code, err := generateVerificationCode()
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	expiresAt := time.Now().Add(10 * time.Minute)
+	if err := c.settings.SaveSetting(r.Context(), adminPasswordCodeHashKey, c.verificationCodeHash(code)); err != nil {
+		c.error(r, err)
+		return
+	}
+	if err := c.settings.SaveSetting(r.Context(), adminPasswordCodeExpiryKey, strconv.FormatInt(expiresAt.Unix(), 10)); err != nil {
+		c.error(r, err)
+		return
+	}
+	if err := c.mailer.Send(mailer.Message{
+		To:      c.cfg.Mail.AdminEmail,
+		Subject: "[" + c.cfg.GetSite().Name + "] Password change verification",
+		Text:    fmt.Sprintf("Your password change verification code is %s. It expires in 10 minutes.", code),
+		HTML: fmt.Sprintf(`<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.7;color:#4b4350">
+  <h2 style="color:#e674a0;margin:0 0 12px">Password change verification</h2>
+  <p>Your verification code is:</p>
+  <p style="font-size:28px;letter-spacing:6px;color:#fb78ad;font-weight:700">%s</p>
+  <p style="font-size:13px;color:#8f8791">It expires in 10 minutes. If this was not you, leave the password unchanged.</p>
+</div>`, code),
+	}); err != nil {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("Could not send verification code: "+err.Error(), ""))
+		return
+	}
+	c.render(r, "admin_settings.tmpl", c.settingsPageData("", "Verification code sent."))
+}
+
+func (c *Controller) ChangePassword(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	currentPassword := r.GetForm("current_password").String()
+	newPassword := strings.TrimSpace(r.GetForm("new_password").String())
+	confirmPassword := strings.TrimSpace(r.GetForm("confirm_password").String())
+	code := strings.TrimSpace(r.GetForm("verification_code").String())
+	if newPassword == "" || len(newPassword) < 8 {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("New password must be at least 8 characters.", ""))
+		return
+	}
+	if newPassword != confirmPassword {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("New password confirmation does not match.", ""))
+		return
+	}
+	ok, err := c.verifyAdminPassword(r.Context(), currentPassword)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	if !ok {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("Current password is incorrect.", ""))
+		return
+	}
+	if ok, err := c.verifyPasswordCode(r.Context(), code); err != nil {
+		c.error(r, err)
+		return
+	} else if !ok {
+		c.render(r, "admin_settings.tmpl", c.settingsPageData("Verification code is invalid or expired.", ""))
+		return
+	}
+	hash, err := auth.HashPassword(newPassword)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	if err := c.settings.SaveSetting(r.Context(), adminPasswordHashKey, hash); err != nil {
+		c.error(r, err)
+		return
+	}
+	if err := c.settings.DeleteSetting(r.Context(), adminPasswordCodeHashKey); err != nil {
+		c.error(r, err)
+		return
+	}
+	if err := c.settings.DeleteSetting(r.Context(), adminPasswordCodeExpiryKey); err != nil {
+		c.error(r, err)
+		return
+	}
+	c.clearAdminCookies(r)
+	r.Response.RedirectTo("/admin/login?error=Password updated. Please sign in again.", http.StatusSeeOther)
+}
+
 func (c *Controller) settingsPageData(errText string, message string) PageData {
 	return PageData{
 		Site:       c.cfg.GetSite(),
@@ -298,17 +402,29 @@ func (c *Controller) Login(r *ghttp.Request) {
 
 func (c *Controller) LoginPost(r *ghttp.Request) {
 	if c.cfg.AdminPassword == "" {
-		c.render(r, "admin_login.tmpl", PageData{
-			Site:  c.cfg.GetSite(),
-			Title: "Admin Login - " + c.cfg.GetSite().Name,
-			Error: "Admin password is not configured.",
-			Now:   time.Now(),
-		})
-		return
+		hash, err := c.settings.Setting(r.Context(), adminPasswordHashKey)
+		if err != nil {
+			c.error(r, err)
+			return
+		}
+		if hash == "" {
+			c.render(r, "admin_login.tmpl", PageData{
+				Site:  c.cfg.GetSite(),
+				Title: "Admin Login - " + c.cfg.GetSite().Name,
+				Error: "Admin password is not configured.",
+				Now:   time.Now(),
+			})
+			return
+		}
 	}
 	username := strings.TrimSpace(r.GetForm("username").String())
 	password := r.GetForm("password").String()
-	if username != c.cfg.AdminUsername || subtle.ConstantTimeCompare([]byte(password), []byte(c.cfg.AdminPassword)) != 1 {
+	ok, err := c.verifyAdminPassword(r.Context(), password)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	if username != c.cfg.AdminUsername || !ok {
 		c.render(r, "admin_login.tmpl", PageData{
 			Site:  c.cfg.GetSite(),
 			Title: "Admin Login - " + c.cfg.GetSite().Name,
@@ -945,6 +1061,65 @@ func (c *Controller) verifyToken(token string) (string, bool) {
 		return "", false
 	}
 	return parts[0], true
+}
+
+func (c *Controller) verifyAdminPassword(ctx context.Context, password string) (bool, error) {
+	hash, err := c.settings.Setting(ctx, adminPasswordHashKey)
+	if err != nil {
+		return false, err
+	}
+	if hash != "" {
+		return auth.VerifyPassword(password, hash), nil
+	}
+	if c.cfg.AdminPassword == "" {
+		return false, nil
+	}
+	return subtle.ConstantTimeCompare([]byte(password), []byte(c.cfg.AdminPassword)) == 1, nil
+}
+
+func (c *Controller) verifyPasswordCode(ctx context.Context, code string) (bool, error) {
+	if code == "" {
+		return false, nil
+	}
+	storedHash, err := c.settings.Setting(ctx, adminPasswordCodeHashKey)
+	if err != nil {
+		return false, err
+	}
+	if storedHash == "" {
+		return false, nil
+	}
+	expiryValue, err := c.settings.Setting(ctx, adminPasswordCodeExpiryKey)
+	if err != nil {
+		return false, err
+	}
+	expiry, err := strconv.ParseInt(expiryValue, 10, 64)
+	if err != nil || time.Now().Unix() > expiry {
+		return false, nil
+	}
+	actual := c.verificationCodeHash(code)
+	return subtle.ConstantTimeCompare([]byte(actual), []byte(storedHash)) == 1, nil
+}
+
+func (c *Controller) verificationCodeHash(code string) string {
+	secret := c.cfg.AdminSecret
+	if secret == "" {
+		secret = c.cfg.AdminPassword
+	}
+	if secret == "" {
+		secret = c.cfg.AdminUsername
+	}
+	mac := hmac.New(sha256.New, []byte(secret))
+	_, _ = mac.Write([]byte(strings.TrimSpace(code)))
+	return fmt.Sprintf("%x", mac.Sum(nil))
+}
+
+func generateVerificationCode() (string, error) {
+	max := big.NewInt(1000000)
+	n, err := crand.Int(crand.Reader, max)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%06d", n.Int64()), nil
 }
 
 func (c *Controller) signature(payload string) string {

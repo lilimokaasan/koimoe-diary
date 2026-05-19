@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-mail-system">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-password-mail">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -80,6 +80,27 @@
 			</div>
 		</form>
 		<form id="mail-test-form" method="post" action="/admin/mail/test"></form>
+		<section class="admin-panel password-panel">
+			<div class="panel-title">
+				<h1>Password</h1>
+				<p>Change the admin password after confirming a code sent to the configured admin mailbox.</p>
+			</div>
+			<div class="password-grid">
+				<form method="post" action="/admin/password/code">
+					<h2>Email verification</h2>
+					<p>The code is sent to {{if .Mail.AdminEmail}}{{.Mail.AdminEmail}}{{else}}MAIL_ADMIN_EMAIL{{end}} and expires in 10 minutes.</p>
+					<button type="submit" {{if not .MailReady}}disabled{{end}}>Send verification code</button>
+				</form>
+				<form method="post" action="/admin/password">
+					<h2>Change password</h2>
+					<label>Current Password<input type="password" name="current_password" autocomplete="current-password" required></label>
+					<label>New Password<input type="password" name="new_password" autocomplete="new-password" minlength="8" required></label>
+					<label>Confirm New Password<input type="password" name="confirm_password" autocomplete="new-password" minlength="8" required></label>
+					<label>Email Code<input type="text" name="verification_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
+					<button class="primary" type="submit" {{if not .MailReady}}disabled{{end}}>Update password</button>
+				</form>
+			</div>
+		</section>
 	</main>
 	<script src="/static/admin.js?v=20260519-nav-motion"></script>
 </body>

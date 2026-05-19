@@ -943,6 +943,51 @@ button.danger {
 	overflow-wrap: anywhere;
 }
 
+.password-panel {
+	margin-top: 22px;
+}
+
+.password-panel .panel-title {
+	align-items: flex-start;
+}
+
+.password-panel .panel-title p {
+	color: var(--muted);
+	font-size: 13px;
+	line-height: 1.6;
+	margin: 4px 0 0;
+	max-width: 560px;
+}
+
+.password-grid {
+	display: grid;
+	gap: 20px;
+	grid-template-columns: minmax(260px, 0.7fr) minmax(300px, 1fr);
+}
+
+.password-grid form {
+	background: rgba(255, 255, 255, 0.6);
+	border: 1px solid rgba(231, 211, 222, 0.72);
+	border-radius: 8px;
+	padding: 18px;
+}
+
+.password-grid h2 {
+	color: var(--ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 20px;
+	font-weight: 400;
+	margin: 0 0 10px;
+}
+
+.password-grid p {
+	color: var(--muted);
+	font-size: 13px;
+	line-height: 1.6;
+	margin: 0 0 16px;
+	overflow-wrap: anywhere;
+}
+
 button:disabled {
 	cursor: not-allowed;
 	opacity: 0.54;
@@ -954,6 +999,7 @@ button:disabled {
 	.panel-title,
 	.editor-grid,
 	.settings-grid,
+	.password-grid,
 	.admin-hero {
 		display: block;
 	}
