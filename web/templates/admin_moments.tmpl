@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{.Title}}</title>
-	<link rel="stylesheet" href="/static/admin.css?v=20260519-private-comments">
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-moments">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -16,37 +16,40 @@
 			<a href="/admin/moments">Moments</a>
 			<a href="/admin/settings">Settings</a>
 			<a href="/" target="_blank">View Site</a>
-			<a class="button" href="/admin/posts/new">New Post</a>
+			<a class="button" href="/admin/moments/new">New Moment</a>
 			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
 		</nav>
 	</header>
 	<section class="admin-hero">
 		<div>
-			<p>Dashboard</p>
-			<h1>Write softly, publish beautifully.</h1>
+			<p>Moments</p>
+			<h1>Keep the tiny heartbeats.</h1>
 		</div>
 		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
 	</section>
 	<main class="admin-shell">
 		<section class="admin-panel">
 			<div class="panel-title">
-				<h1>Posts</h1>
-				<a class="button primary" href="/admin/posts/new">New Post</a>
+				<h1>Moments</h1>
+				<a class="button primary" href="/admin/moments/new">New Moment</a>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
 			<table class="admin-table">
-				<thead><tr><th>Title</th><th>Status</th><th>Category</th><th>Updated</th><th></th></tr></thead>
+				<thead><tr><th>Content</th><th>Author</th><th>Status</th><th>Created</th><th></th></tr></thead>
 				<tbody>
-					{{range .Posts}}
+					{{range .Moments}}
 					<tr>
-						<td><a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a><span>{{.Slug}}</span></td>
+						<td><a href="/admin/moments/{{.ID}}/edit">{{.Content}}</a></td>
+						<td>{{.Author}}</td>
 						<td><span class="status {{.Status}}">{{.Status}}</span></td>
-						<td>{{.Category.Name}}</td>
-						<td>{{since .UpdatedAt}}</td>
-						<td><a href="/post/{{.Slug}}" target="_blank">Open</a></td>
+						<td>{{.CreatedAt.Format "2006-01-02 15:04"}}</td>
+						<td class="table-actions">
+							<a href="/moments" target="_blank" rel="noopener noreferrer">View</a>
+							<form method="post" action="/admin/moments/{{.ID}}/delete"><button class="danger" type="submit">Delete</button></form>
+						</td>
 					</tr>
 					{{else}}
-					<tr><td colspan="5">No posts yet.</td></tr>
+					<tr><td colspan="5">No moments yet.</td></tr>
 					{{end}}
 				</tbody>
 			</table>
@@ -54,3 +57,4 @@
 	</main>
 </body>
 </html>
+

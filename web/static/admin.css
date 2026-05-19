@@ -404,6 +404,18 @@ button.primary,
 	width: 100%;
 }
 
+.form-note {
+	color: var(--muted);
+	font-size: 13px;
+	line-height: 1.7;
+	margin: 0;
+}
+
+.form-note a {
+	color: var(--sakura-deep);
+	text-decoration: none;
+}
+
 .cover-box p {
 	color: var(--muted);
 	font-size: 12px;

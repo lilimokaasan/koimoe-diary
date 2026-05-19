@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{.Title}}</title>
+	<link rel="stylesheet" href="/static/admin.css?v=20260519-moments">
+</head>
+<body class="admin-page">
+	<header class="admin-topbar">
+		<a class="brand" href="/admin">{{.Site.Name}}</a>
+		<nav>
+			<a href="/admin">Posts</a>
+			<a href="/admin/comments">Comments</a>
+			<a href="/admin/links">Links</a>
+			<a href="/admin/moments">Moments</a>
+			<a href="/admin/settings">Settings</a>
+			<a href="/" target="_blank">View Site</a>
+			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
+		</nav>
+	</header>
+	<section class="admin-hero compact">
+		<div>
+			<p>{{if .IsNew}}New Moment{{else}}Moment Editor{{end}}</p>
+			<h1>{{if .IsNew}}Catch a small heartbeat.{{else}}Keep this fragment soft.{{end}}</h1>
+		</div>
+		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+	</section>
+	<main class="admin-shell">
+		<form class="admin-panel editor-panel" method="post" action="{{if .IsNew}}/admin/moments{{else}}/admin/moments/{{.Moment.ID}}{{end}}">
+			<div class="panel-title">
+				<h1>{{if .IsNew}}New Moment{{else}}Edit Moment{{end}}</h1>
+				<div class="actions">
+					<a class="button" href="/admin/moments">Cancel</a>
+					<button class="primary" type="submit">Save</button>
+				</div>
+			</div>
+			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
+			<div class="editor-grid">
+				<section class="editor-main">
+					<label>Moment<textarea class="content-input" name="content" rows="10" required>{{.Moment.Content}}</textarea></label>
+				</section>
+				<aside class="editor-side">
+					<label>Author<input type="text" name="author" value="{{if .Moment.Author}}{{.Moment.Author}}{{else}}{{.Site.Author}}{{end}}" required></label>
+					<label>Status
+						<select name="status">
+							<option value="published" {{if ne .Moment.Status "draft"}}selected{{end}}>Published</option>
+							<option value="draft" {{if eq .Moment.Status "draft"}}selected{{end}}>Draft</option>
+						</select>
+					</label>
+					<p class="form-note">Moments appear on the public timeline at <a href="/moments" target="_blank">/moments</a>.</p>
+				</aside>
+			</div>
+		</form>
+	</main>
+</body>
+</html>
+

@@ -1141,6 +1141,121 @@ textarea:disabled,
 	text-align: center;
 }
 
+.sakurairo-moments-layout {
+	margin-top: 32px;
+}
+
+.moments-hero {
+	backdrop-filter: blur(14px);
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 252, 0.72)),
+		url("/static/theme/content-image/d-2.jpg") center / cover no-repeat;
+	border: 1px solid rgba(255, 255, 255, 0.84);
+	border-radius: 8px;
+	box-shadow: 0 18px 44px rgba(117, 79, 99, 0.12);
+	box-sizing: border-box;
+	margin-bottom: 24px;
+	padding: 34px 28px;
+	text-align: center;
+}
+
+.moments-hero h1 {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: clamp(30px, 4.6vw, 46px);
+	font-weight: 400;
+	letter-spacing: 0;
+	margin: 4px 0 8px;
+}
+
+.moments-hero p:last-child {
+	color: var(--sakura-muted);
+	font-size: 14px;
+	line-height: 1.8;
+	margin: 0;
+}
+
+.moments-timeline {
+	display: grid;
+	gap: 18px;
+	position: relative;
+}
+
+.moments-timeline::before {
+	background: linear-gradient(180deg, rgba(251, 152, 192, 0.38), rgba(251, 152, 192, 0.06));
+	content: "";
+	inset: 10px auto 10px 19px;
+	position: absolute;
+	width: 2px;
+}
+
+.moment-card {
+	display: grid;
+	gap: 14px;
+	grid-template-columns: 40px minmax(0, 1fr);
+	position: relative;
+}
+
+.moment-dot {
+	background: #fff;
+	border: 4px solid rgba(251, 152, 192, 0.55);
+	border-radius: 50%;
+	box-shadow: 0 8px 22px rgba(251, 152, 192, 0.18);
+	height: 14px;
+	margin-top: 24px;
+	width: 14px;
+	z-index: 1;
+}
+
+.moment-paper {
+	backdrop-filter: blur(12px);
+	background: rgba(255, 255, 255, 0.78);
+	border: 1px solid rgba(255, 255, 255, 0.84);
+	border-radius: 8px;
+	box-shadow: 0 14px 36px rgba(117, 79, 99, 0.1);
+	box-sizing: border-box;
+	padding: 18px 20px;
+}
+
+.moment-paper header {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.moment-paper img {
+	border: 3px solid rgba(255, 255, 255, 0.92);
+	border-radius: 50%;
+	box-shadow: 0 8px 18px rgba(251, 152, 192, 0.16);
+	height: 44px;
+	object-fit: cover;
+	width: 44px;
+}
+
+.moment-paper strong {
+	color: var(--sakura-ink);
+	display: block;
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 17px;
+	font-weight: 400;
+}
+
+.moment-paper span {
+	color: var(--sakura-muted);
+	display: block;
+	font-size: 12px;
+	margin-top: 2px;
+}
+
+.moment-paper p {
+	color: #5e5660;
+	font-size: 15px;
+	line-height: 1.9;
+	margin: 0;
+	white-space: pre-wrap;
+}
+
 .content-area.with-sidebar {
 	align-items: start;
 	box-sizing: border-box;

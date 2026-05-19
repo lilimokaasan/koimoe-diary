@@ -29,6 +29,7 @@ type Controller struct {
 	posts    *store.PostStore
 	settings *store.SettingsStore
 	links    *store.LinkStore
+	moments  *store.MomentStore
 	renderer *view.Renderer
 }
 
@@ -42,6 +43,8 @@ type PageData struct {
 	Post        models.Post
 	FriendLinks []models.FriendLink
 	FriendLink  models.FriendLink
+	Moments     []models.Moment
+	Moment      models.Moment
 	Settings    config.Site
 	Navigation  string
 	ContentHTML string
@@ -50,8 +53,8 @@ type PageData struct {
 	Now         time.Time
 }
 
-func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, moments *store.MomentStore, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, moments: moments, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -71,6 +74,12 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/admin/links/{id}/edit", c.EditLink)
 	server.BindHandler("POST:/admin/links/{id}", c.SaveLink)
 	server.BindHandler("POST:/admin/links/{id}/delete", c.DeleteLink)
+	server.BindHandler("GET:/admin/moments", c.Moments)
+	server.BindHandler("GET:/admin/moments/new", c.NewMoment)
+	server.BindHandler("POST:/admin/moments", c.SaveMoment)
+	server.BindHandler("GET:/admin/moments/{id}/edit", c.EditMoment)
+	server.BindHandler("POST:/admin/moments/{id}", c.SaveMoment)
+	server.BindHandler("POST:/admin/moments/{id}/delete", c.DeleteMoment)
 	server.BindHandler("GET:/admin/posts/new", c.NewPost)
 	server.BindHandler("POST:/admin/posts", c.SavePost)
 	server.BindHandler("GET:/admin/posts/{id}/edit", c.EditPost)
@@ -358,6 +367,108 @@ func (c *Controller) DeleteLink(r *ghttp.Request) {
 	r.Response.RedirectTo("/admin/links?saved=1", http.StatusSeeOther)
 }
 
+func (c *Controller) Moments(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	moments, err := c.moments.ListAdmin(r.Context(), 200)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_moments.tmpl", PageData{
+		Site:    c.cfg.GetSite(),
+		Title:   "Moments - " + c.cfg.GetSite().Name,
+		Message: r.GetQuery("saved").String(),
+		Moments: moments,
+		Now:     time.Now(),
+	})
+}
+
+func (c *Controller) NewMoment(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	c.render(r, "admin_moment_form.tmpl", PageData{
+		Site:  c.cfg.GetSite(),
+		Title: "New Moment - " + c.cfg.GetSite().Name,
+		Moment: models.Moment{
+			Author: c.cfg.GetSite().Author,
+			Status: "published",
+		},
+		IsNew: true,
+		Now:   time.Now(),
+	})
+}
+
+func (c *Controller) EditMoment(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	moment, err := c.moments.ByID(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.WriteStatus(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_moment_form.tmpl", PageData{
+		Site:    c.cfg.GetSite(),
+		Title:   "Edit Moment - " + c.cfg.GetSite().Name,
+		Message: r.GetQuery("saved").String(),
+		Moment:  moment,
+		Now:     time.Now(),
+	})
+}
+
+func (c *Controller) SaveMoment(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	input := store.MomentInput{
+		ID:      id,
+		Content: r.GetForm("content").String(),
+		Author:  r.GetForm("author").String(),
+		Status:  r.GetForm("status").String(),
+	}
+	if strings.TrimSpace(input.Author) == "" {
+		input.Author = c.cfg.GetSite().Author
+	}
+	if strings.TrimSpace(input.Content) == "" {
+		c.render(r, "admin_moment_form.tmpl", PageData{
+			Site:   c.cfg.GetSite(),
+			Title:  "Moment Form - " + c.cfg.GetSite().Name,
+			Error:  "Content is required.",
+			Moment: momentFromInput(input),
+			IsNew:  id == 0,
+			Now:    time.Now(),
+		})
+		return
+	}
+	momentID, err := c.moments.Save(r.Context(), input)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/moments/"+strconv.FormatInt(momentID, 10)+"/edit?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) DeleteMoment(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	if err := c.moments.Delete(r.Context(), id); err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/moments?saved=1", http.StatusSeeOther)
+}
+
 func (c *Controller) NewPost(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
@@ -555,6 +666,19 @@ func friendLinkFromInput(input store.FriendLinkInput) models.FriendLink {
 		Category: models.FriendLinkCategory{
 			Name: strings.TrimSpace(input.CategoryName),
 		},
+	}
+}
+
+func momentFromInput(input store.MomentInput) models.Moment {
+	status := strings.TrimSpace(input.Status)
+	if status != "draft" {
+		status = "published"
+	}
+	return models.Moment{
+		ID:      input.ID,
+		Content: strings.TrimSpace(input.Content),
+		Author:  strings.TrimSpace(input.Author),
+		Status:  status,
 	}
 }
 

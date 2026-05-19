@@ -1,0 +1,45 @@
+{{template "head" .}}
+{{template "site_header" .}}
+<div id="primary" class="content-area with-sidebar sakurairo-moments-layout">
+	<main id="main" class="site-main" role="main">
+		<section class="moments-hero">
+			<p class="home-kicker"><i class="iconfont icon-sakura"></i> KoiMoe Moments</p>
+			<h1>{{.SectionTitle}}</h1>
+			<p>Small notes, tiny heartbeats, and little things worth keeping.</p>
+		</section>
+		<section class="moments-timeline" aria-label="Moments timeline">
+			{{range .Moments}}
+			<article class="moment-card">
+				<div class="moment-dot"></div>
+				<div class="moment-paper">
+					<header>
+						<img src="{{$.Site.Avatar}}" alt="{{.Author}}">
+						<div>
+							<strong>{{.Author}}</strong>
+							<span>{{since .CreatedAt}}</span>
+						</div>
+					</header>
+					<p>{{.Content}}</p>
+				</div>
+			</article>
+			{{else}}
+			<article class="moment-card empty-moment">
+				<div class="moment-dot"></div>
+				<div class="moment-paper">
+					<header>
+						<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+						<div>
+							<strong>{{.Site.Author}}</strong>
+							<span>Still quiet</span>
+						</div>
+					</header>
+					<p>No moments yet. The timeline is waiting for its first small note.</p>
+				</div>
+			</article>
+			{{end}}
+		</section>
+	</main>
+	{{template "sidebar" .}}
+</div>
+{{template "site_footer" .}}
+

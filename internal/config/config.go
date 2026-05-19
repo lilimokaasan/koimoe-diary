@@ -76,6 +76,7 @@ func FromEnv() Config {
 				{Label: "Home", URL: "/"},
 				{Label: "Archives", URL: "/archives"},
 				{Label: "Links", URL: "/links"},
+				{Label: "Moments", URL: "/moments"},
 				{Label: "Search", URL: "/search"},
 				{Label: "Admin Login", URL: "/admin/login"},
 			},

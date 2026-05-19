@@ -32,6 +32,7 @@ type Controller struct {
 	cfg      *config.Config
 	posts    *store.PostStore
 	links    *store.LinkStore
+	moments  *store.MomentStore
 	renderer *view.Renderer
 }
 
@@ -50,6 +51,7 @@ type PageData struct {
 	NextPost         models.Post
 	ArchiveGroups    []models.ArchiveGroup
 	LinkCategories   []models.FriendLinkCategory
+	Moments          []models.Moment
 	FeaturedImages   []string
 	Comments         []models.Comment
 	CommentOK        bool
@@ -75,8 +77,8 @@ type PageData struct {
 	ErrorActionURL   string
 }
 
-func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, links: links, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, moments *store.MomentStore, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, links: links, moments: moments, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -86,6 +88,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/archive", c.Archive)
 	server.BindHandler("GET:/archives", c.Archives)
 	server.BindHandler("GET:/links", c.Links)
+	server.BindHandler("GET:/moments", c.Moments)
 	server.BindHandler("GET:/feed", c.Feed)
 	server.BindHandler("GET:/feed.xml", c.Feed)
 	server.BindHandler("HEAD:/feed", c.Feed)
@@ -281,6 +284,22 @@ func (c *Controller) Links(r *ghttp.Request) {
 	})
 }
 
+func (c *Controller) Moments(r *ghttp.Request) {
+	moments, err := c.moments.ListPublished(r.Context(), 120)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "moments.tmpl", PageData{
+		Site:         c.cfg.GetSite(),
+		Title:        "Moments - " + c.cfg.GetSite().Name,
+		Description:  "Small diary fragments from " + c.cfg.GetSite().Name + ".",
+		SectionTitle: "Moments",
+		Moments:      moments,
+		Now:          time.Now(),
+	})
+}
+
 func (c *Controller) Feed(r *ghttp.Request) {
 	posts, err := c.posts.ListPublished(r.Context(), 20)
 	if err != nil {
@@ -363,6 +382,7 @@ func (c *Controller) Sitemap(r *ghttp.Request) {
 			{Loc: baseURL + "/", LastMod: latest.Format("2006-01-02"), ChangeFreq: "daily", Priority: "1.0"},
 			{Loc: baseURL + "/archives", LastMod: latest.Format("2006-01-02"), ChangeFreq: "weekly", Priority: "0.7"},
 			{Loc: baseURL + "/links", LastMod: now.Format("2006-01-02"), ChangeFreq: "monthly", Priority: "0.5"},
+			{Loc: baseURL + "/moments", LastMod: now.Format("2006-01-02"), ChangeFreq: "weekly", Priority: "0.5"},
 			{Loc: baseURL + "/search", LastMod: now.Format("2006-01-02"), ChangeFreq: "monthly", Priority: "0.3"},
 		},
 	}
