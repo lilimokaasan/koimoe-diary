@@ -1,0 +1,48 @@
+{{template "head" .}}
+{{template "site_header" .}}
+<div id="primary" class="content-area with-sidebar single-post-layout">
+	<main id="main" class="site-main" role="main">
+		<div class="admin-preview-banner">
+			<span>Preview</span>
+			<strong>{{if eq .Post.Status "draft"}}Draft{{else}}Published{{end}}</strong>
+			<a href="/admin/posts/{{.Post.ID}}/edit">Back to editor</a>
+		</div>
+		<article class="post type-post status-publish sakurairo-single">
+			{{if .Post.CoverImage}}<div class="single-cover" style="background-image:url('{{.Post.CoverImage}}')"></div>{{end}}
+			<header class="entry-header">
+				<p class="single-kicker"><i class="iconfont icon-sakura"></i> {{.Site.Name}}</p>
+				<h1 class="entry-title">{{.Post.Title}}</h1>
+				<div class="entry-census">
+					<span><i class="iconfont icon-time"></i>{{since .Post.PublishedAt}}</span>
+					<span><i class="iconfont icon-attention"></i>{{.Post.Views}} Views</span>
+					<span><i class="fa fa-heart-o" aria-hidden="true"></i>{{.Post.Likes}} Likes</span>
+					<span><i class="iconfont icon-mark"></i>{{.Post.CommentCount}} Comments</span>
+				</div>
+			</header>
+			<div class="entry-content">
+				{{.Post.ContentHTML}}
+			</div>
+			<footer class="post-footer">
+				<div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> Attribution-NonCommercial-ShareAlike 4.0 International</a></div>
+				<div class="single-taxonomy">
+					{{if .Post.Category.ID}}<div class="post-tags"><i class="fa fa-folder-o" aria-hidden="true"></i> <a href="/category/{{.Post.Category.Slug}}">{{.Post.Category.Name}}</a></div>{{end}}
+					{{if .Post.Tags}}<div class="post-tags"><i class="iconfont icon-tags"></i> {{range .Post.Tags}}<a href="/tag/{{.Slug}}">{{.Name}}</a> {{end}}</div>{{end}}
+				</div>
+			</footer>
+		</article>
+		<section class="single-author">
+			<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+			<div>
+				<p>Written by</p>
+				<h2>{{.Site.Author}}</h2>
+				<span>{{.Site.Description}}</span>
+			</div>
+			<div class="single-actions">
+				<a href="/admin/posts/{{.Post.ID}}/edit"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
+				{{if ne .Post.Status "draft"}}<a href="/post/{{.Post.Slug}}"><i class="fa fa-external-link" aria-hidden="true"></i> Public post</a>{{end}}
+			</div>
+		</section>
+	</main>
+	{{template "sidebar" .}}
+</div>
+{{template "site_footer" .}}

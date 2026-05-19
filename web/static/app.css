@@ -116,6 +116,46 @@ textarea:disabled,
 	cursor: url("/static/theme/cursor/No_Disponible.cur"), not-allowed;
 }
 
+.admin-preview-banner {
+	align-items: center;
+	backdrop-filter: blur(14px);
+	background: rgba(255, 247, 251, 0.88);
+	border: 1px solid rgba(255, 255, 255, 0.82);
+	border-radius: 8px;
+	box-shadow: 0 16px 38px rgba(117, 79, 99, 0.12);
+	box-sizing: border-box;
+	color: var(--sakura-muted);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 0 0 18px;
+	padding: 13px 16px;
+}
+
+.admin-preview-banner span {
+	color: var(--sakura-pink);
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.admin-preview-banner strong {
+	color: var(--sakura-ink);
+	font-weight: 700;
+	margin-right: auto;
+}
+
+.admin-preview-banner a {
+	background: rgba(255, 255, 255, 0.86);
+	border: 1px solid rgba(251, 152, 192, 0.26);
+	border-radius: 8px;
+	color: var(--sakura-pink);
+	font-size: 13px;
+	font-weight: 700;
+	padding: 8px 12px;
+	text-decoration: none;
+}
+
 .centerbg {
 	background-position: center;
 	background-size: cover;

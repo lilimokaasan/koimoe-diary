@@ -34,27 +34,38 @@ type Controller struct {
 }
 
 type PageData struct {
-	Site        config.Site
-	Title       string
-	Error       string
-	Message     string
-	Posts       []models.Post
-	Comments    []models.Comment
-	Post        models.Post
-	FriendLinks []models.FriendLink
-	FriendLink  models.FriendLink
-	Moments     []models.Moment
-	Moment      models.Moment
-	Categories  []models.Category
-	Category    models.Category
-	Tags        []models.Tag
-	Tag         models.Tag
-	Settings    config.Site
-	Navigation  string
-	ContentHTML string
-	PostTags    string
-	IsNew       bool
-	Now         time.Time
+	Site          config.Site
+	Title         string
+	Description   string
+	CanonicalURL  string
+	MetaImage     string
+	MetaType      string
+	Error         string
+	Message       string
+	Posts         []models.Post
+	Comments      []models.Comment
+	Post          models.Post
+	FriendLinks   []models.FriendLink
+	FriendLink    models.FriendLink
+	Moments       []models.Moment
+	Moment        models.Moment
+	Categories    []models.Category
+	Category      models.Category
+	Tags          []models.Tag
+	Tag           models.Tag
+	PreviousPost  models.Post
+	NextPost      models.Post
+	RecentPosts   []models.Post
+	PostTotal     int
+	CommentTotal  int
+	Settings      config.Site
+	Navigation    string
+	ContentHTML   string
+	PostTags      string
+	IsNew         bool
+	Now           time.Time
+	AdminLoggedIn bool
+	ShowAdminNav  bool
 }
 
 func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, moments *store.MomentStore, renderer *view.Renderer) *Controller {
@@ -98,6 +109,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/admin/posts/new", c.NewPost)
 	server.BindHandler("POST:/admin/posts", c.SavePost)
 	server.BindHandler("GET:/admin/posts/{id}/edit", c.EditPost)
+	server.BindHandler("GET:/admin/posts/{id}/preview", c.PreviewPost)
 	server.BindHandler("POST:/admin/posts/{id}", c.SavePost)
 }
 
@@ -701,6 +713,28 @@ func (c *Controller) EditPost(r *ghttp.Request) {
 	c.render(r, "admin_post_form.tmpl", data)
 }
 
+func (c *Controller) PreviewPost(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	post, err := c.posts.ByID(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.WriteStatus(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	data, err := c.previewData(r, post)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_post_preview.tmpl", data)
+}
+
 func (c *Controller) SavePost(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
@@ -806,6 +840,46 @@ func (c *Controller) formData(post models.Post, title string, errText string) Pa
 		PostTags:    strings.Join(tags, ", "),
 		Now:         time.Now(),
 	}
+}
+
+func (c *Controller) previewData(r *ghttp.Request, post models.Post) (PageData, error) {
+	recentPosts, err := c.posts.ListRecent(r.Context(), 5)
+	if err != nil {
+		return PageData{}, err
+	}
+	categories, err := c.posts.ListCategories(r.Context())
+	if err != nil {
+		return PageData{}, err
+	}
+	tags, err := c.posts.ListTags(r.Context())
+	if err != nil {
+		return PageData{}, err
+	}
+	postTotal, err := c.posts.CountPublished(r.Context())
+	if err != nil {
+		return PageData{}, err
+	}
+	commentTotal, err := c.posts.CountComments(r.Context())
+	if err != nil {
+		return PageData{}, err
+	}
+	return PageData{
+		Site:          c.cfg.GetSite(),
+		Title:         "Preview: " + post.Title + " - " + c.cfg.GetSite().Name,
+		Description:   post.Excerpt,
+		CanonicalURL:  "/admin/posts/" + strconv.FormatInt(post.ID, 10) + "/preview",
+		MetaImage:     post.CoverImage,
+		MetaType:      "article",
+		Post:          post,
+		RecentPosts:   recentPosts,
+		Categories:    categories,
+		Tags:          tags,
+		PostTotal:     postTotal,
+		CommentTotal:  commentTotal,
+		Now:           time.Now(),
+		AdminLoggedIn: true,
+		ShowAdminNav:  false,
+	}, nil
 }
 
 func (c *Controller) saveCoverUpload(r *ghttp.Request) (string, string) {

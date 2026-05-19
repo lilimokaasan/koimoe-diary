@@ -33,6 +33,7 @@
 				<h1>{{if .IsNew}}New Post{{else}}Edit Post{{end}}</h1>
 				<div class="actions">
 					<a class="button" href="/admin">Cancel</a>
+					{{if not .IsNew}}<a class="button" href="/admin/posts/{{.Post.ID}}/preview" target="_blank" rel="noopener noreferrer">Preview</a>{{end}}
 					<button class="primary" type="submit">Save</button>
 				</div>
 			</div>
