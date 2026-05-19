@@ -9,7 +9,9 @@ param(
 	[string]$AppDir = "/opt/sakurairo-go",
 	[string]$ServiceName = "sakurairo-go.service",
 	[string]$GoExe = "C:\Program Files\Go\bin\go.exe",
+	[string]$LockPath = (Join-Path $env:TEMP "sakurairo-go-deploy.lock"),
 	[switch]$AllowDirty,
+	[switch]$SkipLock,
 	[switch]$SkipLocalTests,
 	[switch]$SkipPush,
 	[switch]$SkipRemoteDeploy
@@ -42,6 +44,22 @@ function Invoke-Checked {
 		}
 	} finally {
 		Pop-Location
+	}
+}
+
+$script:lockStream = $null
+try {
+if (-not $SkipLock) {
+	Invoke-Step "Acquire deployment lock" {
+		try {
+			$script:lockStream = [System.IO.File]::Open($LockPath, [System.IO.FileMode]::CreateNew, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+			$lockInfo = [System.Text.Encoding]::UTF8.GetBytes("pid=$PID started=$(Get-Date -Format o)`n")
+			$script:lockStream.Write($lockInfo, 0, $lockInfo.Length)
+			$script:lockStream.Flush()
+			Write-Host "Lock: $LockPath"
+		} catch {
+			throw "Another deployment appears to be running, or a stale lock exists at $LockPath. Remove it only after confirming no deploy is active."
+		}
 	}
 }
 
@@ -89,6 +107,10 @@ if (-not $SkipRemoteDeploy) {
 		$stamp = "deploy_${head}_$(Get-Date -Format yyyyMMddHHmmss)"
 		$remoteScript = @"
 set -e
+if command -v flock >/dev/null 2>&1; then
+  exec 9>/tmp/sakurairo-go-deploy.lock
+  flock -n 9 || { echo 'Another remote deployment is already running.'; exit 75; }
+fi
 if [ ! -d '$ServerCheckout/.git' ]; then
   git clone '/home/ubuntu/sakurairo-go.git' '$ServerCheckout'
 else
@@ -117,3 +139,12 @@ curl -s -o /dev/null -w '%{http_code} %{content_type}\n' https://blog.koimoe.com
 
 Write-Host ""
 Write-Host "Deployment flow completed." -ForegroundColor Green
+} finally {
+	if ($script:lockStream) {
+		$script:lockStream.Close()
+		$script:lockStream.Dispose()
+		if (Test-Path -LiteralPath $LockPath) {
+			Remove-Item -LiteralPath $LockPath -Force
+		}
+	}
+}
