@@ -57,6 +57,12 @@ body.admin-page::after {
 	z-index: 0;
 }
 
+body.admin-is-loading .admin-hero,
+body.admin-is-loading .admin-shell {
+	opacity: 0.58;
+	transition: opacity 0.16s ease;
+}
+
 .auth-bg {
 	background:
 		linear-gradient(90deg, rgba(34, 19, 48, 0.26), rgba(255, 239, 247, 0.28) 42%, rgba(255, 255, 255, 0.48)),
