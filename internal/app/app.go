@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -91,6 +92,10 @@ func New() (*App, error) {
 	server.SetAddr(cfg.Addr)
 	server.Use(requestLogger)
 	server.AddStaticPath("/static", cfg.StaticDir)
+	server.BindHandler("GET:/favicon.png", faviconHandler(cfg.StaticDir, "favicon.png", "image/png"))
+	server.BindHandler("HEAD:/favicon.png", faviconHandler(cfg.StaticDir, "favicon.png", "image/png"))
+	server.BindHandler("GET:/favicon.ico", faviconHandler(cfg.StaticDir, "favicon.ico", "image/x-icon"))
+	server.BindHandler("HEAD:/favicon.ico", faviconHandler(cfg.StaticDir, "favicon.ico", "image/x-icon"))
 	server.BindHandler("GET:/api/health", func(r *ghttp.Request) {
 		r.Response.WriteJson(g.Map{
 			"ok":         true,
@@ -143,4 +148,12 @@ func requestLogger(r *ghttp.Request) {
 
 func isQuietAssetPath(path string) bool {
 	return strings.HasPrefix(path, "/static/") || path == "/favicon.ico" || path == "/favicon.png"
+}
+
+func faviconHandler(staticDir string, name string, contentType string) ghttp.HandlerFunc {
+	return func(r *ghttp.Request) {
+		r.Response.Header().Set("Content-Type", contentType)
+		r.Response.Header().Set("Cache-Control", "public, max-age=604800")
+		http.ServeFile(r.Response.ResponseWriter, r.Request, filepath.Join(staticDir, name))
+	}
 }
