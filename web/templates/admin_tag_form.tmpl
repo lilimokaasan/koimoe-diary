@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260521-admin-user-chip">
+	<link rel="stylesheet" href="/static/admin.css?v=20260521-sidebar-site-card">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -19,7 +19,10 @@
 			<a href="/admin/media">Media</a>
 			<a href="/admin/taxonomy">Taxonomy</a>
 			<a href="/admin/settings">Settings</a>
-			<a href="/" target="_blank">View Site</a>
+			<div class="admin-sidebar-site">
+				<p>{{.Site.Description}}</p>
+				<a href="/" target="_blank">View Site</a>
+			</div>
 			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
 		</nav>
 	</header>
