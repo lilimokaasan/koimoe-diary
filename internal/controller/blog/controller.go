@@ -672,7 +672,7 @@ func (c *Controller) notifyNewComment(comment models.Comment, post models.Post, 
 		return
 	}
 	go func() {
-		if err := c.mailer.SendNewComment(comment, post, c.cfg.GetSite(), postURL); err != nil && c.cfg.Mail.Enabled {
+		if err := c.mailer.SendNewComment(comment, post, c.cfg.GetSite(), postURL); err != nil && c.cfg.GetMail().Enabled {
 			log.Printf("send comment notification: %v", err)
 		}
 	}()

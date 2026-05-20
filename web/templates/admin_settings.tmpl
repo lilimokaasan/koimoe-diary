@@ -71,13 +71,43 @@
 						<div>
 							<p>Mail System</p>
 							<strong>{{if .MailReady}}Enabled{{else}}Not configured{{end}}</strong>
-							<span>Host: {{if .Mail.Host}}{{.Mail.Host}}:{{.Mail.Port}}{{else}}Set SMTP_HOST and SMTP_PORT{{end}}</span>
-							<span>Admin: {{if .Mail.AdminEmail}}{{.Mail.AdminEmail}}{{else}}Set MAIL_ADMIN_EMAIL{{end}}</span>
+							<span>Host: {{if .Mail.Host}}{{.Mail.Host}}:{{.Mail.Port}}{{else}}Configure SMTP below{{end}}</span>
+							<span>Admin: {{if .Mail.AdminEmail}}{{.Mail.AdminEmail}}{{else}}Set an admin mailbox{{end}}</span>
 						</div>
 						<button type="submit" form="mail-test-form" {{if not .MailReady}}disabled{{end}}>Send test mail</button>
 					</div>
 				</section>
 			</div>
+			<section class="settings-section">
+				<div class="panel-title slim">
+					<h1>Mail System</h1>
+					<p>Configure SMTP for comments, test mail, and password verification codes.</p>
+				</div>
+				<div class="settings-grid">
+					<section>
+						<label class="toggle-field">
+							<input type="checkbox" name="mail_enabled" value="1" {{if .Mail.Enabled}}checked{{end}}>
+							<span>Enable mail delivery</span>
+						</label>
+						<label>SMTP Host<input type="text" name="smtp_host" value="{{.Mail.Host}}" placeholder="smtpdm.aliyun.com"></label>
+						<label>SMTP Port<input type="number" name="smtp_port" value="{{.Mail.Port}}" min="1" max="65535" placeholder="465"></label>
+						<label>TLS Mode
+							<select name="smtp_tls_mode">
+								<option value="implicit" {{if eq .Mail.TLSMode "implicit"}}selected{{end}}>implicit SSL/TLS</option>
+								<option value="starttls" {{if eq .Mail.TLSMode "starttls"}}selected{{end}}>STARTTLS</option>
+								<option value="none" {{if eq .Mail.TLSMode "none"}}selected{{end}}>none</option>
+							</select>
+						</label>
+					</section>
+					<section>
+						<label>SMTP Username<input type="text" name="smtp_username" value="{{.Mail.Username}}" placeholder="noreply@koimoe.com"></label>
+						<label>SMTP Password<input type="password" name="smtp_password" autocomplete="new-password" placeholder="{{if .MailPasswordSet}}Saved. Leave blank to keep it.{{else}}Aliyun SMTP password{{end}}"></label>
+						<label>Sender Address<input type="email" name="smtp_from" value="{{.Mail.From}}" placeholder="noreply@koimoe.com"></label>
+						<label>Sender Name<input type="text" name="smtp_from_name" value="{{.Mail.FromName}}" placeholder="KoiMoe Diary"></label>
+						<label>Admin Mailbox<input type="email" name="mail_admin_email" value="{{.Mail.AdminEmail}}" placeholder="your mailbox for tests and codes"></label>
+					</section>
+				</div>
+			</section>
 		</form>
 		<form id="mail-test-form" method="post" action="/admin/mail/test"></form>
 		<section class="admin-panel password-panel">

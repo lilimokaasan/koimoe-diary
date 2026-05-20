@@ -379,6 +379,68 @@ func mailReady(mail config.Mail) bool {
 	return mail.Enabled && mail.Host != "" && mail.Port > 0 && mail.From != "" && mail.AdminEmail != ""
 }
 
+func normalizeMailSettings(mail config.Mail, fallback config.Mail) config.Mail {
+	mail.Host = strings.TrimSpace(mail.Host)
+	mail.Username = strings.TrimSpace(mail.Username)
+	mail.From = strings.TrimSpace(mail.From)
+	mail.FromName = strings.TrimSpace(mail.FromName)
+	mail.AdminEmail = strings.TrimSpace(mail.AdminEmail)
+	mail.TLSMode = strings.ToLower(strings.TrimSpace(mail.TLSMode))
+	if mail.Port <= 0 {
+		mail.Port = fallback.Port
+	}
+	if mail.Port <= 0 {
+		mail.Port = 465
+	}
+	if mail.Password == "" {
+		mail.Password = fallback.Password
+	}
+	if mail.FromName == "" {
+		mail.FromName = fallback.FromName
+	}
+	if mail.FromName == "" {
+		mail.FromName = "KoiMoe Diary"
+	}
+	if mail.AdminEmail == "" && mail.From != "" {
+		mail.AdminEmail = fallback.AdminEmail
+	}
+	if mail.TLSMode != "implicit" && mail.TLSMode != "starttls" && mail.TLSMode != "none" {
+		mail.TLSMode = fallback.TLSMode
+	}
+	if mail.TLSMode != "implicit" && mail.TLSMode != "starttls" && mail.TLSMode != "none" {
+		mail.TLSMode = "implicit"
+	}
+	return mail
+}
+
+func validateMailSettings(mail config.Mail) string {
+	if !mail.Enabled {
+		return ""
+	}
+	switch {
+	case mail.Host == "":
+		return "SMTP host is required when mail is enabled."
+	case mail.Port <= 0:
+		return "SMTP port is required when mail is enabled."
+	case mail.Username == "":
+		return "SMTP username is required when mail is enabled."
+	case mail.Password == "":
+		return "SMTP password is required when mail is enabled."
+	case mail.From == "":
+		return "Sender address is required when mail is enabled."
+	case !strings.Contains(mail.From, "@"):
+		return "Sender address looks invalid."
+	case mail.AdminEmail == "":
+		return "Admin email is required when mail is enabled."
+	case !strings.Contains(mail.AdminEmail, "@"):
+		return "Admin email looks invalid."
+	case mail.TLSMode != "implicit" && mail.TLSMode != "starttls" && mail.TLSMode != "none":
+		return "SMTP TLS mode must be implicit, starttls, or none."
+	default:
+		return ""
+	}
+}
+
 func (c *Controller) Media(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
