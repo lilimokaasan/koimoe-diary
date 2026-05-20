@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260521-sakura-bg-depth">
+	<link rel="stylesheet" href="/static/admin.css?v=20260521-globalbar">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -26,12 +26,22 @@
 			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
 		</nav>
 	</header>
+	<section class="admin-globalbar" aria-label="Admin tools">
+		<form class="admin-global-search" action="/search" method="get" target="_blank">
+			<input type="search" name="q" placeholder="Search posts, pages..." aria-label="Search site">
+			<button type="submit" aria-label="Search"></button>
+		</form>
+		<div class="admin-global-actions">
+			<a class="admin-tool-icon admin-tool-comments" href="/admin/comments" aria-label="Comments"></a>
+			<a class="admin-tool-icon admin-tool-settings" href="/admin/settings" aria-label="Settings"></a>
+			<div class="admin-user-chip" aria-label="{{.Site.Author}}"><img src="{{.Site.Avatar}}" alt="{{.Site.Author}}"><span>{{.Site.Author}}</span></div>
+		</div>
+	</section>
 	<section class="admin-hero compact">
 		<div>
 			<p>Posts</p>
 			<h1>Manage your posts.</h1>
 		</div>
-		<div class="admin-user-chip" aria-label="{{.Site.Author}}"><img src="{{.Site.Avatar}}" alt="{{.Site.Author}}"><span>{{.Site.Author}}</span></div>
 	</section>
 	<main class="admin-shell">
 		<section class="admin-panel">
