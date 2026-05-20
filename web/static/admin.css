@@ -321,6 +321,36 @@ body.admin-page::after {
 	width: 86px;
 }
 
+.admin-user-chip {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.62);
+	backdrop-filter: blur(16px) saturate(1.12);
+	border: 1px solid rgba(255, 255, 255, 0.72);
+	border-radius: 8px;
+	box-shadow: 0 16px 36px rgba(126, 64, 98, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.76);
+	box-sizing: border-box;
+	display: inline-flex;
+	gap: 10px;
+	min-height: 44px;
+	padding: 5px 12px 5px 6px;
+}
+
+.admin-user-chip img {
+	border: 3px solid rgba(255, 255, 255, 0.9);
+	border-radius: 50%;
+	box-shadow: 0 8px 18px rgba(124, 78, 102, 0.14);
+	height: 34px;
+	object-fit: cover;
+	width: 34px;
+}
+
+.admin-user-chip span {
+	color: #6f6670;
+	font-size: 13px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
 .admin-shell {
 	box-sizing: border-box;
 	margin: 0 0 0 244px;
@@ -1151,6 +1181,23 @@ button:disabled {
 	padding: 38px 48px 28px;
 }
 
+.admin-page .admin-hero::before {
+	background:
+		radial-gradient(circle at 16px 50%, rgba(126, 118, 132, 0.72) 2px, transparent 3px),
+		radial-gradient(circle at 47px 50%, rgba(126, 118, 132, 0.72) 2px, transparent 3px),
+		rgba(255, 255, 255, 0.54);
+	backdrop-filter: blur(16px) saturate(1.12);
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	border-radius: 8px;
+	box-shadow: 0 14px 30px rgba(126, 64, 98, 0.08);
+	content: "";
+	height: 32px;
+	position: absolute;
+	right: 176px;
+	top: 34px;
+	width: 64px;
+}
+
 .admin-page .admin-hero.compact {
 	min-height: 154px;
 }
@@ -1166,6 +1213,10 @@ button:disabled {
 	font-weight: 500;
 }
 
+.admin-page .admin-hero > div {
+	padding-right: 250px;
+}
+
 .admin-page .admin-hero span {
 	color: #8c8290;
 	display: block;
@@ -1173,9 +1224,15 @@ button:disabled {
 	margin-top: 9px;
 }
 
-.admin-page .admin-hero img {
-	height: 90px;
-	width: 90px;
+.admin-page .admin-user-chip {
+	position: absolute;
+	right: 48px;
+	top: 28px;
+}
+
+.admin-page .admin-user-chip img {
+	height: 34px;
+	width: 34px;
 }
 
 .admin-page .admin-shell {
@@ -1504,7 +1561,12 @@ button:disabled {
 		font-size: 26px;
 	}
 
-	.admin-hero img {
+	.admin-hero > img {
+		display: none;
+	}
+
+	.admin-page .admin-hero::before,
+	.admin-page .admin-user-chip {
 		display: none;
 	}
 

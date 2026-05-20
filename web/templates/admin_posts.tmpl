@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260521-admin-nav-init">
+	<link rel="stylesheet" href="/static/admin.css?v=20260521-admin-user-chip">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -28,7 +28,7 @@
 			<p>Posts</p>
 			<h1>Manage your posts.</h1>
 		</div>
-		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+		<div class="admin-user-chip" aria-label="{{.Site.Author}}"><img src="{{.Site.Avatar}}" alt="{{.Site.Author}}"><span>{{.Site.Author}}</span></div>
 	</section>
 	<main class="admin-shell">
 		<section class="admin-panel">
