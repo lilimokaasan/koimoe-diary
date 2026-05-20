@@ -292,12 +292,7 @@ func (c *Controller) RequestPasswordCode(r *ghttp.Request) {
 		To:      mailCfg.AdminEmail,
 		Subject: "[" + c.cfg.GetSite().Name + "] Password change verification",
 		Text:    fmt.Sprintf("Your password change verification code is %s. It expires in 10 minutes.", code),
-		HTML: fmt.Sprintf(`<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.7;color:#4b4350">
-  <h2 style="color:#e674a0;margin:0 0 12px">Password change verification</h2>
-  <p>Your verification code is:</p>
-  <p style="font-size:28px;letter-spacing:6px;color:#fb78ad;font-weight:700">%s</p>
-  <p style="font-size:13px;color:#8f8791">It expires in 10 minutes. If this was not you, leave the password unchanged.</p>
-</div>`, code),
+		HTML:    passwordVerificationHTML(c.cfg.GetSite().Name, code, 10),
 	}); err != nil {
 		c.render(r, "admin_settings.tmpl", c.settingsPageData("Could not send verification code: "+err.Error(), ""))
 		return
@@ -439,6 +434,61 @@ func validateMailSettings(mail config.Mail) string {
 	default:
 		return ""
 	}
+}
+
+func passwordVerificationHTML(siteName string, code string, expireMinutes int) string {
+	siteName = template.HTMLEscapeString(strings.TrimSpace(siteName))
+	if siteName == "" {
+		siteName = "KoiMoe Diary"
+	}
+	code = template.HTMLEscapeString(strings.TrimSpace(code))
+	expireLabel := template.HTMLEscapeString(strconv.Itoa(expireMinutes))
+	body := `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{site_name}} Password Verification</title>
+</head>
+<body style="margin:0;padding:0;background:#fff6fa;color:#4b4350;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',Arial,sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#fff6fa;margin:0;padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #ffe2ee;border-radius:14px;box-shadow:0 18px 50px rgba(251,152,192,0.16);overflow:hidden;">
+          <tr>
+            <td style="background:linear-gradient(135deg,#fff9fc,#ffeef6);padding:28px 30px 22px;text-align:center;border-bottom:1px solid #ffe3ee;">
+              <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#fb7fb4;font-weight:700;">{{site_name}}</div>
+              <h1 style="margin:12px 0 0;font-family:Georgia,'Times New Roman','Microsoft YaHei',serif;font-size:28px;line-height:1.35;font-weight:400;color:#3f3b43;">Password Verification</h1>
+              <p style="margin:10px 0 0;font-size:14px;line-height:1.8;color:#8f8791;">You requested an admin password change for {{site_name}}.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:30px;">
+              <p style="margin:0 0 18px;font-size:15px;line-height:1.8;color:#5b535f;">Enter the verification code below on the password change page:</p>
+              <div style="margin:0 auto 22px;padding:18px 16px;background:#fff1f7;border:1px solid #ffcfe3;border-radius:12px;text-align:center;">
+                <div style="font-size:34px;line-height:1.2;letter-spacing:8px;color:#fb78ad;font-weight:800;">{{code}}</div>
+              </div>
+              <p style="margin:0 0 14px;font-size:14px;line-height:1.8;color:#6f6670;">This code expires in <strong style="color:#e674a0;">{{expire_minutes}} minutes</strong>. To keep your account safe, do not share it with anyone.</p>
+              <p style="margin:0 0 22px;font-size:14px;line-height:1.8;color:#6f6670;">If you did not request this change, you can ignore this email. Your current password will remain unchanged.</p>
+              <div style="height:1px;background:#ffe2ee;margin:24px 0;"></div>
+              <p style="margin:0;font-size:12px;line-height:1.7;color:#a49aa5;">This security email was sent automatically by {{site_name}}. Please do not reply directly.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:18px 30px;background:#fffafd;text-align:center;border-top:1px solid #ffeaf2;">
+              <p style="margin:0;font-size:12px;line-height:1.7;color:#b09cab;">{{site_name}} - A soft diary for tiny heartbeats.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+	body = strings.ReplaceAll(body, "{{site_name}}", siteName)
+	body = strings.ReplaceAll(body, "{{code}}", code)
+	body = strings.ReplaceAll(body, "{{expire_minutes}}", expireLabel)
+	return body
 }
 
 func (c *Controller) Media(r *ghttp.Request) {
