@@ -42,12 +42,12 @@ body.admin-page::before {
 
 body.admin-page::after {
 	background:
-		linear-gradient(145deg, rgba(255, 255, 255, 0.64), rgba(255, 246, 251, 0.5)),
-		rgba(255, 255, 255, 0.42);
-	backdrop-filter: blur(22px) saturate(1.12);
-	border: 1px solid rgba(255, 255, 255, 0.72);
+		linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 246, 251, 0.26)),
+		rgba(255, 255, 255, 0.18);
+	backdrop-filter: blur(30px) saturate(1.16);
+	border: 1px solid rgba(255, 255, 255, 0.58);
 	border-radius: 8px;
-	box-shadow: 0 34px 90px rgba(126, 64, 98, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+	box-shadow: 0 34px 90px rgba(126, 64, 98, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.56);
 	content: "";
 	inset: var(--admin-frame-gap) var(--admin-frame-gap) var(--admin-frame-gap) calc(var(--admin-sidebar) + 18px);
 	pointer-events: none;
@@ -1209,8 +1209,8 @@ button:disabled {
 
 .admin-page .admin-hero {
 	background:
-		linear-gradient(90deg, rgba(255, 255, 255, 0.54), rgba(255, 247, 251, 0.34) 62%, rgba(255, 255, 255, 0.16));
-	border-bottom: 1px solid rgba(251, 152, 192, 0.12);
+		linear-gradient(90deg, rgba(255, 255, 255, 0.34), rgba(255, 247, 251, 0.2) 62%, rgba(255, 255, 255, 0.08));
+	border-bottom: 1px solid rgba(251, 152, 192, 0.09);
 	box-shadow: none;
 	margin: var(--admin-frame-gap) var(--admin-frame-gap) 0 calc(var(--admin-sidebar) + 18px);
 	min-height: 178px;
@@ -1280,10 +1280,10 @@ button:disabled {
 .admin-page .admin-panel,
 .admin-page .dashboard-stat {
 	background:
-		linear-gradient(145deg, rgba(255, 255, 255, 0.68), rgba(255, 247, 251, 0.48)),
-		rgba(255, 255, 255, 0.44);
-	border-color: rgba(255, 255, 255, 0.66);
-	box-shadow: 0 24px 58px rgba(126, 64, 98, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+		linear-gradient(145deg, rgba(255, 255, 255, 0.48), rgba(255, 247, 251, 0.28)),
+		rgba(255, 255, 255, 0.18);
+	border-color: rgba(255, 255, 255, 0.54);
+	box-shadow: 0 24px 58px rgba(126, 64, 98, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.56);
 }
 
 .dashboard-overview {
@@ -1295,8 +1295,8 @@ button:disabled {
 
 .dashboard-stat {
 	align-items: center;
-	backdrop-filter: blur(18px) saturate(1.12);
-	border: 1px solid rgba(255, 255, 255, 0.72);
+	backdrop-filter: blur(24px) saturate(1.16);
+	border: 1px solid rgba(255, 255, 255, 0.58);
 	border-radius: 8px;
 	box-sizing: border-box;
 	display: grid;
