@@ -2,13 +2,15 @@ param(
 	[string]$RepoPath = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
 	[string]$RemoteName = "deploy-server",
 	[string]$Branch = "master",
-	[string]$SshKey = "C:\Users\lhjer\.ssh\sakurairo_server_ed25519",
-	[string]$Server = "ubuntu@124.156.182.231",
+	[string]$SshKey = "C:\Users\lhjer\.ssh\koimoe_la_cn2_gia_ed25519",
+	[string]$Server = "root@104.194.86.132",
 	[int]$Port = 22,
-	[string]$ServerCheckout = "/home/ubuntu/sakurairo-go-src",
+	[string]$ServerBareRepo = "/opt/git/sakurairo-go.git",
+	[string]$ServerCheckout = "/opt/sakurairo-go-src",
 	[string]$AppDir = "/opt/sakurairo-go",
 	[string]$ServiceName = "sakurairo-go.service",
 	[string]$GoExe = "C:\Program Files\Go\bin\go.exe",
+	[string]$RemoteGoExe = "/usr/local/go/bin/go",
 	[string]$LockPath = (Join-Path $env:TEMP "sakurairo-go-deploy.lock"),
 	[switch]$AllowDirty,
 	[switch]$SkipLock,
@@ -112,24 +114,26 @@ if command -v flock >/dev/null 2>&1; then
   flock -n 9 || { echo 'Another remote deployment is already running.'; exit 75; }
 fi
 if [ ! -d '$ServerCheckout/.git' ]; then
-  git clone '/home/ubuntu/sakurairo-go.git' '$ServerCheckout'
+  git clone '$ServerBareRepo' '$ServerCheckout'
 else
   git -C '$ServerCheckout' fetch origin '$Branch'
   git -C '$ServerCheckout' checkout '$Branch'
   git -C '$ServerCheckout' reset --hard 'origin/$Branch'
 fi
 cd '$ServerCheckout'
-go test ./...
+export PATH='/usr/local/go/bin:/usr/bin:/bin:'"`$PATH"
+'$RemoteGoExe' test ./...
 build_time=`$(date -u +%Y-%m-%dT%H:%M:%SZ)
 ldflags="-X sakurairo-go/internal/buildinfo.Version=$head -X sakurairo-go/internal/buildinfo.Commit=$head -X sakurairo-go/internal/buildinfo.BuiltAt=`$build_time"
-go build -ldflags "`$ldflags" -o /tmp/sakurairo-built ./cmd/server
+'$RemoteGoExe' build -ldflags "`$ldflags" -o /tmp/sakurairo-built ./cmd/server
 cd '$AppDir'
-sudo cp sakurairo sakurairo.bak.$stamp
-sudo tar -czf web.bak.$stamp.tar.gz web
-sudo install -m 755 /tmp/sakurairo-built '$AppDir/sakurairo'
-sudo rm -rf '$AppDir/web'
-sudo cp -a '$ServerCheckout/web' '$AppDir/web'
-sudo systemctl restart '$ServiceName'
+cp sakurairo sakurairo.bak.$stamp
+tar -czf web.bak.$stamp.tar.gz web
+install -o koimoe -g koimoe -m 755 /tmp/sakurairo-built '$AppDir/sakurairo'
+rm -rf '$AppDir/web'
+cp -a '$ServerCheckout/web' '$AppDir/web'
+chown -R koimoe:koimoe '$AppDir/web'
+systemctl restart '$ServiceName'
 sleep 1
 systemctl is-active '$ServiceName'
 curl -fsS http://127.0.0.1:8081/api/health

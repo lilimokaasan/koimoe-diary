@@ -21,6 +21,14 @@ The script:
 - restarts `sakurairo-go.service`;
 - verifies `/api/health` and the public blog response.
 
+Current production defaults:
+
+- Server: `root@104.194.86.132`
+- SSH key: `C:\Users\lhjer\.ssh\koimoe_la_cn2_gia_ed25519`
+- Bare repo: `/opt/git/sakurairo-go.git`
+- Server build checkout: `/opt/sakurairo-go-src`
+- Remote Go: `/usr/local/go/bin/go`
+
 Useful validation commands:
 
 ```powershell
