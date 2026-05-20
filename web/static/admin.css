@@ -265,7 +265,7 @@ body.admin-page::after {
 	background:
 		linear-gradient(90deg, rgba(255, 255, 255, 0.84), rgba(255, 247, 251, 0.62) 54%, rgba(255, 255, 255, 0.5)),
 		linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(251, 152, 192, 0.08)),
-		url("/static/curated-sakura-images/originals/fuji-pagoda-sakura-02.jpg") center / cover no-repeat;
+		url("/static/admin-hero-bg.jpg") center / cover no-repeat;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.66);
 	box-sizing: border-box;
 	display: flex;
