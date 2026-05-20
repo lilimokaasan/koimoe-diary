@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260521-admin-glass-frame">
+	<link rel="stylesheet" href="/static/admin.css?v=20260521-admin-posts-list">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -23,78 +23,17 @@
 			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
 		</nav>
 	</header>
-	<section class="admin-hero">
+	<section class="admin-hero compact">
 		<div>
-			<p>Dashboard</p>
-			<h1>欢迎回来，{{.Site.Author}}</h1>
-			<span>今天又是充满灵感的一天呢~</span>
+			<p>Posts</p>
+			<h1>Manage your posts.</h1>
 		</div>
 		<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
 	</section>
 	<main class="admin-shell">
-		<section class="dashboard-overview" aria-label="Dashboard overview">
-			<article class="dashboard-stat stat-posts">
-				<span class="stat-icon"></span>
-				<div>
-					<p>文章总数</p>
-					<strong>{{.PostTotal}}</strong>
-					<small>温柔记录中</small>
-				</div>
-			</article>
-			<article class="dashboard-stat stat-comments">
-				<span class="stat-icon"></span>
-				<div>
-					<p>评论总数</p>
-					<strong>{{.CommentTotal}}</strong>
-					<small>小小回声</small>
-				</div>
-			</article>
-			<article class="dashboard-stat stat-views">
-				<span class="stat-icon"></span>
-				<div>
-					<p>访问总数</p>
-					<strong>{{.TotalViews}}</strong>
-					<small>来访足迹</small>
-				</div>
-			</article>
-			<article class="dashboard-stat stat-likes">
-				<span class="stat-icon"></span>
-				<div>
-					<p>喜欢总数</p>
-					<strong>{{.TotalLikes}}</strong>
-					<small>心动收藏</small>
-				</div>
-			</article>
-		</section>
-		<section class="dashboard-grid" aria-label="Dashboard details">
-			<article class="admin-panel dashboard-card dashboard-trend-card">
-				<div class="panel-title">
-					<h1>访问趋势</h1>
-					<div class="dashboard-tabs" aria-label="Range">
-						<span>今日</span>
-						<span>本周</span>
-						<span class="active">本月</span>
-					</div>
-				</div>
-				<div class="soft-chart" aria-hidden="true">
-					<span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-				</div>
-			</article>
-			<article class="admin-panel dashboard-card dashboard-notice-card">
-				<div class="panel-title">
-					<h1>系统通知</h1>
-					<a href="/admin/settings">查看设置</a>
-				</div>
-				<ul class="dashboard-notices">
-					<li><span></span>后台视觉已切换为柔和 Sakura 仪表盘风格。</li>
-					<li><span></span>发布、媒体库、邮件和主题设置仍在左侧导航中。</li>
-					<li><span></span>当前站点：{{.Site.Name}}</li>
-				</ul>
-			</article>
-		</section>
 		<section class="admin-panel">
 			<div class="panel-title">
-				<h1>最新文章</h1>
+				<h1>Posts</h1>
 				<a class="button primary" href="/admin/posts/new">New Post</a>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}

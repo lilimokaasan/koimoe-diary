@@ -73,8 +73,6 @@ type PageData struct {
 	RecentPosts     []models.Post
 	PostTotal       int
 	CommentTotal    int
-	TotalViews      int64
-	TotalLikes      int64
 	Settings        config.Site
 	Mail            config.Mail
 	MailReady       bool
@@ -625,27 +623,12 @@ func (c *Controller) Dashboard(r *ghttp.Request) {
 		c.error(r, err)
 		return
 	}
-	commentTotal, err := c.posts.CountComments(r.Context())
-	if err != nil {
-		c.error(r, err)
-		return
-	}
-	var totalViews int64
-	var totalLikes int64
-	for _, post := range posts {
-		totalViews += post.Views
-		totalLikes += post.Likes
-	}
 	c.render(r, "admin_posts.tmpl", PageData{
-		Site:         c.cfg.GetSite(),
-		Title:        "Posts - " + c.cfg.GetSite().Name,
-		Message:      r.GetQuery("saved").String(),
-		Posts:        posts,
-		PostTotal:    len(posts),
-		CommentTotal: commentTotal,
-		TotalViews:   totalViews,
-		TotalLikes:   totalLikes,
-		Now:          time.Now(),
+		Site:    c.cfg.GetSite(),
+		Title:   "Posts - " + c.cfg.GetSite().Name,
+		Message: r.GetQuery("saved").String(),
+		Posts:   posts,
+		Now:     time.Now(),
 	})
 }
 
