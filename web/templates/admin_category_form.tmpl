@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260521-globalbar">
+	<link rel="stylesheet" href="/static/admin.css?v=20260521-user-menu">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -23,7 +23,6 @@
 				<p>{{.Site.Description}}</p>
 				<a href="/" target="_blank">View Site</a>
 			</div>
-			<form method="post" action="/admin/logout"><button type="submit">Logout</button></form>
 		</nav>
 	</header>
 	<section class="admin-globalbar" aria-label="Admin tools">
@@ -34,7 +33,16 @@
 		<div class="admin-global-actions">
 			<a class="admin-tool-icon admin-tool-comments" href="/admin/comments" aria-label="Comments"></a>
 			<a class="admin-tool-icon admin-tool-settings" href="/admin/settings" aria-label="Settings"></a>
-			<div class="admin-user-chip" aria-label="{{.Site.Author}}"><img src="{{.Site.Avatar}}" alt="{{.Site.Author}}"><span>{{.Site.Author}}</span></div>
+			<div class="admin-user-menu">
+				<button class="admin-user-chip" type="button" aria-label="Account menu" aria-expanded="false">
+					<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}"><span>{{.Site.Author}}</span>
+				</button>
+				<div class="admin-user-dropdown" role="menu">
+					<a href="/admin/settings" role="menuitem">Profile</a>
+					<a href="/admin/settings" role="menuitem">Settings</a>
+					<form method="post" action="/admin/logout" role="none"><button type="submit" role="menuitem">Logout</button></form>
+				</div>
+			</div>
 		</div>
 	</section>
 	<section class="admin-hero compact">
@@ -66,6 +74,6 @@
 			<p class="form-note">Deleting a category only removes the shelf. Posts inside it stay safe and become uncategorized.</p>
 		</form>
 	</main>
-	<script src="/static/admin.js?v=20260521-nav-init"></script>
+	<script src="/static/admin.js?v=20260521-user-menu"></script>
 </body>
 </html>

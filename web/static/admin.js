@@ -76,3 +76,36 @@
 	nav.addEventListener("mouseleave", function () { moveTo(active || links[0]); });
 	window.addEventListener("resize", function () { moveTo(document.querySelector(".admin-topbar nav > a[aria-current='page']") || active || links[0]); });
 })();
+
+(function () {
+	var menu = document.querySelector(".admin-user-menu");
+	if (!menu) return;
+
+	var trigger = menu.querySelector(".admin-user-chip");
+	if (!trigger) return;
+
+	function setOpen(open) {
+		menu.classList.toggle("is-open", open);
+		trigger.setAttribute("aria-expanded", open ? "true" : "false");
+	}
+
+	trigger.addEventListener("click", function (event) {
+		event.stopPropagation();
+		setOpen(!menu.classList.contains("is-open"));
+	});
+
+	menu.addEventListener("click", function (event) {
+		event.stopPropagation();
+	});
+
+	document.addEventListener("click", function () {
+		setOpen(false);
+	});
+
+	document.addEventListener("keydown", function (event) {
+		if (event.key === "Escape") {
+			setOpen(false);
+			trigger.focus();
+		}
+	});
+})();

@@ -528,6 +528,23 @@ body.admin-page::after {
 	padding: 5px 12px 5px 6px;
 }
 
+button.admin-user-chip {
+	color: inherit;
+	cursor: pointer;
+	font: inherit;
+}
+
+button.admin-user-chip::after {
+	border: solid rgba(111, 102, 112, 0.72);
+	border-width: 0 1.5px 1.5px 0;
+	content: "";
+	height: 6px;
+	margin-left: 2px;
+	transform: rotate(45deg) translateY(-1px);
+	transition: transform 0.18s ease;
+	width: 6px;
+}
+
 .admin-user-chip img {
 	border: 3px solid rgba(255, 255, 255, 0.9);
 	border-radius: 50%;
@@ -542,6 +559,81 @@ body.admin-page::after {
 	font-size: 13px;
 	font-weight: 700;
 	white-space: nowrap;
+}
+
+.admin-user-menu {
+	position: relative;
+}
+
+.admin-user-menu.is-open .admin-user-chip,
+.admin-user-chip:focus {
+	border-color: rgba(251, 152, 192, 0.44);
+	box-shadow: 0 18px 34px rgba(251, 152, 192, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+	outline: none;
+}
+
+.admin-user-menu.is-open .admin-user-chip::after {
+	transform: rotate(225deg) translate(-2px, -1px);
+}
+
+.admin-user-dropdown {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 246, 251, 0.46)),
+		rgba(255, 255, 255, 0.24);
+	backdrop-filter: blur(20px) saturate(1.14);
+	border: 1px solid rgba(255, 255, 255, 0.64);
+	border-radius: 8px;
+	box-shadow: 0 22px 46px rgba(126, 64, 98, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	box-sizing: border-box;
+	min-width: 150px;
+	opacity: 0;
+	padding: 8px;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	top: calc(100% + 10px);
+	transform: translateY(-4px);
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	z-index: 6;
+}
+
+.admin-user-menu.is-open .admin-user-dropdown {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.admin-user-dropdown a,
+.admin-user-dropdown button {
+	align-items: center;
+	background: transparent;
+	border: 0;
+	border-radius: 8px;
+	box-shadow: none;
+	box-sizing: border-box;
+	color: #746a76;
+	display: flex;
+	font-size: 13px;
+	font-weight: 700;
+	justify-content: flex-start;
+	min-height: 36px;
+	padding: 9px 10px;
+	text-align: left;
+	width: 100%;
+}
+
+.admin-user-dropdown a:hover,
+.admin-user-dropdown a:focus,
+.admin-user-dropdown button:hover,
+.admin-user-dropdown button:focus {
+	background: rgba(251, 152, 192, 0.12);
+	color: var(--sakura-deep);
+	outline: none;
+	transform: none;
+}
+
+.admin-user-dropdown form {
+	margin: 0;
 }
 
 .admin-shell {
