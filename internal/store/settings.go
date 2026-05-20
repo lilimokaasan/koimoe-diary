@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS site_settings (
 	setting_key VARCHAR(80) PRIMARY KEY,
 	setting_value TEXT NOT NULL,
 	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci`); err != nil {
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`); err != nil {
 		return err
 	}
 	return s.ensureDefaults(defaults)
