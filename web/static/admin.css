@@ -28,14 +28,16 @@ body.admin-page {
 
 body.admin-page::before {
 	background:
-		linear-gradient(135deg, rgba(255, 255, 255, 0.68), transparent 44%, rgba(255, 235, 246, 0.28)),
-		url("/static/admin-hero-bg.jpg") right bottom / min(720px, 48vw) auto no-repeat;
+		radial-gradient(circle at 96% 92%, rgba(251, 152, 192, 0.24), transparent 28%),
+		radial-gradient(circle at 82% 78%, rgba(255, 255, 255, 0.42), transparent 34%),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent 40%, rgba(255, 235, 246, 0.2)),
+		url("/static/admin-hero-bg.jpg") right bottom / min(1120px, 64vw) auto no-repeat;
 	content: "";
 	inset: 0;
-	opacity: 0.42;
+	opacity: 0.62;
 	pointer-events: none;
 	position: fixed;
-	filter: blur(2px) saturate(0.95);
+	filter: blur(3px) saturate(1.06);
 	transform: scale(1.015);
 	z-index: 0;
 }
