@@ -38,13 +38,21 @@
 		return best.link;
 	}
 
-	function moveTo(link) {
+	function moveTo(link, instant) {
 		if (!link) return;
+		if (instant) {
+			nav.classList.add("is-positioning");
+		}
 		indicator.style.width = link.offsetWidth + "px";
 		indicator.style.height = link.offsetHeight + "px";
 		indicator.style.setProperty("--nav-x", link.offsetLeft + "px");
 		indicator.style.setProperty("--nav-y", link.offsetTop + "px");
 		nav.classList.add("is-ready");
+		if (instant) {
+			window.requestAnimationFrame(function () {
+				nav.classList.remove("is-positioning");
+			});
+		}
 	}
 
 	var active = currentLink();
@@ -52,12 +60,12 @@
 		active.setAttribute("aria-current", "page");
 	}
 
-	moveTo(active || links[0]);
+	moveTo(active || links[0], true);
 	window.setTimeout(function () {
-		moveTo(active || links[0]);
+		moveTo(active || links[0], true);
 	}, 80);
 	window.requestAnimationFrame(function () {
-		moveTo(active || links[0]);
+		moveTo(active || links[0], true);
 	});
 
 	links.forEach(function (link) {

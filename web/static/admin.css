@@ -252,6 +252,10 @@ body.admin-page::after {
 	opacity: 1;
 }
 
+.admin-topbar nav.is-positioning .admin-nav-indicator {
+	transition: none;
+}
+
 .admin-topbar nav > a[href="/"] {
 	background: rgba(255, 255, 255, 0.72);
 	border-color: rgba(205, 181, 194, 0.58);
