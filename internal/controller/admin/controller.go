@@ -48,43 +48,43 @@ type Controller struct {
 }
 
 type PageData struct {
-	Site          config.Site
-	Title         string
-	Description   string
-	CanonicalURL  string
-	MetaImage     string
-	MetaType      string
-	Error         string
-	Message       string
-	Posts         []models.Post
-	Comments      []models.Comment
-	Post          models.Post
-	FriendLinks   []models.FriendLink
-	FriendLink    models.FriendLink
-	Moments       []models.Moment
-	Moment        models.Moment
-	MediaAssets   []MediaAsset
-	Categories    []models.Category
-	Category      models.Category
-	Tags          []models.Tag
-	Tag           models.Tag
-	PreviousPost  models.Post
-	NextPost      models.Post
-	RecentPosts   []models.Post
-	PostTotal     int
-	CommentTotal  int
-	Settings      config.Site
-	Mail          config.Mail
-	MailReady     bool
+	Site            config.Site
+	Title           string
+	Description     string
+	CanonicalURL    string
+	MetaImage       string
+	MetaType        string
+	Error           string
+	Message         string
+	Posts           []models.Post
+	Comments        []models.Comment
+	Post            models.Post
+	FriendLinks     []models.FriendLink
+	FriendLink      models.FriendLink
+	Moments         []models.Moment
+	Moment          models.Moment
+	MediaAssets     []MediaAsset
+	Categories      []models.Category
+	Category        models.Category
+	Tags            []models.Tag
+	Tag             models.Tag
+	PreviousPost    models.Post
+	NextPost        models.Post
+	RecentPosts     []models.Post
+	PostTotal       int
+	CommentTotal    int
+	Settings        config.Site
+	Mail            config.Mail
+	MailReady       bool
 	MailPasswordSet bool
-	Navigation    string
-	FocusCards    string
-	ContentHTML   string
-	PostTags      string
-	IsNew         bool
-	Now           time.Time
-	AdminLoggedIn bool
-	ShowAdminNav  bool
+	Navigation      string
+	FocusCards      string
+	ContentHTML     string
+	PostTags        string
+	IsNew           bool
+	Now             time.Time
+	AdminLoggedIn   bool
+	ShowAdminNav    bool
 }
 
 type MediaAsset struct {

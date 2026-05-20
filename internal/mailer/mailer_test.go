@@ -16,7 +16,7 @@ func TestBuildMessageUsesUTF8AlternativeParts(t *testing.T) {
 		FromName:   "KoiMoe Diary",
 		AdminEmail: "admin@example.com",
 	})
-	payload, err := m.build(Message{
+	payload, err := m.build(m.config(), Message{
 		To:      "admin@example.com",
 		Subject: "新评论",
 		Text:    "hello",
