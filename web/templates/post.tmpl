@@ -7,6 +7,7 @@
 			<header class="entry-header">
 				<p class="single-kicker"><i class="iconfont icon-sakura"></i> {{.Site.Name}}</p>
 				<h1 class="entry-title">{{.Post.Title}}</h1>
+				{{if eq .Post.Status "private"}}<p class="private-post-notice"><i class="fa fa-lock" aria-hidden="true"></i> Private post, visible only while signed in.</p>{{end}}
 				<div class="entry-census">
 					<span><i class="iconfont icon-time"></i>{{since .Post.PublishedAt}}</span>
 					<span><i class="iconfont icon-attention"></i>{{.Post.Views}} Views</span>

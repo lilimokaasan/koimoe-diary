@@ -1549,6 +1549,20 @@ textarea:disabled,
 	font-weight: 700;
 }
 
+.private-post-notice {
+	align-items: center;
+	background: rgba(255, 247, 251, 0.88);
+	border: 1px solid rgba(251, 152, 192, 0.2);
+	border-radius: 8px;
+	color: var(--sakura-pink);
+	display: inline-flex;
+	font-size: 13px;
+	font-weight: 700;
+	gap: 8px;
+	margin: 12px 0 0;
+	padding: 9px 12px;
+}
+
 .sidebar-list {
 	display: grid;
 	gap: 12px;

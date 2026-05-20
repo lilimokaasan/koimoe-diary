@@ -109,7 +109,8 @@
 				<aside class="editor-side">
 					<label>Status
 						<select name="status">
-							<option value="published" {{if ne .Post.Status "draft"}}selected{{end}}>Published</option>
+							<option value="published" {{if eq .Post.Status "published"}}selected{{end}}>Published</option>
+							<option value="private" {{if eq .Post.Status "private"}}selected{{end}}>Private</option>
 							<option value="draft" {{if eq .Post.Status "draft"}}selected{{end}}>Draft</option>
 						</select>
 					</label>

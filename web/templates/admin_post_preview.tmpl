@@ -4,7 +4,7 @@
 	<main id="main" class="site-main" role="main">
 		<div class="admin-preview-banner">
 			<span>Preview</span>
-			<strong>{{if eq .Post.Status "draft"}}Draft{{else}}Published{{end}}</strong>
+			<strong>{{if eq .Post.Status "draft"}}Draft{{else if eq .Post.Status "private"}}Private{{else}}Published{{end}}</strong>
 			<a href="/admin/posts/{{.Post.ID}}/edit">Back to editor</a>
 		</div>
 		<article class="post type-post status-publish sakurairo-single">
@@ -39,7 +39,7 @@
 			</div>
 			<div class="single-actions">
 				<a href="/admin/posts/{{.Post.ID}}/edit"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a>
-				{{if ne .Post.Status "draft"}}<a href="/post/{{.Post.Slug}}"><i class="fa fa-external-link" aria-hidden="true"></i> Public post</a>{{end}}
+				{{if ne .Post.Status "draft"}}<a href="/post/{{.Post.Slug}}"><i class="fa fa-external-link" aria-hidden="true"></i> {{if eq .Post.Status "private"}}Private post{{else}}Public post{{end}}</a>{{end}}
 			</div>
 		</section>
 	</main>

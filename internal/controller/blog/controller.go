@@ -151,6 +151,9 @@ func (c *Controller) Post(r *ghttp.Request) {
 	}
 
 	post, err := c.posts.BySlug(r.Context(), slug)
+	if errors.Is(err, sql.ErrNoRows) && c.isAdminLoggedIn(r) {
+		post, err = c.posts.BySlugForAdmin(r.Context(), slug)
+	}
 	if errors.Is(err, sql.ErrNoRows) {
 		c.NotFound(r)
 		return
@@ -167,9 +170,12 @@ func (c *Controller) Post(r *ghttp.Request) {
 		c.error(r, err)
 		return
 	}
-	previousPost, nextPost, err := c.posts.AdjacentPublished(r.Context(), post)
-	if err != nil {
-		log.Printf("load adjacent posts: %v", err)
+	var previousPost, nextPost models.Post
+	if post.Status == "published" {
+		previousPost, nextPost, err = c.posts.AdjacentPublished(r.Context(), post)
+		if err != nil {
+			log.Printf("load adjacent posts: %v", err)
+		}
 	}
 
 	c.render(r, "post.tmpl", PageData{
@@ -188,6 +194,9 @@ func (c *Controller) Post(r *ghttp.Request) {
 func (c *Controller) CreateComment(r *ghttp.Request) {
 	slug := r.GetRouter("slug").String()
 	post, err := c.posts.BySlug(r.Context(), slug)
+	if errors.Is(err, sql.ErrNoRows) && c.isAdminLoggedIn(r) {
+		post, err = c.posts.BySlugForAdmin(r.Context(), slug)
+	}
 	if errors.Is(err, sql.ErrNoRows) {
 		c.NotFound(r)
 		return

@@ -25,3 +25,14 @@ func TestSearchTextStripsHTML(t *testing.T) {
 		t.Fatalf("searchText() = %q, want %q", got, want)
 	}
 }
+
+func TestNormalizePostInputKeepsPrivateStatus(t *testing.T) {
+	input := normalizePostInput(PostInput{
+		Title:       "A quiet draft",
+		ContentHTML: "tiny",
+		Status:      "private",
+	})
+	if input.Status != "private" {
+		t.Fatalf("Status = %q, want private", input.Status)
+	}
+}

@@ -449,18 +449,30 @@ ORDER BY p.published_at DESC`)
 }
 
 func (s *PostStore) BySlug(ctx context.Context, slug string) (models.Post, error) {
+	return s.bySlug(ctx, slug, false)
+}
+
+func (s *PostStore) BySlugForAdmin(ctx context.Context, slug string) (models.Post, error) {
+	return s.bySlug(ctx, slug, true)
+}
+
+func (s *PostStore) bySlug(ctx context.Context, slug string, includePrivate bool) (models.Post, error) {
 	var post models.Post
 	var content string
+	statusClause := "AND p.status = 'published'"
+	if includePrivate {
+		statusClause = "AND p.status IN ('published', 'private')"
+	}
 	err := s.db.QueryRowContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
-WHERE p.slug = ? AND p.status = 'published'
+WHERE p.slug = ? `+statusClause+`
 LIMIT 1`, slug).Scan(
-		&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage,
+		&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage, &post.Status,
 		&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
@@ -1258,7 +1270,7 @@ func normalizePostInput(input PostInput) PostInput {
 		input.CoverImage = "/static/theme/content-image/d-1.jpg"
 	}
 	input.Status = strings.TrimSpace(input.Status)
-	if input.Status != "draft" {
+	if input.Status != "draft" && input.Status != "private" {
 		input.Status = "published"
 	}
 	input.CategoryName = strings.TrimSpace(input.CategoryName)
