@@ -49,6 +49,7 @@ type Mail struct {
 
 type Config struct {
 	siteMu           sync.RWMutex
+	mailMu           sync.RWMutex
 	Addr             string
 	DSN              string
 	StaticDir        string
@@ -73,6 +74,18 @@ func (c *Config) SetSite(site Site) {
 	c.siteMu.Lock()
 	defer c.siteMu.Unlock()
 	c.Site = site
+}
+
+func (c *Config) GetMail() Mail {
+	c.mailMu.RLock()
+	defer c.mailMu.RUnlock()
+	return c.Mail
+}
+
+func (c *Config) SetMail(mail Mail) {
+	c.mailMu.Lock()
+	defer c.mailMu.Unlock()
+	c.Mail = mail
 }
 
 func FromEnv() Config {

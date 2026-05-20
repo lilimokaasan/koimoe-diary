@@ -74,6 +74,12 @@ func New() (*App, error) {
 		return nil, err
 	}
 	cfg.SetSite(site)
+	mailCfg, err := settingsStore.Mail(context.Background(), cfg.GetMail())
+	if err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	cfg.SetMail(mailCfg)
 
 	renderer, err := view.NewDefaultRenderer()
 	if err != nil {
@@ -93,7 +99,7 @@ func New() (*App, error) {
 		})
 	})
 
-	mailSender := mailer.NewSMTP(cfg.Mail)
+	mailSender := mailer.NewDynamicSMTP(cfg.GetMail)
 	admin.New(&cfg, postStore, settingsStore, linkStore, momentStore, mailSender, renderer).Register(server)
 	blog.New(&cfg, postStore, linkStore, momentStore, mailSender, renderer).Register(server)
 

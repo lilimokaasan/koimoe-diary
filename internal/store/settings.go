@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strconv"
 
 	"sakurairo-go/internal/config"
 )
@@ -109,6 +110,71 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"footer_credit":        site.FooterCredit,
 		"navigation":           string(navigation),
 		"focus_cards":          string(focusCards),
+	}
+	for key, value := range settings {
+		if _, err := s.db.ExecContext(ctx, `
+INSERT INTO site_settings (setting_key, setting_value)
+VALUES (?, ?)
+ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)`, key, value); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (s *SettingsStore) Mail(ctx context.Context, fallback config.Mail) (config.Mail, error) {
+	values, err := s.values(ctx)
+	if err != nil {
+		return fallback, err
+	}
+	mail := fallback
+	if values["mail_enabled"] != "" {
+		mail.Enabled = values["mail_enabled"] == "1"
+	}
+	if values["smtp_host"] != "" {
+		mail.Host = values["smtp_host"]
+	}
+	if values["smtp_port"] != "" {
+		if port, err := strconv.Atoi(values["smtp_port"]); err == nil {
+			mail.Port = port
+		}
+	}
+	if values["smtp_username"] != "" {
+		mail.Username = values["smtp_username"]
+	}
+	if values["smtp_password"] != "" {
+		mail.Password = values["smtp_password"]
+	}
+	if values["smtp_from"] != "" {
+		mail.From = values["smtp_from"]
+	}
+	if values["smtp_from_name"] != "" {
+		mail.FromName = values["smtp_from_name"]
+	}
+	if values["mail_admin_email"] != "" {
+		mail.AdminEmail = values["mail_admin_email"]
+	}
+	if values["smtp_tls_mode"] != "" {
+		mail.TLSMode = values["smtp_tls_mode"]
+	}
+	return mail, nil
+}
+
+func (s *SettingsStore) SaveMail(ctx context.Context, mail config.Mail) error {
+	enabled := "0"
+	if mail.Enabled {
+		enabled = "1"
+	}
+	settings := map[string]string{
+		"mail_enabled":     enabled,
+		"smtp_host":        mail.Host,
+		"smtp_port":        strconv.Itoa(mail.Port),
+		"smtp_username":    mail.Username,
+		"smtp_password":    mail.Password,
+		"smtp_from":        mail.From,
+		"smtp_from_name":   mail.FromName,
+		"mail_admin_email": mail.AdminEmail,
+		"smtp_tls_mode":    mail.TLSMode,
 	}
 	for key, value := range settings {
 		if _, err := s.db.ExecContext(ctx, `

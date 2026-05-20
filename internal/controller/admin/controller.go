@@ -76,6 +76,7 @@ type PageData struct {
 	Settings      config.Site
 	Mail          config.Mail
 	MailReady     bool
+	MailPasswordSet bool
 	Navigation    string
 	FocusCards    string
 	ContentHTML   string
@@ -147,6 +148,7 @@ func (c *Controller) Settings(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
 	}
+	mailCfg := c.cfg.GetMail()
 	c.render(r, "admin_settings.tmpl", PageData{
 		Site:     c.cfg.GetSite(),
 		Title:    "Settings - " + c.cfg.GetSite().Name,
@@ -158,9 +160,10 @@ func (c *Controller) Settings(r *ghttp.Request) {
 		FocusCards: formatFocusCards(
 			c.cfg.GetSite().FocusCards,
 		),
-		Mail:      c.cfg.Mail,
-		MailReady: mailReady(c.cfg.Mail),
-		Now:       time.Now(),
+		Mail:            mailCfg,
+		MailReady:       mailReady(mailCfg),
+		MailPasswordSet: mailCfg.Password != "",
+		Now:             time.Now(),
 	})
 }
 
@@ -185,17 +188,44 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		FocusCards:         parseFocusCards(r.GetForm("focus_cards").String()),
 	}
 	site = normalizeSiteSettings(site, c.cfg.GetSite())
+	mailCfg := normalizeMailSettings(config.Mail{
+		Enabled:    r.GetForm("mail_enabled").String() == "1",
+		Host:       strings.TrimSpace(r.GetForm("smtp_host").String()),
+		Port:       r.GetForm("smtp_port").Int(),
+		Username:   strings.TrimSpace(r.GetForm("smtp_username").String()),
+		Password:   strings.TrimSpace(r.GetForm("smtp_password").String()),
+		From:       strings.TrimSpace(r.GetForm("smtp_from").String()),
+		FromName:   strings.TrimSpace(r.GetForm("smtp_from_name").String()),
+		AdminEmail: strings.TrimSpace(r.GetForm("mail_admin_email").String()),
+		TLSMode:    strings.TrimSpace(r.GetForm("smtp_tls_mode").String()),
+	}, c.cfg.GetMail())
+	if errText := validateMailSettings(mailCfg); errText != "" {
+		c.render(r, "admin_settings.tmpl", PageData{
+			Site:            c.cfg.GetSite(),
+			Title:           "Settings - " + c.cfg.GetSite().Name,
+			Error:           errText,
+			Settings:        site,
+			Navigation:      formatNavigation(site.Navigation),
+			FocusCards:      formatFocusCards(site.FocusCards),
+			Mail:            mailCfg,
+			MailReady:       mailReady(mailCfg),
+			MailPasswordSet: mailCfg.Password != "",
+			Now:             time.Now(),
+		})
+		return
+	}
 	if uploadedAvatar, uploadErr := c.saveImageUpload(r, "avatar_upload", "Avatar"); uploadErr != "" {
 		c.render(r, "admin_settings.tmpl", PageData{
-			Site:       c.cfg.GetSite(),
-			Title:      "Settings - " + c.cfg.GetSite().Name,
-			Error:      uploadErr,
-			Settings:   site,
-			Navigation: formatNavigation(site.Navigation),
-			FocusCards: formatFocusCards(site.FocusCards),
-			Mail:       c.cfg.Mail,
-			MailReady:  mailReady(c.cfg.Mail),
-			Now:        time.Now(),
+			Site:            c.cfg.GetSite(),
+			Title:           "Settings - " + c.cfg.GetSite().Name,
+			Error:           uploadErr,
+			Settings:        site,
+			Navigation:      formatNavigation(site.Navigation),
+			FocusCards:      formatFocusCards(site.FocusCards),
+			Mail:            mailCfg,
+			MailReady:       mailReady(mailCfg),
+			MailPasswordSet: mailCfg.Password != "",
+			Now:             time.Now(),
 		})
 		return
 	} else if uploadedAvatar != "" {
@@ -205,7 +235,12 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		c.error(r, err)
 		return
 	}
+	if err := c.settings.SaveMail(r.Context(), mailCfg); err != nil {
+		c.error(r, err)
+		return
+	}
 	c.cfg.SetSite(site)
+	c.cfg.SetMail(mailCfg)
 	r.Response.RedirectTo("/admin/settings?saved=1", http.StatusSeeOther)
 }
 
@@ -213,12 +248,13 @@ func (c *Controller) TestMail(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
 	}
-	if c.mailer == nil || !mailReady(c.cfg.Mail) {
+	mailCfg := c.cfg.GetMail()
+	if c.mailer == nil || !mailReady(mailCfg) {
 		c.render(r, "admin_settings.tmpl", c.settingsPageData("Mail is not configured yet.", ""))
 		return
 	}
 	if err := c.mailer.Send(mailer.Message{
-		To:      c.cfg.Mail.AdminEmail,
+		To:      mailCfg.AdminEmail,
 		Subject: "[" + c.cfg.GetSite().Name + "] Test mail",
 		Text:    "KoiMoe Diary mail is working.",
 		HTML:    `<p style="color:#4b4350">KoiMoe Diary mail is working.</p>`,
@@ -233,7 +269,8 @@ func (c *Controller) RequestPasswordCode(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
 	}
-	if c.mailer == nil || !mailReady(c.cfg.Mail) {
+	mailCfg := c.cfg.GetMail()
+	if c.mailer == nil || !mailReady(mailCfg) {
 		c.render(r, "admin_settings.tmpl", c.settingsPageData("Mail is not configured yet.", ""))
 		return
 	}
@@ -252,7 +289,7 @@ func (c *Controller) RequestPasswordCode(r *ghttp.Request) {
 		return
 	}
 	if err := c.mailer.Send(mailer.Message{
-		To:      c.cfg.Mail.AdminEmail,
+		To:      mailCfg.AdminEmail,
 		Subject: "[" + c.cfg.GetSite().Name + "] Password change verification",
 		Text:    fmt.Sprintf("Your password change verification code is %s. It expires in 10 minutes.", code),
 		HTML: fmt.Sprintf(`<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.7;color:#4b4350">
@@ -322,17 +359,19 @@ func (c *Controller) ChangePassword(r *ghttp.Request) {
 }
 
 func (c *Controller) settingsPageData(errText string, message string) PageData {
+	mailCfg := c.cfg.GetMail()
 	return PageData{
-		Site:       c.cfg.GetSite(),
-		Title:      "Settings - " + c.cfg.GetSite().Name,
-		Error:      errText,
-		Message:    message,
-		Settings:   c.cfg.GetSite(),
-		Navigation: formatNavigation(c.cfg.GetSite().Navigation),
-		FocusCards: formatFocusCards(c.cfg.GetSite().FocusCards),
-		Mail:       c.cfg.Mail,
-		MailReady:  mailReady(c.cfg.Mail),
-		Now:        time.Now(),
+		Site:            c.cfg.GetSite(),
+		Title:           "Settings - " + c.cfg.GetSite().Name,
+		Error:           errText,
+		Message:         message,
+		Settings:        c.cfg.GetSite(),
+		Navigation:      formatNavigation(c.cfg.GetSite().Navigation),
+		FocusCards:      formatFocusCards(c.cfg.GetSite().FocusCards),
+		Mail:            mailCfg,
+		MailReady:       mailReady(mailCfg),
+		MailPasswordSet: mailCfg.Password != "",
+		Now:             time.Now(),
 	}
 }
 

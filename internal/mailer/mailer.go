@@ -31,15 +31,29 @@ type Message struct {
 }
 
 type SMTPMailer struct {
-	cfg config.Mail
+	cfg func() config.Mail
 }
 
 func NewSMTP(cfg config.Mail) *SMTPMailer {
-	return &SMTPMailer{cfg: normalize(cfg)}
+	return NewDynamicSMTP(func() config.Mail {
+		return cfg
+	})
+}
+
+func NewDynamicSMTP(cfg func() config.Mail) *SMTPMailer {
+	return &SMTPMailer{cfg: cfg}
+}
+
+func (m *SMTPMailer) config() config.Mail {
+	if m.cfg == nil {
+		return config.Mail{}
+	}
+	return normalize(m.cfg())
 }
 
 func (m *SMTPMailer) Enabled() bool {
-	return m.cfg.Enabled && m.cfg.Host != "" && m.cfg.Port > 0 && m.cfg.From != "" && m.cfg.AdminEmail != ""
+	cfg := m.config()
+	return cfg.Enabled && cfg.Host != "" && cfg.Port > 0 && cfg.From != "" && cfg.AdminEmail != ""
 }
 
 func (m *SMTPMailer) Send(message Message) error {
@@ -49,11 +63,12 @@ func (m *SMTPMailer) Send(message Message) error {
 	if strings.TrimSpace(message.To) == "" {
 		return errors.New("recipient is required")
 	}
-	payload, err := m.build(message)
+	cfg := m.config()
+	payload, err := m.build(cfg, message)
 	if err != nil {
 		return err
 	}
-	return m.deliver(message.To, payload)
+	return m.deliver(cfg, message.To, payload)
 }
 
 func (m *SMTPMailer) SendNewComment(comment models.Comment, post models.Post, site config.Site, postURL string) error {
@@ -74,15 +89,15 @@ func (m *SMTPMailer) SendNewComment(comment models.Comment, post models.Post, si
 </div>`, author, postTitle, content, html.EscapeString(postURL), html.EscapeString(postURL))
 	text := fmt.Sprintf("New comment by %s on %s:\n\n%s\n\n%s", comment.Author, post.Title, comment.Content, postURL)
 	return m.Send(Message{
-		To:      m.cfg.AdminEmail,
+		To:      m.config().AdminEmail,
 		Subject: subject,
 		Text:    text,
 		HTML:    body,
 	})
 }
 
-func (m *SMTPMailer) build(message Message) ([]byte, error) {
-	from := mail.Address{Name: m.cfg.FromName, Address: m.cfg.From}
+func (m *SMTPMailer) build(cfg config.Mail, message Message) ([]byte, error) {
+	from := mail.Address{Name: cfg.FromName, Address: cfg.From}
 	to := mail.Address{Address: message.To}
 	boundary := "sakurairo-" + fmt.Sprint(time.Now().UnixNano())
 	var buf bytes.Buffer
@@ -98,16 +113,16 @@ func (m *SMTPMailer) build(message Message) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (m *SMTPMailer) deliver(to string, payload []byte) error {
-	addr := net.JoinHostPort(m.cfg.Host, fmt.Sprint(m.cfg.Port))
+func (m *SMTPMailer) deliver(cfg config.Mail, to string, payload []byte) error {
+	addr := net.JoinHostPort(cfg.Host, fmt.Sprint(cfg.Port))
 	var client *smtp.Client
 	var err error
-	if m.cfg.TLSMode == "implicit" {
-		conn, tlsErr := tls.Dial("tcp", addr, &tls.Config{ServerName: m.cfg.Host, MinVersion: tls.VersionTLS12})
+	if cfg.TLSMode == "implicit" {
+		conn, tlsErr := tls.Dial("tcp", addr, &tls.Config{ServerName: cfg.Host, MinVersion: tls.VersionTLS12})
 		if tlsErr != nil {
 			return tlsErr
 		}
-		client, err = smtp.NewClient(conn, m.cfg.Host)
+		client, err = smtp.NewClient(conn, cfg.Host)
 	} else {
 		client, err = smtp.Dial(addr)
 	}
@@ -119,19 +134,19 @@ func (m *SMTPMailer) deliver(to string, payload []byte) error {
 			log.Printf("mail quit: %v", err)
 		}
 	}()
-	if m.cfg.TLSMode == "starttls" {
+	if cfg.TLSMode == "starttls" {
 		if ok, _ := client.Extension("STARTTLS"); ok {
-			if err := client.StartTLS(&tls.Config{ServerName: m.cfg.Host, MinVersion: tls.VersionTLS12}); err != nil {
+			if err := client.StartTLS(&tls.Config{ServerName: cfg.Host, MinVersion: tls.VersionTLS12}); err != nil {
 				return err
 			}
 		}
 	}
-	if m.cfg.Username != "" {
-		if err := client.Auth(smtp.PlainAuth("", m.cfg.Username, m.cfg.Password, m.cfg.Host)); err != nil {
+	if cfg.Username != "" {
+		if err := client.Auth(smtp.PlainAuth("", cfg.Username, cfg.Password, cfg.Host)); err != nil {
 			return err
 		}
 	}
-	if err := client.Mail(m.cfg.From); err != nil {
+	if err := client.Mail(cfg.From); err != nil {
 		return err
 	}
 	if err := client.Rcpt(to); err != nil {
