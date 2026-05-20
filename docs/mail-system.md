@@ -13,7 +13,9 @@ Nested comment replies are not implemented yet, so visitor reply-notification em
 
 ## Environment Variables
 
-Configure these in the production `.env` file, usually `/opt/sakurairo-go/.env`.
+Mail can be configured from `/admin/settings`. The database-backed settings take effect immediately after saving and are preferred for normal operation.
+
+The production `.env` file, usually `/opt/sakurairo-go/.env`, is now only a fallback/bootstrap source. Use it when the database has no mail settings yet or when recovering from a broken admin configuration.
 
 ```env
 MAIL_ENABLED=1
@@ -48,6 +50,19 @@ Then open `/admin/settings`:
 - The Mail System card should show `Enabled`.
 - Click `Send test mail`.
 - If sending fails, the settings page shows the SMTP error without exposing the password.
+
+For Aliyun DirectMail, the recommended admin settings are:
+
+```text
+SMTP Host: smtpdm.aliyun.com
+SMTP Port: 465
+TLS Mode: implicit SSL/TLS
+SMTP Username: the approved sender address, such as noreply@koimoe.com
+SMTP Password: the SMTP password generated in Aliyun
+Sender Address: same as SMTP Username
+Sender Name: KoiMoe Diary
+Admin Mailbox: the mailbox that should receive tests, comments, and password codes
+```
 
 Useful service checks:
 
