@@ -113,7 +113,10 @@
 			if (!options.skipHistory) {
 				window.history.pushState({ adminShell: true }, "", url);
 			}
-			window.scrollTo(0, 0);
+			var shell = document.querySelector(".admin-shell");
+			if (shell) {
+				shell.scrollTop = 0;
+			}
 			syncNav(true);
 		}).catch(function () {
 			window.location.href = url;
