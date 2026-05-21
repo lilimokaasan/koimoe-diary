@@ -25,6 +25,18 @@ type Post struct {
 	UpdatedAt    time.Time
 }
 
+type Page struct {
+	ID          int64
+	Slug        string
+	Title       string
+	Excerpt     string
+	ContentHTML template.HTML
+	CoverImage  string
+	Status      string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
 type Comment struct {
 	ID         int64
 	PostID     int64

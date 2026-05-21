@@ -49,7 +49,9 @@ type PageData struct {
 	SectionTitle     string
 	Query            string
 	Posts            []models.Post
+	Pages            []models.Page
 	Post             models.Post
+	PageContent      models.Page
 	PreviousPost     models.Post
 	NextPost         models.Post
 	ArchiveGroups    []models.ArchiveGroup
@@ -88,6 +90,7 @@ func New(cfg *config.Config, posts *store.PostStore, links *store.LinkStore, mom
 func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/", c.Home)
 	server.BindHandler("GET:/post/{slug}", c.Post)
+	server.BindHandler("GET:/page/{slug}", c.Page)
 	server.BindHandler("POST:/post/{slug}/comments", c.CreateComment)
 	server.BindHandler("GET:/archive", c.Archive)
 	server.BindHandler("GET:/archives", c.Archives)
@@ -188,6 +191,37 @@ func (c *Controller) Post(r *ghttp.Request) {
 		Comments:     comments,
 		CommentOK:    r.GetQuery("comment").String() == "ok",
 		Now:          time.Now(),
+	})
+}
+
+func (c *Controller) Page(r *ghttp.Request) {
+	slug := r.GetRouter("slug").String()
+	if slug == "" {
+		c.NotFound(r)
+		return
+	}
+	page, err := c.posts.PageBySlug(r.Context(), slug)
+	if errors.Is(err, sql.ErrNoRows) && c.isAdminLoggedIn(r) {
+		page, err = c.posts.PageBySlugForAdmin(r.Context(), slug)
+	}
+	if errors.Is(err, sql.ErrNoRows) {
+		c.NotFound(r)
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "page.tmpl", PageData{
+		Site:          c.cfg.GetSite(),
+		Title:         page.Title + " - " + c.cfg.GetSite().Name,
+		Description:   firstNonEmpty(page.Excerpt, c.cfg.GetSite().Description),
+		CanonicalURL:  "/page/" + page.Slug,
+		MetaImage:     firstNonEmpty(page.CoverImage, c.cfg.GetSite().HeroImage),
+		MetaType:      "article",
+		PageContent:   page,
+		Now:           time.Now(),
+		AdminLoggedIn: c.isAdminLoggedIn(r),
 	})
 }
 
@@ -377,6 +411,11 @@ func (c *Controller) Sitemap(r *ghttp.Request) {
 		c.apiError(r, err)
 		return
 	}
+	pages, err := c.posts.ListPublishedPages(ctx, 200)
+	if err != nil {
+		c.apiError(r, err)
+		return
+	}
 	categories, err := c.posts.ListCategories(ctx)
 	if err != nil {
 		c.apiError(r, err)
@@ -410,6 +449,14 @@ func (c *Controller) Sitemap(r *ghttp.Request) {
 			LastMod:    post.PublishedAt.Format("2006-01-02"),
 			ChangeFreq: "monthly",
 			Priority:   "0.8",
+		})
+	}
+	for _, page := range pages {
+		sitemap.URLs = append(sitemap.URLs, sitemapURL{
+			Loc:        baseURL + "/page/" + page.Slug,
+			LastMod:    page.UpdatedAt.Format("2006-01-02"),
+			ChangeFreq: "monthly",
+			Priority:   "0.7",
 		})
 	}
 	for _, category := range categories {
@@ -453,6 +500,7 @@ func (c *Controller) Search(r *ghttp.Request) {
 	page := currentPage(r)
 	pageSize := 10
 	var posts []models.Post
+	var pages []models.Page
 	var searchCategories []models.Category
 	var searchTags []models.Tag
 	total := 0
@@ -468,6 +516,17 @@ func (c *Controller) Search(r *ghttp.Request) {
 			c.error(r, err)
 			return
 		}
+		pages, err = c.posts.SearchPages(r.Context(), q, 10)
+		if err != nil {
+			c.error(r, err)
+			return
+		}
+		pageTotal, err := c.posts.CountSearchPages(r.Context(), q)
+		if err != nil {
+			c.error(r, err)
+			return
+		}
+		total += pageTotal
 		searchCategories, err = c.posts.SearchCategories(r.Context(), q, 6)
 		if err != nil {
 			c.error(r, err)
@@ -486,6 +545,7 @@ func (c *Controller) Search(r *ghttp.Request) {
 		SectionTitle:     "Search",
 		Query:            q,
 		Posts:            posts,
+		Pages:            pages,
 		SearchCategories: searchCategories,
 		SearchTags:       searchTags,
 		Page:             store.PageInfo(page, pageSize, total, "/search", q),
@@ -701,11 +761,13 @@ func (c *Controller) withMeta(r *ghttp.Request, data *PageData) {
 	image := site.HeroImage
 	if data.Post.ID > 0 && strings.TrimSpace(data.Post.CoverImage) != "" {
 		image = data.Post.CoverImage
+	} else if data.PageContent.ID > 0 && strings.TrimSpace(data.PageContent.CoverImage) != "" {
+		image = data.PageContent.CoverImage
 	} else if strings.TrimSpace(image) == "" {
 		image = site.Avatar
 	}
 	data.MetaImage = absoluteURL(baseURL, image)
-	if data.Post.ID > 0 {
+	if data.Post.ID > 0 || data.PageContent.ID > 0 {
 		data.MetaType = "article"
 	} else {
 		data.MetaType = "website"
@@ -973,6 +1035,15 @@ func absoluteURL(baseURL string, value string) string {
 		value = "/" + value
 	}
 	return strings.TrimRight(baseURL, "/") + value
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return value
+		}
+	}
+	return ""
 }
 
 func currentPage(r *ghttp.Request) int {

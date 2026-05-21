@@ -57,8 +57,10 @@ type PageData struct {
 	Error           string
 	Message         string
 	Posts           []models.Post
+	Pages           []models.Page
 	Comments        []models.Comment
 	Post            models.Post
+	PageContent     models.Page
 	FriendLinks     []models.FriendLink
 	FriendLink      models.FriendLink
 	Moments         []models.Moment
@@ -142,6 +144,11 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("GET:/admin/posts/{id}/edit", c.EditPost)
 	server.BindHandler("GET:/admin/posts/{id}/preview", c.PreviewPost)
 	server.BindHandler("POST:/admin/posts/{id}", c.SavePost)
+	server.BindHandler("GET:/admin/pages", c.Pages)
+	server.BindHandler("GET:/admin/pages/new", c.NewPage)
+	server.BindHandler("POST:/admin/pages", c.SavePage)
+	server.BindHandler("GET:/admin/pages/{id}/edit", c.EditPage)
+	server.BindHandler("POST:/admin/pages/{id}", c.SavePage)
 }
 
 func (c *Controller) Settings(r *ghttp.Request) {
@@ -628,6 +635,24 @@ func (c *Controller) Dashboard(r *ghttp.Request) {
 		Title:   "Posts - " + c.cfg.GetSite().Name,
 		Message: r.GetQuery("saved").String(),
 		Posts:   posts,
+		Now:     time.Now(),
+	})
+}
+
+func (c *Controller) Pages(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	pages, err := c.posts.ListAllPages(r.Context(), 100)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	c.render(r, "admin_pages.tmpl", PageData{
+		Site:    c.cfg.GetSite(),
+		Title:   "Pages - " + c.cfg.GetSite().Name,
+		Message: r.GetQuery("saved").String(),
+		Pages:   pages,
 		Now:     time.Now(),
 	})
 }
@@ -1157,7 +1182,7 @@ func (c *Controller) SavePost(r *ghttp.Request) {
 	if strings.TrimSpace(input.CoverImage) == "" {
 		input.CoverImage = c.cfg.GetSite().DefaultPostCover
 	}
-	if input.Title == "" || input.ContentHTML == "" {
+	if strings.TrimSpace(input.Title) == "" || strings.TrimSpace(input.ContentHTML) == "" {
 		post := postFromInput(input)
 		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.GetSite().Name, "Title and content are required."))
 		return
@@ -1168,6 +1193,67 @@ func (c *Controller) SavePost(r *ghttp.Request) {
 		return
 	}
 	r.Response.RedirectTo("/admin/posts/"+strconv.FormatInt(postID, 10)+"/edit?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) NewPage(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	c.render(r, "admin_page_form.tmpl", c.pageFormData(models.Page{
+		Status:     "published",
+		CoverImage: c.cfg.GetSite().DefaultPostCover,
+	}, "New Page - "+c.cfg.GetSite().Name, "", true))
+}
+
+func (c *Controller) EditPage(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	page, err := c.posts.PageByID(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.WriteStatus(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	data := c.pageFormData(page, "Edit Page - "+c.cfg.GetSite().Name, "", false)
+	data.Message = r.GetQuery("saved").String()
+	c.render(r, "admin_page_form.tmpl", data)
+}
+
+func (c *Controller) SavePage(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	input := store.PageInput{
+		ID:          id,
+		Slug:        r.GetForm("slug").String(),
+		Title:       r.GetForm("title").String(),
+		Excerpt:     r.GetForm("excerpt").String(),
+		ContentHTML: r.GetForm("content_html").String(),
+		CoverImage:  r.GetForm("cover_image").String(),
+		Status:      r.GetForm("status").String(),
+	}
+	if uploadedCover, uploadErr := c.saveCoverUpload(r); uploadErr != "" {
+		c.render(r, "admin_page_form.tmpl", c.pageFormData(pageFromInput(input), "Page Form - "+c.cfg.GetSite().Name, uploadErr, id == 0))
+		return
+	} else if uploadedCover != "" {
+		input.CoverImage = uploadedCover
+	}
+	if input.Title == "" || input.ContentHTML == "" {
+		c.render(r, "admin_page_form.tmpl", c.pageFormData(pageFromInput(input), "Page Form - "+c.cfg.GetSite().Name, "Title and content are required.", id == 0))
+		return
+	}
+	pageID, err := c.posts.SavePage(r.Context(), input)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/pages/"+strconv.FormatInt(pageID, 10)+"/edit?saved=1", http.StatusSeeOther)
 }
 
 func (c *Controller) requireLogin(r *ghttp.Request) bool {
@@ -1297,6 +1383,20 @@ func (c *Controller) formData(post models.Post, title string, errText string) Pa
 		ContentHTML: string(post.ContentHTML),
 		PostTags:    strings.Join(tags, ", "),
 		MediaAssets: c.mustListMediaAssets(),
+		Now:         time.Now(),
+	}
+}
+
+func (c *Controller) pageFormData(page models.Page, title string, errText string, isNew bool) PageData {
+	return PageData{
+		Site:        c.cfg.GetSite(),
+		Title:       title,
+		Error:       errText,
+		Message:     "",
+		PageContent: page,
+		ContentHTML: string(page.ContentHTML),
+		MediaAssets: c.mustListMediaAssets(),
+		IsNew:       isNew,
 		Now:         time.Now(),
 	}
 }
@@ -1461,6 +1561,18 @@ func postFromInput(input store.PostInput) models.Post {
 		Status:      input.Status,
 		Category:    models.Category{Name: input.CategoryName},
 		Tags:        tags,
+		ContentHTML: template.HTML(input.ContentHTML),
+	}
+}
+
+func pageFromInput(input store.PageInput) models.Page {
+	return models.Page{
+		ID:          input.ID,
+		Slug:        input.Slug,
+		Title:       input.Title,
+		Excerpt:     input.Excerpt,
+		CoverImage:  input.CoverImage,
+		Status:      input.Status,
 		ContentHTML: template.HTML(input.ContentHTML),
 	}
 }

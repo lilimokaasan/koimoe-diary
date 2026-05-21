@@ -41,7 +41,18 @@
 			{{end}}
 
 			<h1 class="main-title sakurairo-main-title"><i class="fa fa-search" aria-hidden="true"></i> Search Results</h1>
-			{{range .Posts}}{{template "post_card" .}}{{else}}
+			{{if .Pages}}
+			<section class="koimoe-search-taxonomy koimoe-search-pages" aria-label="Matched pages">
+				{{range .Pages}}
+				<a href="/page/{{.Slug}}">
+					<span><i class="fa fa-file-text-o" aria-hidden="true"></i> Page</span>
+					<strong>{{.Title}}</strong>
+					<small>{{.Excerpt}}</small>
+				</a>
+				{{end}}
+			</section>
+			{{end}}
+			{{if .Posts}}{{range .Posts}}{{template "post_card" .}}{{end}}{{else if not .Pages}}
 			<article class="post post-list koimoe-empty-search">
 				<div class="post-entry">
 					<h1 class="entry-title">Nothing has bloomed here yet.</h1>

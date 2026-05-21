@@ -30,6 +30,16 @@ type PostInput struct {
 	Tags         []string
 }
 
+type PageInput struct {
+	ID          int64
+	Slug        string
+	Title       string
+	Excerpt     string
+	ContentHTML string
+	CoverImage  string
+	Status      string
+}
+
 type CategoryInput struct {
 	ID          int64
 	Slug        string
@@ -112,6 +122,21 @@ CREATE TABLE IF NOT EXISTS comments (
 	user_agent VARCHAR(255) NOT NULL DEFAULT '',
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	INDEX idx_comments_post_status_created (post_id, status, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`); err != nil {
+		return err
+	}
+	if _, err := s.db.Exec(`
+CREATE TABLE IF NOT EXISTS pages (
+	id BIGINT PRIMARY KEY AUTO_INCREMENT,
+	slug VARCHAR(160) NOT NULL UNIQUE,
+	title VARCHAR(255) NOT NULL,
+	excerpt TEXT NOT NULL,
+	content_html MEDIUMTEXT NOT NULL,
+	cover_image VARCHAR(500) NOT NULL DEFAULT '',
+	status VARCHAR(20) NOT NULL DEFAULT 'published',
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	INDEX idx_pages_status_updated (status, updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`); err != nil {
 		return err
 	}
@@ -243,6 +268,33 @@ LIMIT ?`, limit)
 	return posts, s.hydrateTags(ctx, posts)
 }
 
+func (s *PostStore) ListAllPages(ctx context.Context, limit int) ([]models.Page, error) {
+	rows, err := s.db.QueryContext(ctx, `
+SELECT id, slug, title, excerpt, content_html, cover_image, status, created_at, updated_at
+FROM pages
+ORDER BY updated_at DESC
+LIMIT ?`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanPages(rows)
+}
+
+func (s *PostStore) ListPublishedPages(ctx context.Context, limit int) ([]models.Page, error) {
+	rows, err := s.db.QueryContext(ctx, `
+SELECT id, slug, title, excerpt, content_html, cover_image, status, created_at, updated_at
+FROM pages
+WHERE status = 'published'
+ORDER BY updated_at DESC
+LIMIT ?`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanPages(rows)
+}
+
 func (s *PostStore) ListPublishedPaged(ctx context.Context, page int, pageSize int) ([]models.Post, error) {
 	page, pageSize = normalizePage(page, pageSize)
 	rows, err := s.db.QueryContext(ctx, `
@@ -307,6 +359,29 @@ LIMIT ? OFFSET ?`, like, like, like, like, like, pageSize, (page-1)*pageSize)
 		return nil, err
 	}
 	return posts, s.hydrateTags(ctx, posts)
+}
+
+func (s *PostStore) SearchPages(ctx context.Context, query string, limit int) ([]models.Page, error) {
+	query = normalizeSearchQuery(query)
+	if query == "" {
+		return nil, nil
+	}
+	like := likePattern(query)
+	rows, err := s.db.QueryContext(ctx, `
+SELECT id, slug, title, excerpt, content_html, cover_image, status, created_at, updated_at
+FROM pages
+WHERE status = 'published' AND (
+	title LIKE ? ESCAPE '\\' OR
+	excerpt LIKE ? ESCAPE '\\' OR
+	content_html LIKE ? ESCAPE '\\'
+)
+ORDER BY updated_at DESC
+LIMIT ?`, like, like, like, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanPages(rows)
 }
 
 func (s *PostStore) ByCategory(ctx context.Context, slug string, page int, pageSize int) ([]models.Post, models.Category, error) {
@@ -391,6 +466,22 @@ WHERE p.status = 'published' AND (
 		WHERE pt.post_id = p.id AND t.name LIKE ? ESCAPE '\\'
 	)
 )`, like, like, like, like, like)
+}
+
+func (s *PostStore) CountSearchPages(ctx context.Context, query string) (int, error) {
+	query = normalizeSearchQuery(query)
+	if query == "" {
+		return 0, nil
+	}
+	like := likePattern(query)
+	return s.count(ctx, `
+SELECT COUNT(*)
+FROM pages
+WHERE status = 'published' AND (
+	title LIKE ? ESCAPE '\\' OR
+	excerpt LIKE ? ESCAPE '\\' OR
+	content_html LIKE ? ESCAPE '\\'
+)`, like, like, like)
 }
 
 func (s *PostStore) CountByCategory(ctx context.Context, slug string) (int, error) {
@@ -508,6 +599,46 @@ LIMIT 1`, id).Scan(
 		post = posts[0]
 	}
 	return post, err
+}
+
+func (s *PostStore) PageBySlug(ctx context.Context, slug string) (models.Page, error) {
+	return s.pageBySlug(ctx, slug, false)
+}
+
+func (s *PostStore) PageBySlugForAdmin(ctx context.Context, slug string) (models.Page, error) {
+	return s.pageBySlug(ctx, slug, true)
+}
+
+func (s *PostStore) pageBySlug(ctx context.Context, slug string, includePrivate bool) (models.Page, error) {
+	var page models.Page
+	var content string
+	statusClause := "AND status = 'published'"
+	if includePrivate {
+		statusClause = "AND status IN ('published', 'private')"
+	}
+	err := s.db.QueryRowContext(ctx, `
+SELECT id, slug, title, excerpt, content_html, cover_image, status, created_at, updated_at
+FROM pages
+WHERE slug = ? `+statusClause+`
+LIMIT 1`, slug).Scan(
+		&page.ID, &page.Slug, &page.Title, &page.Excerpt, &content, &page.CoverImage, &page.Status, &page.CreatedAt, &page.UpdatedAt,
+	)
+	page.ContentHTML = template.HTML(content)
+	return page, err
+}
+
+func (s *PostStore) PageByID(ctx context.Context, id int64) (models.Page, error) {
+	var page models.Page
+	var content string
+	err := s.db.QueryRowContext(ctx, `
+SELECT id, slug, title, excerpt, content_html, cover_image, status, created_at, updated_at
+FROM pages
+WHERE id = ?
+LIMIT 1`, id).Scan(
+		&page.ID, &page.Slug, &page.Title, &page.Excerpt, &content, &page.CoverImage, &page.Status, &page.CreatedAt, &page.UpdatedAt,
+	)
+	page.ContentHTML = template.HTML(content)
+	return page, err
 }
 
 func (s *PostStore) AdjacentPublished(ctx context.Context, post models.Post) (models.Post, models.Post, error) {
@@ -817,11 +948,15 @@ func (s *PostStore) SearchIndex(ctx context.Context) (models.SearchIndex, error)
 	if err != nil {
 		return models.SearchIndex{}, err
 	}
+	pages, err := s.ListPublishedPages(ctx, 200)
+	if err != nil {
+		return models.SearchIndex{}, err
+	}
 
 	index := models.SearchIndex{
 		GeneratedAt: time.Now(),
 		Posts:       make([]models.SearchPostItem, 0, len(posts)),
-		Pages:       []models.SearchPostItem{},
+		Pages:       make([]models.SearchPostItem, 0, len(pages)),
 		Categories:  make([]models.SearchTaxonomyItem, 0, len(categories)),
 		Tags:        make([]models.SearchTaxonomyItem, 0, len(tags)),
 		Comments:    []models.SearchCommentItem{},
@@ -843,6 +978,16 @@ func (s *PostStore) SearchIndex(ctx context.Context) (models.SearchIndex, error)
 			Views:        post.Views,
 			Likes:        post.Likes,
 			PublishedAt:  post.PublishedAt,
+		})
+	}
+	for _, page := range pages {
+		index.Pages = append(index.Pages, models.SearchPostItem{
+			Title:       page.Title,
+			URL:         "/page/" + page.Slug,
+			Excerpt:     page.Excerpt,
+			Content:     searchText(string(page.ContentHTML)),
+			CoverImage:  page.CoverImage,
+			PublishedAt: page.UpdatedAt,
 		})
 	}
 	for _, category := range categories {
@@ -1033,6 +1178,45 @@ WHERE id = ?`,
 
 	err = tx.Commit()
 	return postID, err
+}
+
+func (s *PostStore) SavePage(ctx context.Context, input PageInput) (int64, error) {
+	input = normalizePageInput(input)
+	now := time.Now()
+	if input.ID == 0 {
+		result, err := s.db.ExecContext(ctx, `
+INSERT INTO pages (slug, title, excerpt, content_html, cover_image, status, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, input.Status, now, now,
+		)
+		if err != nil {
+			return 0, err
+		}
+		return result.LastInsertId()
+	}
+	_, err := s.db.ExecContext(ctx, `
+UPDATE pages
+SET slug = ?, title = ?, excerpt = ?, content_html = ?, cover_image = ?, status = ?
+WHERE id = ?`,
+		input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, input.Status, input.ID,
+	)
+	return input.ID, err
+}
+
+func scanPages(rows *sql.Rows) ([]models.Page, error) {
+	var pages []models.Page
+	for rows.Next() {
+		var page models.Page
+		var content string
+		if err := rows.Scan(
+			&page.ID, &page.Slug, &page.Title, &page.Excerpt, &content, &page.CoverImage, &page.Status, &page.CreatedAt, &page.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		page.ContentHTML = template.HTML(content)
+		pages = append(pages, page)
+	}
+	return pages, rows.Err()
 }
 
 func scanAdminPosts(rows *sql.Rows) ([]models.Post, error) {
@@ -1276,6 +1460,29 @@ func normalizePostInput(input PostInput) PostInput {
 	input.CategoryName = strings.TrimSpace(input.CategoryName)
 	if input.CategoryName == "" {
 		input.CategoryName = "Blog"
+	}
+	return input
+}
+
+func normalizePageInput(input PageInput) PageInput {
+	input.Title = strings.TrimSpace(input.Title)
+	input.Slug = slugify(input.Slug)
+	if input.Slug == "" {
+		input.Slug = slugify(input.Title)
+	}
+	if input.Slug == "" {
+		if input.ID > 0 {
+			input.Slug = "page-" + strconv.FormatInt(input.ID, 10)
+		} else {
+			input.Slug = "page-" + time.Now().Format("20060102150405")
+		}
+	}
+	input.Excerpt = strings.TrimSpace(input.Excerpt)
+	input.ContentHTML = strings.TrimSpace(input.ContentHTML)
+	input.CoverImage = strings.TrimSpace(input.CoverImage)
+	input.Status = strings.TrimSpace(input.Status)
+	if input.Status != "draft" && input.Status != "private" {
+		input.Status = "published"
 	}
 	return input
 }

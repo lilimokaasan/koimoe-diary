@@ -48,30 +48,29 @@
 	</section>
 	<section class="admin-hero compact">
 		<div>
-			<p>Posts</p>
-			<h1>Write softly, publish beautifully.</h1>
+			<p>Pages</p>
+			<h1>Keep quiet corners for lasting notes.</h1>
 		</div>
 	</section>
 	<main class="admin-shell">
 		<section class="admin-panel">
 			<div class="panel-title">
-				<h1>Posts</h1>
-				<a class="button primary" href="/admin/posts/new">New Post</a>
+				<h1>Pages</h1>
+				<a class="button primary" href="/admin/pages/new">New Page</a>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
 			<table class="admin-table">
-				<thead><tr><th>Title</th><th>Status</th><th>Category</th><th>Updated</th><th></th></tr></thead>
+				<thead><tr><th>Title</th><th>Status</th><th>Updated</th><th></th></tr></thead>
 				<tbody>
-					{{range .Posts}}
+					{{range .Pages}}
 					<tr>
-						<td><a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a><span>{{.Slug}}</span></td>
+						<td><a href="/admin/pages/{{.ID}}/edit">{{.Title}}</a><span>{{.Slug}}</span></td>
 						<td><span class="status {{.Status}}">{{.Status}}</span></td>
-						<td>{{.Category.Name}}</td>
 						<td>{{since .UpdatedAt}}</td>
-						<td><a href="/post/{{.Slug}}" target="_blank">Open</a></td>
+						<td>{{if ne .Status "draft"}}<a href="/page/{{.Slug}}" target="_blank">Open</a>{{end}}</td>
 					</tr>
 					{{else}}
-					<tr><td colspan="5">No posts yet.</td></tr>
+					<tr><td colspan="4">No pages yet.</td></tr>
 					{{end}}
 				</tbody>
 			</table>

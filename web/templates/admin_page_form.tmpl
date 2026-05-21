@@ -48,17 +48,17 @@
 	</section>
 	<section class="admin-hero compact">
 		<div>
-			<p>{{if .IsNew}}New Draft{{else}}Editor{{end}}</p>
-			<h1>{{if .IsNew}}Catch a new thought.{{else}}Shape this post.{{end}}</h1>
+			<p>{{if .IsNew}}New Page{{else}}Page Editor{{end}}</p>
+			<h1>{{if .IsNew}}Make a quiet little room.{{else}}Refine this corner.{{end}}</h1>
 		</div>
 	</section>
 	<main class="admin-shell">
-		<form class="admin-panel editor-panel" method="post" enctype="multipart/form-data" action="{{if .IsNew}}/admin/posts{{else}}/admin/posts/{{.Post.ID}}{{end}}">
+		<form class="admin-panel editor-panel" method="post" enctype="multipart/form-data" action="{{if .IsNew}}/admin/pages{{else}}/admin/pages/{{.PageContent.ID}}{{end}}">
 			<div class="panel-title">
-				<h1>{{if .IsNew}}New Post{{else}}Edit Post{{end}}</h1>
+				<h1>{{if .IsNew}}New Page{{else}}Edit Page{{end}}</h1>
 				<div class="actions">
-					<a class="button" href="/admin">Cancel</a>
-					{{if not .IsNew}}<a class="button" href="/admin/posts/{{.Post.ID}}/preview" target="_blank" rel="noopener noreferrer">Preview</a>{{end}}
+					<a class="button" href="/admin/pages">Cancel</a>
+					{{if and (not .IsNew) (ne .PageContent.Status "draft")}}<a class="button" href="/page/{{.PageContent.Slug}}" target="_blank" rel="noopener noreferrer">Open</a>{{end}}
 					<button class="primary" type="submit">Save</button>
 				</div>
 			</div>
@@ -66,11 +66,11 @@
 			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
 			<div class="editor-grid">
 				<section class="editor-main">
-					<label>Title<input type="text" name="title" value="{{.Post.Title}}" required></label>
-					<label>Slug<input type="text" name="slug" value="{{.Post.Slug}}" placeholder="auto-generated from title"></label>
+					<label>Title<input type="text" name="title" value="{{.PageContent.Title}}" required></label>
+					<label>Slug<input type="text" name="slug" value="{{.PageContent.Slug}}" placeholder="auto-generated from title"></label>
 					<label>Excerpt
 						<span class="field-with-action">
-							<textarea name="excerpt" rows="3">{{.Post.Excerpt}}</textarea>
+							<textarea name="excerpt" rows="3">{{.PageContent.Excerpt}}</textarea>
 							<button class="soft-tool" type="button" data-generate-excerpt>Use content</button>
 						</span>
 					</label>
@@ -102,7 +102,7 @@
 								</div>
 							</article>
 							{{else}}
-							<p class="empty-state">No uploaded images yet. Use Media to upload images, then come back to insert them into a post.</p>
+							<p class="empty-state">No uploaded images yet. Use Media to upload images, then come back to insert them into a page.</p>
 							{{end}}
 						</div>
 					</div>
@@ -110,18 +110,16 @@
 				<aside class="editor-side">
 					<label>Status
 						<select name="status">
-							<option value="published" {{if eq .Post.Status "published"}}selected{{end}}>Published</option>
-							<option value="private" {{if eq .Post.Status "private"}}selected{{end}}>Private</option>
-							<option value="draft" {{if eq .Post.Status "draft"}}selected{{end}}>Draft</option>
+							<option value="published" {{if eq .PageContent.Status "published"}}selected{{end}}>Published</option>
+							<option value="private" {{if eq .PageContent.Status "private"}}selected{{end}}>Private</option>
+							<option value="draft" {{if eq .PageContent.Status "draft"}}selected{{end}}>Draft</option>
 						</select>
 					</label>
-					<label>Category<input type="text" name="category" value="{{.Post.Category.Name}}" placeholder="Blog"></label>
-					<label>Tags<input type="text" name="tags" value="{{.PostTags}}" placeholder="Go, Sakurairo"></label>
 					<div class="cover-box">
-						{{if .Post.CoverImage}}<img src="{{.Post.CoverImage}}" alt="Cover preview">{{end}}
-						<label>Cover Image<input type="text" name="cover_image" value="{{.Post.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+						{{if .PageContent.CoverImage}}<img src="{{.PageContent.CoverImage}}" alt="Cover preview">{{end}}
+						<label>Cover Image<input type="text" name="cover_image" value="{{.PageContent.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
 						<label>Upload Cover<input type="file" name="cover_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
-						<p>Uploading a file will replace the cover path when saved.</p>
+						<p>Pages use this image for the top cover and social previews.</p>
 					</div>
 				</aside>
 			</div>
@@ -138,7 +136,7 @@
 			function insertImage(url) {
 				if (!url) return;
 				var titleInput = document.querySelector("input[name='title']");
-				var alt = ((titleInput && titleInput.value) || "Post image").replace(/"/g, "&quot;");
+				var alt = ((titleInput && titleInput.value) || "Page image").replace(/"/g, "&quot;");
 				var snippet = '<figure><img src="' + url + '" alt="' + alt + '"></figure>';
 				var start = typeof content.selectionStart === "number" ? content.selectionStart : content.value.length;
 				var end = typeof content.selectionEnd === "number" ? content.selectionEnd : start;

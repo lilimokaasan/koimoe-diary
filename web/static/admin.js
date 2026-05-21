@@ -17,6 +17,9 @@
 		if (path === "/admin/posts/new" || path.indexOf("/admin/posts/") === 0) {
 			return links.find(function (link) { return normalizedPath(link) === "/admin"; });
 		}
+		if (path === "/admin/pages/new" || path.indexOf("/admin/pages/") === 0) {
+			return links.find(function (link) { return normalizedPath(link) === "/admin/pages"; });
+		}
 		if (path.indexOf("/admin/categories") === 0 || path.indexOf("/admin/tags") === 0) {
 			return links.find(function (link) { return normalizedPath(link) === "/admin/taxonomy"; });
 		}

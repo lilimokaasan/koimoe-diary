@@ -1,0 +1,35 @@
+{{template "head" .}}
+{{template "site_header" .}}
+<div id="primary" class="content-area with-sidebar single-post-layout">
+	<main id="main" class="site-main" role="main">
+		<article class="post type-page sakurairo-single koimoe-page">
+			{{if .PageContent.CoverImage}}<div class="single-cover" style="background-image:url('{{.PageContent.CoverImage}}')"></div>{{end}}
+			<header class="entry-header">
+				<p class="single-kicker"><i class="iconfont icon-sakura"></i> Page</p>
+				<h1 class="entry-title">{{.PageContent.Title}}</h1>
+				{{if eq .PageContent.Status "private"}}<p class="private-post-notice"><i class="fa fa-lock" aria-hidden="true"></i> Private page, visible only while signed in.</p>{{end}}
+				<div class="entry-census">
+					<span><i class="iconfont icon-time"></i>Updated {{since .PageContent.UpdatedAt}}</span>
+					<span><i class="fa fa-heart-o" aria-hidden="true"></i>{{.Site.Author}}</span>
+				</div>
+			</header>
+			<div class="entry-content">
+				{{.PageContent.ContentHTML}}
+			</div>
+		</article>
+		<section class="single-author">
+			<img src="{{.Site.Avatar}}" alt="{{.Site.Author}}">
+			<div>
+				<p>Kept by</p>
+				<h2>{{.Site.Author}}</h2>
+				<span>{{.Site.Description}}</span>
+			</div>
+			<div class="single-actions">
+				<a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+				<a href="/search"><i class="iconfont icon-search"></i> Search</a>
+			</div>
+		</section>
+	</main>
+	{{template "sidebar" .}}
+</div>
+{{template "site_footer" .}}
