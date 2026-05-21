@@ -56,7 +56,14 @@
 			if (link === active) link.setAttribute("aria-current", "page");
 			else link.removeAttribute("aria-current");
 		});
-		moveTo(active || links[0], instant);
+		if (nav.classList.contains("is-ready")) {
+			moveTo(active || links[0], instant);
+		}
+	}
+
+	function clearIndicator() {
+		if (!nav) return;
+		nav.classList.remove("is-ready");
 	}
 
 	function runInlineScripts(root) {
@@ -149,7 +156,7 @@
 
 		Array.prototype.slice.call(document.querySelectorAll(".admin-global-actions a[href^='/admin']")).forEach(bindShellClick);
 
-		nav.addEventListener("mouseleave", function () { syncNav(false); });
+		nav.addEventListener("mouseleave", clearIndicator);
 		window.addEventListener("resize", function () { syncNav(true); });
 		window.addEventListener("popstate", function () { loadAdminPage(window.location.href, { skipHistory: true }); });
 	}
@@ -173,6 +180,13 @@
 
 		menu.addEventListener("click", function (event) {
 			event.stopPropagation();
+		});
+
+		Array.prototype.slice.call(menu.querySelectorAll(".admin-user-dropdown a")).forEach(function (link) {
+			link.addEventListener("click", function () {
+				setOpen(false);
+				link.blur();
+			});
 		});
 
 		document.addEventListener("click", function () {

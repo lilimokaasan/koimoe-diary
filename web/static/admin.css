@@ -629,9 +629,9 @@ button.admin-user-chip::after {
 }
 
 .admin-user-dropdown a:hover,
-.admin-user-dropdown a:focus,
+.admin-user-dropdown a:focus-visible,
 .admin-user-dropdown button:hover,
-.admin-user-dropdown button:focus {
+.admin-user-dropdown button:focus-visible {
 	background: rgba(251, 152, 192, 0.12);
 	color: var(--sakura-deep);
 	outline: none;
