@@ -756,6 +756,8 @@ textarea {
 
 .editor-tools {
 	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 	justify-content: flex-end;
 	margin: 0 0 8px;
 }
@@ -764,6 +766,21 @@ textarea {
 	justify-self: end;
 	min-height: 34px;
 	padding: 8px 12px;
+}
+
+.editor-statusline {
+	align-items: center;
+	color: var(--muted);
+	display: flex;
+	font-family: "Source Code Pro", Consolas, monospace;
+	font-size: 12px;
+	gap: 12px;
+	justify-content: space-between;
+	margin-top: 8px;
+}
+
+.editor-statusline span:last-child {
+	color: var(--sakura-deep);
 }
 
 .navigation-input {

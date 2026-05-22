@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260522-comment-replies">
+	<link rel="stylesheet" href="/static/admin.css?v=20260522-editor-tools">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -53,12 +53,13 @@
 		</div>
 	</section>
 	<main class="admin-shell">
-		<form class="admin-panel editor-panel" method="post" enctype="multipart/form-data" action="{{if .IsNew}}/admin/posts{{else}}/admin/posts/{{.Post.ID}}{{end}}">
+		<form class="admin-panel editor-panel" method="post" enctype="multipart/form-data" action="{{if .IsNew}}/admin/posts{{else}}/admin/posts/{{.Post.ID}}{{end}}" data-enhanced-editor>
 			<div class="panel-title">
 				<h1>{{if .IsNew}}New Post{{else}}Edit Post{{end}}</h1>
 				<div class="actions">
 					<a class="button" href="/admin">Cancel</a>
 					{{if not .IsNew}}<a class="button" href="/admin/posts/{{.Post.ID}}/preview" target="_blank" rel="noopener noreferrer">Preview</a>{{end}}
+					<button class="button" type="button" data-save-draft>Save Draft</button>
 					<button class="primary" type="submit">Save</button>
 				</div>
 			</div>
@@ -76,10 +77,18 @@
 					</label>
 					<label>Content HTML
 						<span class="editor-tools">
+							<button class="soft-tool" type="button" data-editor-snippet="heading">Heading</button>
+							<button class="soft-tool" type="button" data-editor-snippet="quote">Quote</button>
+							<button class="soft-tool" type="button" data-editor-snippet="code">Code</button>
+							<button class="soft-tool" type="button" data-editor-snippet="divider">Divider</button>
 							<button class="soft-tool" type="button" data-insert-cover>Insert cover image</button>
 							<button class="soft-tool" type="button" data-open-media-picker>Choose from media</button>
 						</span>
 						<textarea class="content-input" name="content_html" rows="18" required>{{.ContentHTML}}</textarea>
+						<span class="editor-statusline">
+							<span data-editor-count>0 chars · 0 words</span>
+							<span data-editor-autosave>Local draft ready.</span>
+						</span>
 					</label>
 					<div class="editor-media-picker compact">
 						<div>
@@ -142,17 +151,62 @@
 	</main>
 	<script>
 		(function () {
+			var form = document.querySelector("[data-enhanced-editor]");
 			var trigger = document.querySelector("[data-generate-excerpt]");
 			var imageTrigger = document.querySelector("[data-insert-cover]");
 			var excerpt = document.querySelector("textarea[name='excerpt']");
 			var content = document.querySelector("textarea[name='content_html']");
 			var cover = document.querySelector("input[name='cover_image']");
+			var title = document.querySelector("input[name='title']");
+			var slug = document.querySelector("input[name='slug']");
+			var status = document.querySelector("select[name='status']");
+			var saveDraft = document.querySelector("[data-save-draft]");
+			var count = document.querySelector("[data-editor-count]");
+			var autosave = document.querySelector("[data-editor-autosave]");
+			var autosaveTimer;
+			var initialSnapshot = "";
 			if (!content) return;
-			function insertImage(url, altText) {
-				if (!url) return;
-				var titleInput = document.querySelector("input[name='title']");
-				var alt = (altText || (titleInput && titleInput.value) || "Post image").replace(/"/g, "&quot;");
-				var snippet = '<figure><img src="' + url + '" alt="' + alt + '"></figure>';
+			var draftKey = "koimoe-post-draft:" + (form && form.getAttribute("action") || location.pathname);
+			var snippetMap = {
+				heading: "<h2>Section title</h2>\n<p>Write softly here.</p>",
+				quote: "<blockquote>\n<p>A small thought worth keeping.</p>\n</blockquote>",
+				code: "<pre><code>code here</code></pre>",
+				divider: "<hr>"
+			};
+			function snapshot() {
+				return JSON.stringify({
+					title: title && title.value || "",
+					slug: slug && slug.value || "",
+					excerpt: excerpt && excerpt.value || "",
+					content: content && content.value || "",
+					cover: cover && cover.value || "",
+					status: status && status.value || ""
+				});
+			}
+			function setAutosaveText(text) {
+				if (autosave) autosave.textContent = text;
+			}
+			function updateCount() {
+				if (!count) return;
+				var holder = document.createElement("div");
+				holder.innerHTML = content.value || "";
+				var text = (holder.textContent || holder.innerText || "").replace(/\s+/g, " ").trim();
+				var chars = text ? Array.from(text).length : 0;
+				var words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+				count.textContent = chars + " chars · " + words + " words";
+			}
+			function scheduleAutosave() {
+				window.clearTimeout(autosaveTimer);
+				autosaveTimer = window.setTimeout(function () {
+					try {
+						localStorage.setItem(draftKey, snapshot());
+						setAutosaveText("Local draft saved.");
+					} catch (error) {
+						setAutosaveText("Local draft unavailable.");
+					}
+				}, 500);
+			}
+			function insertAtCursor(snippet) {
 				var start = typeof content.selectionStart === "number" ? content.selectionStart : content.value.length;
 				var end = typeof content.selectionEnd === "number" ? content.selectionEnd : start;
 				var before = content.value.slice(0, start).replace(/\s*$/, "");
@@ -161,7 +215,74 @@
 				var cursor = before.length + snippet.length + 4;
 				content.focus();
 				content.setSelectionRange(cursor, cursor);
+				content.dispatchEvent(new Event("input", { bubbles: true }));
 			}
+			function slugify(value) {
+				return (value || "")
+					.toLowerCase()
+					.trim()
+					.replace(/['"]/g, "")
+					.replace(/[^a-z0-9]+/g, "-")
+					.replace(/^-+|-+$/g, "")
+					.slice(0, 120);
+			}
+			function insertImage(url, altText) {
+				if (!url) return;
+				var titleInput = document.querySelector("input[name='title']");
+				var alt = (altText || (titleInput && titleInput.value) || "Post image").replace(/"/g, "&quot;");
+				var snippet = '<figure><img src="' + url + '" alt="' + alt + '"></figure>';
+				insertAtCursor(snippet);
+			}
+			try {
+				var saved = JSON.parse(localStorage.getItem(draftKey) || "null");
+				if (saved && saved.content && saved.content !== content.value && confirm("Restore the local draft for this post?")) {
+					if (title && saved.title) title.value = saved.title;
+					if (slug && saved.slug) slug.value = saved.slug;
+					if (excerpt && saved.excerpt) excerpt.value = saved.excerpt;
+					if (cover && saved.cover) cover.value = saved.cover;
+					if (status && saved.status) status.value = saved.status;
+					content.value = saved.content;
+					setAutosaveText("Local draft restored.");
+				}
+			} catch (error) {
+				setAutosaveText("Local draft unavailable.");
+			}
+			initialSnapshot = snapshot();
+			updateCount();
+			title && title.addEventListener("input", function () {
+				if (slug && !slug.value.trim()) slug.value = slugify(title.value);
+				scheduleAutosave();
+			});
+			content.addEventListener("input", function () {
+				updateCount();
+				scheduleAutosave();
+			});
+			[slug, excerpt, cover, status].forEach(function (field) {
+				field && field.addEventListener("input", scheduleAutosave);
+				field && field.addEventListener("change", scheduleAutosave);
+			});
+			document.querySelectorAll("[data-editor-snippet]").forEach(function (button) {
+				button.addEventListener("click", function () {
+					insertAtCursor(snippetMap[button.getAttribute("data-editor-snippet")] || "");
+				});
+			});
+			saveDraft && saveDraft.addEventListener("click", function () {
+				if (status) status.value = "draft";
+				if (form && form.requestSubmit) {
+					form.requestSubmit();
+				} else if (form) {
+					form.submit();
+				}
+			});
+			window.addEventListener("beforeunload", function (event) {
+				if (snapshot() === initialSnapshot) return;
+				event.preventDefault();
+				event.returnValue = "";
+			});
+			form && form.addEventListener("submit", function () {
+				initialSnapshot = snapshot();
+				try { localStorage.removeItem(draftKey); } catch (error) {}
+			});
 			if (trigger && excerpt) trigger.addEventListener("click", function () {
 				var holder = document.createElement("div");
 				holder.innerHTML = content.value || "";
@@ -194,6 +315,6 @@
 			});
 		})();
 	</script>
-	<script src="/static/admin.js?v=20260522-media-v2"></script>
+	<script src="/static/admin.js?v=20260522-editor-tools"></script>
 </body>
 </html>
