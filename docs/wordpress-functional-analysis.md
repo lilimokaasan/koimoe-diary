@@ -376,8 +376,12 @@ Implementation note:
 
 Go 版建议：
 
-- 当前已有评论提交，可以扩展字段：`parent_id`, `website`, `qq`, `is_private`, `mail_notify`, `user_agent`, `ip`, `status`。
+- 当前已有评论提交，并已扩展 `parent_id`, `website`, `is_private`, `mail_notify`, `user_agent`, `ip`, `status` 等字段；`qq`、Markdown 原文/渲染 HTML 和地理位置仍可后续扩展。
 - Ajax 与普通 form 可以共用同一个 POST handler，按 `Accept` 返回 HTML fragment 或 redirect。
+
+Implementation note:
+
+- 当前 Go 版已经支持嵌套回复、私密评论、后台私密切换、新评论管理员通知，以及父评论作者 opt-in 回复邮件通知。
 
 ### 5.2 Markdown 评论
 
@@ -410,6 +414,10 @@ Go 版建议：
   - 当前评论者 cookie/email token
   - 父评论作者 email token
 - 单用户个人站初期可以只做“管理员可见，访客不可见”的简化版。
+
+Implementation note:
+
+- 当前 Go 版已支持提交私密评论和后台切换私密状态；访客侧私密内容展示仍可继续按作者 token 细化。
 
 ### 5.4 评论图片
 
@@ -642,29 +650,34 @@ Go 版建议：
 现有 Go 版已有：
 
 - `posts`
+- `pages`
 - `categories`
 - `tags`
 - `post_tags`
 - `comments`
+- `moments`
+- `friend_link_categories`
+- `friend_links`
+- `media_assets`
 - `site_settings`
 
-建议新增或扩展：
+已实现或建议扩展的数据形态：
 
 ```sql
--- 页面
+-- 页面，已实现
 pages(id, title, slug, content, status, created_at, updated_at)
 
--- 说说/短动态
+-- 说说/短动态，已实现
 moments(id, content, author_name, status, created_at, updated_at)
 
--- 友情链接
+-- 友情链接，已实现
 friend_link_categories(id, name, description, sort_order)
 friend_links(id, category_id, name, url, description, image_url, sort_order, visible, created_at, updated_at)
 
--- 媒体库
+-- 媒体库，已实现并包含 title/alt_text/description 等扩展字段
 media_assets(id, filename, original_name, mime_type, size, width, height, url, storage, created_at)
 
--- 评论扩展字段，可直接加到 comments
+-- 评论扩展字段，部分已实现
 comments.parent_id
 comments.website
 comments.qq
@@ -677,7 +690,7 @@ comments.content_markdown
 comments.content_html
 comments.status
 
--- 文章扩展字段，可直接加到 posts
+-- 文章扩展字段，部分已实现
 posts.views_count
 posts.likes_count
 posts.cover_url
@@ -691,40 +704,39 @@ posts.license_type
 - 复杂列表用 JSON 或独立表：
   - navigation：已实现 JSON
   - social_links：建议 JSON 或独立表
-  - focus_cards：建议 JSON
+  - focus_cards：已实现为后台可编辑的文本配置，运行时解析为卡片列表
   - random image sources：长期建议独立表
 
 ## 12. 迁移优先级
 
 ### P0：已经基本具备或应保持
 
-- 文章列表、文章详情、分类、标签、搜索、归档。
-- 评论提交和后台评论管理。
-- 站点基础设置、导航设置。
-- 文章封面、默认封面。
-- 后台登录和文章编辑。
+- 文章列表、文章详情、独立页面、分类、标签、搜索、普通归档和月度归档。
+- 评论提交、嵌套回复、私密评论、邮件通知和后台评论管理。
+- 站点基础设置、导航设置、Profile、footer、Focus Cards 和 sakura 特效开关。
+- 文章封面、默认封面、分类封面、媒体库和文章编辑器媒体选择。
+- 友情链接、说说/短动态、分类/标签后台管理。
+- 文章浏览量、点赞、上一篇/下一篇、作者卡片、Feed、sitemap、robots.txt 和 SEO/social metadata。
+- 后台登录、文章/页面编辑、预览、密码邮件验证码、部署脚本和健康检查。
 
 ### P1：建议下一阶段迁移
 
-- 归档页按年月聚合。
-- 友情链接页和后台管理。
-- 说说/短动态。
-- 文章浏览量与点赞。
-- 上一篇/下一篇。
-- 作者卡片、版权声明、打赏配置。
-- 实时搜索 JSON。
-- 分类/标签管理与分类封面。
-- 评论嵌套回复、私密评论、邮件通知。
+- 评论 Markdown 与 HTML sanitize。
+- 更完整的评论审核工作流，包括 review states、垃圾评论隔离、批量操作。
+- 旧短代码兼容 renderer：`[toc]`、`[collapse]`、`[begin]`、旧图片语法和下载/提示类短代码。
+- 文章页配置化：版权声明、分享区、打赏配置、目录、复制版权提示。
+- 社交链接模型：`social_links` JSON 或独立表，并复用到首页、侧栏、作者卡和页脚。
+- WordPress 导入路径：XML 或数据库导入，包含文章、分类、标签、评论、友情链接和媒体 URL。
 
 ### P2：体验增强，可逐步迁移
 
-- 评论 Markdown 与表情兼容。
+- 评论表情兼容。
 - 评论图片上传。
 - QQ 头像。
-- 首页 Focus Area。
 - 首页随机图管理。
+- 媒体库搜索/筛选、标签或用途分类、缩略图/压缩、批量删除和 R2/CDN 存储。
 - 前台登录页。
-- 复制版权、TOC、旧短代码兼容。
+- 浮动工具、字体/皮肤控制、移动导航和更完整的视觉 parity 修补。
 
 ### P3：可选或暂缓
 

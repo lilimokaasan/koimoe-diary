@@ -1,11 +1,12 @@
 # Mail System
 
-Sakurairo Go has a lightweight SMTP mail foundation for comment notifications.
+Sakurairo Go has lightweight SMTP mail support for comment notifications and admin password verification.
 
 ## Current Scope
 
 - Sends an asynchronous admin notification when a new public comment is saved.
 - Sends a reply notification to the parent commenter when they choose `Email me on reply`.
+- Sends an admin password verification code when changing the admin password from `/admin/settings`.
 - Shows mail status on `/admin/settings`.
 - Provides a `Send test mail` action on `/admin/settings`.
 - Stores `comments.parent_id` for comment threads and `comments.mail_notify` for reply notices.
