@@ -56,6 +56,7 @@ For this workspace, local development should use the `sakurairo` database. If My
 - Sakurairo-style hero, post cards, sidebar, reading page, comments, error pages, scroll/progress effects, and soft admin styling.
 - Automatic article/page table of contents for longer content, with generated heading anchors.
 - Configurable article share links with copy-link support.
+- Optional source/license notice when visitors copy longer article text.
 - Public comments with honeypot, lightweight spam filtering, Markdown rendering with sanitized HTML, nested replies, private comment option, optional reply notification opt-in, and admin comment management.
 - Admin login, sidebar navigation, post list, post editor, preview, excerpt helper, cover upload, media library, and post editor media picker.
 - Site settings for title, description, profile name/avatar, notice, navigation, social links, hero image, overlay opacity, default cover, article license copy, footer copy, Focus Cards, and sakura effects.
@@ -126,7 +127,7 @@ journalctl -u sakurairo-go.service -n 80 --no-pager
 
 - Add safer comment moderation workflow, review states, and bulk actions.
 - Add a compatibility renderer for legacy Sakurairo shortcodes such as `[toc]`, `[collapse]`, and older image syntax.
-- Make remaining article footer features configurable, including reward images and copy notices.
+- Make remaining article footer features configurable, including reward images.
 - Improve post editor ergonomics around drafts, richer image insertion, and publish-readiness checks.
 - Add WordPress import path from XML or database.
 - Build a visual parity punch list against `D:\codex\Sakurairo-1.20.10`, especially floating controls, font/skin tools, and mobile navigation.

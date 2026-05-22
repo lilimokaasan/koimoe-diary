@@ -2,7 +2,7 @@
 {{template "site_header" .}}
 <div id="primary" class="content-area with-sidebar single-post-layout">
 	<main id="main" class="site-main" role="main">
-		<article class="post type-post status-publish sakurairo-single">
+		<article class="post type-post status-publish sakurairo-single" {{if eq .Site.PostCopyNotice "1"}}data-copy-notice="1" data-copy-title="{{.Post.Title}}" data-copy-url="{{.CanonicalURL}}" data-copy-site="{{.Site.Name}}" data-copy-license="{{.Site.PostLicenseText}}"{{end}}>
 			{{if .Post.CoverImage}}<div class="single-cover" style="background-image:url('{{.Post.CoverImage}}')"></div>{{end}}
 			<header class="entry-header">
 				<p class="single-kicker"><i class="iconfont icon-sakura"></i> {{.Site.Name}}</p>

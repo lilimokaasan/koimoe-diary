@@ -197,6 +197,7 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		PostLicenseText:    strings.TrimSpace(r.GetForm("post_license_text").String()),
 		PostLicenseURL:     strings.TrimSpace(r.GetForm("post_license_url").String()),
 		PostShare:          checkboxValue(r, "post_share"),
+		PostCopyNotice:     checkboxValue(r, "post_copy_notice"),
 		SakuraEffects:      strings.TrimSpace(r.GetForm("sakura_effects").String()),
 		FooterText:         strings.TrimSpace(r.GetForm("footer_text").String()),
 		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
@@ -1883,6 +1884,9 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	site.PostLicenseURL = strings.TrimSpace(site.PostLicenseURL)
 	if site.PostShare != "0" {
 		site.PostShare = "1"
+	}
+	if site.PostCopyNotice != "0" {
+		site.PostCopyNotice = "1"
 	}
 	if site.SakuraEffects != "1" {
 		site.SakuraEffects = "0"

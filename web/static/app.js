@@ -403,6 +403,34 @@
 		return Promise.resolve();
 	}
 
+	document.querySelectorAll(".sakurairo-single[data-copy-notice='1'] .entry-content").forEach(function (content) {
+		content.addEventListener("copy", function (event) {
+			var selection = window.getSelection && window.getSelection();
+			if (!selection || selection.isCollapsed || !content.contains(selection.anchorNode)) {
+				return;
+			}
+			var selectedText = selection.toString().trim();
+			if (selectedText.length < 24 || !event.clipboardData) {
+				return;
+			}
+			var article = content.closest(".sakurairo-single[data-copy-notice='1']");
+			var title = article.getAttribute("data-copy-title") || document.title;
+			var url = article.getAttribute("data-copy-url") || window.location.href;
+			var site = article.getAttribute("data-copy-site") || "";
+			var license = article.getAttribute("data-copy-license") || "";
+			var notice = [
+				"",
+				"From " + (site ? site + ": " : "") + title,
+				"Link: " + url
+			];
+			if (license) {
+				notice.push("License: " + license);
+			}
+			event.clipboardData.setData("text/plain", selectedText + "\n" + notice.join("\n"));
+			event.preventDefault();
+		});
+	});
+
 	var commentForm = document.querySelector(".comment-form");
 	if (commentForm) {
 		var parentInput = commentForm.querySelector('input[name="parent_id"]');

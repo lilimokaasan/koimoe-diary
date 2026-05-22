@@ -88,6 +88,10 @@
 						<span>Show article share links</span>
 					</label>
 					<label class="toggle-field">
+						<input type="checkbox" name="post_copy_notice" value="1" {{if ne .Settings.PostCopyNotice "0"}}checked{{end}}>
+						<span>Append source when visitors copy article text</span>
+					</label>
+					<label class="toggle-field">
 						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
 						<span>Enable subtle sakura petals</span>
 					</label>

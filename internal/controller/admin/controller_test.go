@@ -66,6 +66,7 @@ func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 		PostLicenseText:  "Default license",
 		PostLicenseURL:   "https://example.com/license",
 		PostShare:        "1",
+		PostCopyNotice:   "1",
 		FooterText:       "footer",
 		FooterCredit:     "credit",
 		SocialLinks:      []config.SocialLink{{Label: "Feed", URL: "/feed", Icon: "fa-rss"}},
@@ -90,15 +91,22 @@ func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 	if site.PostShare != "1" {
 		t.Fatalf("PostShare = %q, want enabled by default", site.PostShare)
 	}
+	if site.PostCopyNotice != "1" {
+		t.Fatalf("PostCopyNotice = %q, want enabled by default", site.PostCopyNotice)
+	}
 	if site.SakuraEffects != "0" {
 		t.Fatalf("SakuraEffects = %q, want normalized off", site.SakuraEffects)
 	}
 
 	site = normalizeSiteSettings(config.Site{
-		Name:      "KoiMoe Diary",
-		PostShare: "0",
+		Name:           "KoiMoe Diary",
+		PostShare:      "0",
+		PostCopyNotice: "0",
 	}, fallback)
 	if site.PostShare != "0" {
 		t.Fatalf("PostShare = %q, want disabled", site.PostShare)
+	}
+	if site.PostCopyNotice != "0" {
+		t.Fatalf("PostCopyNotice = %q, want disabled", site.PostCopyNotice)
 	}
 }
