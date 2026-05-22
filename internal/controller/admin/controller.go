@@ -11,8 +11,13 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"log"
 	"math/big"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -43,6 +48,7 @@ type Controller struct {
 	settings *store.SettingsStore
 	links    *store.LinkStore
 	moments  *store.MomentStore
+	media    *store.MediaStore
 	mailer   mailer.Sender
 	renderer *view.Renderer
 }
@@ -65,7 +71,7 @@ type PageData struct {
 	FriendLink      models.FriendLink
 	Moments         []models.Moment
 	Moment          models.Moment
-	MediaAssets     []MediaAsset
+	MediaAssets     []models.MediaAsset
 	Categories      []models.Category
 	Category        models.Category
 	Tags            []models.Tag
@@ -89,15 +95,8 @@ type PageData struct {
 	ShowAdminNav    bool
 }
 
-type MediaAsset struct {
-	Name      string
-	URL       string
-	SizeLabel string
-	UpdatedAt time.Time
-}
-
-func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, moments *store.MomentStore, mailer mailer.Sender, renderer *view.Renderer) *Controller {
-	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, moments: moments, mailer: mailer, renderer: renderer}
+func New(cfg *config.Config, posts *store.PostStore, settings *store.SettingsStore, links *store.LinkStore, moments *store.MomentStore, media *store.MediaStore, mailer mailer.Sender, renderer *view.Renderer) *Controller {
+	return &Controller{cfg: cfg, posts: posts, settings: settings, links: links, moments: moments, media: media, mailer: mailer, renderer: renderer}
 }
 
 func (c *Controller) Register(server *ghttp.Server) {
@@ -501,6 +500,9 @@ func passwordVerificationHTML(siteName string, code string, expireMinutes int) s
 func (c *Controller) Media(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
+	}
+	if err := c.backfillLocalMediaAssets(r.Context()); err != nil {
+		log.Printf("backfill media assets: %v", err)
 	}
 	assets, err := c.listMediaAssets()
 	if err != nil {
@@ -1466,10 +1468,14 @@ func (c *Controller) saveImageUpload(r *ghttp.Request, field string, label strin
 		log.Printf("save image upload: %v", err)
 		return "", "Could not save " + strings.ToLower(label) + "."
 	}
-	return "/static/uploads/" + month + "/" + filename, ""
+	url := "/static/uploads/" + month + "/" + filename
+	if err := c.indexLocalMediaURL(r.Context(), url, file.Filename); err != nil {
+		log.Printf("index media upload: %v", err)
+	}
+	return url, ""
 }
 
-func (c *Controller) mustListMediaAssets() []MediaAsset {
+func (c *Controller) mustListMediaAssets() []models.MediaAsset {
 	assets, err := c.listMediaAssets()
 	if err != nil {
 		log.Printf("list media assets: %v", err)
@@ -1478,7 +1484,60 @@ func (c *Controller) mustListMediaAssets() []MediaAsset {
 	return assets
 }
 
-func (c *Controller) listMediaAssets() ([]MediaAsset, error) {
+func (c *Controller) listMediaAssets() ([]models.MediaAsset, error) {
+	if c.media != nil {
+		assets, err := c.media.List(context.Background(), 240)
+		if err == nil && len(assets) > 0 {
+			return assets, nil
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err := c.backfillLocalMediaAssets(context.Background()); err != nil {
+		return nil, err
+	}
+	if c.media != nil {
+		return c.media.List(context.Background(), 240)
+	}
+	return c.scanLocalMediaAssets()
+}
+
+func (c *Controller) backfillLocalMediaAssets(ctx context.Context) error {
+	if c.media == nil {
+		return nil
+	}
+	count, err := c.media.Count(ctx)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return nil
+	}
+	assets, err := c.scanLocalMediaAssets()
+	if err != nil {
+		return err
+	}
+	for _, asset := range assets {
+		if _, err := c.media.UpsertLocal(ctx, store.MediaAssetInput{
+			Filename:     asset.Filename,
+			OriginalName: asset.OriginalName,
+			MimeType:     asset.MimeType,
+			SizeBytes:    asset.SizeBytes,
+			Width:        asset.Width,
+			Height:       asset.Height,
+			URL:          asset.URL,
+			Storage:      asset.Storage,
+			CreatedAt:    asset.CreatedAt,
+			UpdatedAt:    asset.UpdatedAt,
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *Controller) scanLocalMediaAssets() ([]models.MediaAsset, error) {
 	root := filepath.Join(c.cfg.StaticDir, "uploads")
 	if _, err := os.Stat(root); errors.Is(err, os.ErrNotExist) {
 		return nil, nil
@@ -1486,7 +1545,7 @@ func (c *Controller) listMediaAssets() ([]MediaAsset, error) {
 		return nil, err
 	}
 
-	var assets []MediaAsset
+	var assets []models.MediaAsset
 	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -1503,11 +1562,18 @@ func (c *Controller) listMediaAssets() ([]MediaAsset, error) {
 			return err
 		}
 		url := "/static/" + strings.ReplaceAll(filepath.ToSlash(rel), "//", "/")
-		assets = append(assets, MediaAsset{
-			Name:      entry.Name(),
-			URL:       url,
-			SizeLabel: humanFileSize(info.Size()),
-			UpdatedAt: info.ModTime(),
+		width, height := imageDimensions(path)
+		assets = append(assets, models.MediaAsset{
+			Filename:     entry.Name(),
+			OriginalName: entry.Name(),
+			MimeType:     mediaTypeForPath(path),
+			SizeBytes:    info.Size(),
+			Width:        width,
+			Height:       height,
+			URL:          url,
+			Storage:      "local",
+			CreatedAt:    info.ModTime(),
+			UpdatedAt:    info.ModTime(),
 		})
 		return nil
 	})
@@ -1523,19 +1589,50 @@ func (c *Controller) listMediaAssets() ([]MediaAsset, error) {
 	return assets, nil
 }
 
-func humanFileSize(size int64) string {
-	if size < 1024 {
-		return strconv.FormatInt(size, 10) + " B"
+func (c *Controller) indexLocalMediaURL(ctx context.Context, url string, originalName string) error {
+	if c.media == nil || !strings.HasPrefix(url, "/static/") {
+		return nil
 	}
-	units := []string{"KB", "MB", "GB"}
-	value := float64(size)
-	for _, unit := range units {
-		value = value / 1024
-		if value < 1024 {
-			return strconv.FormatFloat(value, 'f', 1, 64) + " " + unit
-		}
+	rel := strings.TrimPrefix(url, "/static/")
+	path := filepath.Join(c.cfg.StaticDir, filepath.FromSlash(rel))
+	info, err := os.Stat(path)
+	if err != nil {
+		return err
 	}
-	return strconv.FormatFloat(value, 'f', 1, 64) + " GB"
+	width, height := imageDimensions(path)
+	_, err = c.media.UpsertLocal(ctx, store.MediaAssetInput{
+		Filename:     filepath.Base(path),
+		OriginalName: originalName,
+		MimeType:     mediaTypeForPath(path),
+		SizeBytes:    info.Size(),
+		Width:        width,
+		Height:       height,
+		URL:          url,
+		Storage:      "local",
+		CreatedAt:    info.ModTime(),
+		UpdatedAt:    info.ModTime(),
+	})
+	return err
+}
+
+func imageDimensions(path string) (int, int) {
+	file, err := os.Open(path)
+	if err != nil {
+		return 0, 0
+	}
+	defer file.Close()
+	cfg, _, err := image.DecodeConfig(file)
+	if err != nil {
+		return 0, 0
+	}
+	return cfg.Width, cfg.Height
+}
+
+func mediaTypeForPath(path string) string {
+	if mediaType := mime.TypeByExtension(strings.ToLower(filepath.Ext(path))); mediaType != "" {
+		return mediaType
+	}
+	return "application/octet-stream"
 }
 
 func isImageFile(name string) bool {

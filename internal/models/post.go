@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -66,6 +67,42 @@ type Tag struct {
 	Slug      string
 	Name      string
 	PostCount int
+}
+
+type MediaAsset struct {
+	ID           int64
+	Filename     string
+	OriginalName string
+	MimeType     string
+	SizeBytes    int64
+	Width        int
+	Height       int
+	URL          string
+	Storage      string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func (asset MediaAsset) Name() string {
+	if asset.OriginalName != "" {
+		return asset.OriginalName
+	}
+	return asset.Filename
+}
+
+func (asset MediaAsset) SizeLabel() string {
+	if asset.SizeBytes < 1024 {
+		return strconv.FormatInt(asset.SizeBytes, 10) + " B"
+	}
+	units := []string{"KB", "MB", "GB"}
+	value := float64(asset.SizeBytes)
+	for _, unit := range units {
+		value = value / 1024
+		if value < 1024 {
+			return strconv.FormatFloat(value, 'f', 1, 64) + " " + unit
+		}
+	}
+	return strconv.FormatFloat(value, 'f', 1, 64) + " GB"
 }
 
 type ArchiveGroup struct {

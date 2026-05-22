@@ -69,6 +69,11 @@ func New() (*App, error) {
 		_ = db.Close()
 		return nil, err
 	}
+	mediaStore := store.NewMediaStore(db)
+	if err := mediaStore.Init(); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
 	site, err := settingsStore.Site(context.Background(), cfg.GetSite())
 	if err != nil {
 		_ = db.Close()
@@ -105,7 +110,7 @@ func New() (*App, error) {
 	})
 
 	mailSender := mailer.NewDynamicSMTP(cfg.GetMail)
-	admin.New(&cfg, postStore, settingsStore, linkStore, momentStore, mailSender, renderer).Register(server)
+	admin.New(&cfg, postStore, settingsStore, linkStore, momentStore, mediaStore, mailSender, renderer).Register(server)
 	blog.New(&cfg, postStore, linkStore, momentStore, mailSender, renderer).Register(server)
 
 	return &App{cfg: &cfg, db: db, server: server}, nil
