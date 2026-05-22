@@ -312,7 +312,7 @@
 		{{if .IsPrivate}}
 		<p class="comment-private-text"><i class="fa fa-heart-o" aria-hidden="true"></i> This whisper is tucked away for the site owner.</p>
 		{{else}}
-		<p>{{.Content}}</p>
+		<div class="comment-content">{{.ContentHTML}}</div>
 		{{end}}
 		{{if not .IsPrivate}}
 		<div class="comment-actions">

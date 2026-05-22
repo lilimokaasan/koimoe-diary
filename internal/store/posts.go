@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"sakurairo-go/internal/commentrender"
 	"sakurairo-go/internal/models"
 )
 
@@ -1057,6 +1058,7 @@ ORDER BY created_at ASC`, postID)
 		); err != nil {
 			return nil, err
 		}
+		comment.ContentHTML = commentrender.HTML(comment.Content)
 		comments = append(comments, comment)
 	}
 	if err := rows.Err(); err != nil {
@@ -1090,6 +1092,7 @@ LIMIT ?`, limit)
 			return nil, err
 		}
 		comment.ParentAuthor = parentAuthor.String
+		comment.ContentHTML = commentrender.HTML(comment.Content)
 		comments = append(comments, comment)
 	}
 	return comments, rows.Err()
@@ -1109,6 +1112,7 @@ WHERE cm.id = ?`, id).Scan(
 		&comment.Status, &comment.IsPrivate, &comment.MailNotify, &comment.CreatedAt,
 	)
 	comment.ParentAuthor = parentAuthor.String
+	comment.ContentHTML = commentrender.HTML(comment.Content)
 	return comment, err
 }
 

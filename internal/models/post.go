@@ -49,6 +49,7 @@ type Comment struct {
 	Email        string
 	Website      string
 	Content      string
+	ContentHTML  template.HTML
 	Status       string
 	IsPrivate    bool
 	MailNotify   bool
