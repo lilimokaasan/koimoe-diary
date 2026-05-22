@@ -19,6 +19,14 @@
 					<span><i class="iconfont icon-mark"></i>{{.Post.CommentCount}} Comments</span>
 				</div>
 			</header>
+			{{if .Post.Outline}}
+			<nav class="article-toc" aria-label="Article contents">
+				<p><i class="fa fa-list-ul" aria-hidden="true"></i> Contents</p>
+				<ol>
+					{{range .Post.Outline}}<li class="toc-level-{{.Level}}"><a href="#{{.ID}}">{{.Title}}</a></li>{{end}}
+				</ol>
+			</nav>
+			{{end}}
 			<div class="entry-content">
 				{{.Post.ContentHTML}}
 			</div>

@@ -13,6 +13,14 @@
 					<span><i class="fa fa-heart-o" aria-hidden="true"></i>{{.Site.Author}}</span>
 				</div>
 			</header>
+			{{if .PageContent.Outline}}
+			<nav class="article-toc" aria-label="Page contents">
+				<p><i class="fa fa-list-ul" aria-hidden="true"></i> Contents</p>
+				<ol>
+					{{range .PageContent.Outline}}<li class="toc-level-{{.Level}}"><a href="#{{.ID}}">{{.Title}}</a></li>{{end}}
+				</ol>
+			</nav>
+			{{end}}
 			<div class="entry-content">
 				{{.PageContent.ContentHTML}}
 			</div>

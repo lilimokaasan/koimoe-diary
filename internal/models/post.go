@@ -14,6 +14,7 @@ type Post struct {
 	Title        string
 	Excerpt      string
 	ContentHTML  template.HTML
+	Outline      []ContentHeading
 	CoverImage   string
 	Status       string
 	Category     Category
@@ -32,10 +33,17 @@ type Page struct {
 	Title       string
 	Excerpt     string
 	ContentHTML template.HTML
+	Outline     []ContentHeading
 	CoverImage  string
 	Status      string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+type ContentHeading struct {
+	ID    string
+	Title string
+	Level int
 }
 
 type Comment struct {

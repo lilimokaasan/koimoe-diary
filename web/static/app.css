@@ -932,6 +932,56 @@ textarea:disabled,
 	transform: translateY(-1px);
 }
 
+.article-toc {
+	background: rgba(255, 250, 253, 0.82);
+	border: 1px solid rgba(251, 152, 192, 0.22);
+	border-radius: 18px;
+	box-shadow: 0 12px 30px rgba(117, 79, 99, 0.08);
+	margin: 0 auto 26px;
+	max-width: 840px;
+	padding: 18px 22px;
+}
+
+.article-toc p {
+	align-items: center;
+	color: var(--sakura-rose);
+	display: flex;
+	font-size: 13px;
+	font-weight: 700;
+	gap: 8px;
+	letter-spacing: 0;
+	margin: 0 0 10px;
+	text-transform: uppercase;
+}
+
+.article-toc ol {
+	display: grid;
+	gap: 8px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.article-toc a {
+	color: #6f5a65;
+	display: inline-flex;
+	font-size: 14px;
+	line-height: 1.5;
+	text-decoration: none;
+}
+
+.article-toc a:hover {
+	color: var(--sakura-rose);
+}
+
+.article-toc .toc-level-3 {
+	padding-left: 18px;
+}
+
+.article-toc .toc-level-4 {
+	padding-left: 36px;
+}
+
 .hero-social-links {
 	justify-content: center;
 	margin-top: 14px;

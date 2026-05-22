@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"sakurairo-go/internal/commentrender"
+	"sakurairo-go/internal/contentoutline"
 	"sakurairo-go/internal/models"
 )
 
@@ -571,6 +572,7 @@ LIMIT 1`, slug).Scan(
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
 	post.ContentHTML = template.HTML(content)
+	enhancePostContent(&post)
 	if err == nil {
 		posts := []models.Post{post}
 		err = s.hydrateTags(ctx, posts)
@@ -596,6 +598,7 @@ LIMIT 1`, id).Scan(
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
 	post.ContentHTML = template.HTML(content)
+	enhancePostContent(&post)
 	if err == nil {
 		posts := []models.Post{post}
 		err = s.hydrateTags(ctx, posts)
@@ -627,6 +630,7 @@ LIMIT 1`, slug).Scan(
 		&page.ID, &page.Slug, &page.Title, &page.Excerpt, &content, &page.CoverImage, &page.Status, &page.CreatedAt, &page.UpdatedAt,
 	)
 	page.ContentHTML = template.HTML(content)
+	enhancePageContent(&page)
 	return page, err
 }
 
@@ -641,6 +645,7 @@ LIMIT 1`, id).Scan(
 		&page.ID, &page.Slug, &page.Title, &page.Excerpt, &content, &page.CoverImage, &page.Status, &page.CreatedAt, &page.UpdatedAt,
 	)
 	page.ContentHTML = template.HTML(content)
+	enhancePageContent(&page)
 	return page, err
 }
 
@@ -1495,6 +1500,14 @@ func (s *PostStore) count(ctx context.Context, query string, args ...any) (int, 
 	var total int
 	err := s.db.QueryRowContext(ctx, query, args...).Scan(&total)
 	return total, err
+}
+
+func enhancePostContent(post *models.Post) {
+	post.ContentHTML, post.Outline = contentoutline.Apply(post.ContentHTML)
+}
+
+func enhancePageContent(page *models.Page) {
+	page.ContentHTML, page.Outline = contentoutline.Apply(page.ContentHTML)
 }
 
 func normalizePostInput(input PostInput) PostInput {
