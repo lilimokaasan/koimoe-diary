@@ -1107,7 +1107,8 @@ textarea:disabled,
 
 .legacy-shortcode,
 .legacy-collapse,
-.legacy-download {
+.legacy-download,
+.legacy-image {
 	border-radius: 8px;
 	box-sizing: border-box;
 	margin: 20px 0;
@@ -1206,6 +1207,23 @@ textarea:disabled,
 .legacy-download:hover {
 	background: rgba(251, 152, 192, 0.2);
 	color: var(--sakura-deep);
+}
+
+.legacy-image {
+	text-align: center;
+}
+
+.legacy-image a {
+	display: inline-block;
+}
+
+.legacy-image img {
+	border-radius: 8px;
+	box-shadow: 0 16px 36px rgba(117, 79, 99, 0.12);
+	display: block;
+	height: auto;
+	margin: 0 auto;
+	max-width: 100%;
 }
 
 .hero-social-links {

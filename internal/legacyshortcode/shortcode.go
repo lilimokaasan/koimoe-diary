@@ -14,14 +14,16 @@ var (
 	panelPattern    = regexp.MustCompile(`(?is)\[(task|warning|noway|buy)\](.*?)\[/\s*(task|warning|noway|buy)\]`)
 	downloadPattern = regexp.MustCompile(`(?is)\[download\](.*?)\[/download\]`)
 	collapsePattern = regexp.MustCompile(`(?is)\[collapse([^\]]*)\](.*?)\[/collapse\]`)
+	imagePattern    = regexp.MustCompile(`!\{([^}]*)\}\(([^)\s]+)\)(?:\[([^\]\s]+)\])?`)
 	titlePattern    = regexp.MustCompile(`(?i)\btitle\s*=\s*("([^"]*)"|'([^']*)'|([^\s\]]+))`)
 )
 
 func Apply(content template.HTML) template.HTML {
 	source := string(content)
-	if !strings.Contains(source, "[") {
+	if !strings.Contains(source, "[") && !strings.Contains(source, "!{") {
 		return content
 	}
+	source = imagePattern.ReplaceAllStringFunc(source, renderImage)
 	source = tocPattern.ReplaceAllString(source, "")
 	source = beginOpen.ReplaceAllString(source, `<span class="legacy-begin">`)
 	source = beginClose.ReplaceAllString(source, `</span>`)
@@ -52,11 +54,36 @@ func renderDownload(match string) string {
 		return match
 	}
 	href := strings.TrimSpace(stripTags(parts[1]))
-	if href == "" || strings.HasPrefix(strings.ToLower(href), "javascript:") {
+	if !safeAssetURL(href) {
 		return match
 	}
 	escaped := html.EscapeString(href)
 	return `<a class="legacy-download" href="` + escaped + `" rel="external noopener noreferrer" target="_blank"><i class="fa fa-download" aria-hidden="true"></i><span>Download</span></a>`
+}
+
+func renderImage(match string) string {
+	parts := imagePattern.FindStringSubmatch(match)
+	if len(parts) < 3 {
+		return match
+	}
+	alt := strings.TrimSpace(parts[1])
+	src := strings.TrimSpace(parts[2])
+	thumb := ""
+	if len(parts) > 3 {
+		thumb = strings.TrimSpace(parts[3])
+	}
+	if !safeAssetURL(src) || (thumb != "" && !safeAssetURL(thumb)) {
+		return match
+	}
+	imgSrc := src
+	if thumb != "" {
+		imgSrc = thumb
+	}
+	image := `<img src="` + html.EscapeString(imgSrc) + `" alt="` + html.EscapeString(alt) + `">`
+	if thumb != "" {
+		image = `<a href="` + html.EscapeString(src) + `" target="_blank" rel="noopener noreferrer">` + image + `</a>`
+	}
+	return `<figure class="legacy-image">` + image + `</figure>`
 }
 
 func renderCollapse(match string) string {
@@ -100,4 +127,20 @@ func stripTags(value string) string {
 		}
 	}
 	return out.String()
+}
+
+func safeAssetURL(value string) bool {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return false
+	}
+	lower := strings.ToLower(value)
+	if strings.HasPrefix(lower, "javascript:") || strings.HasPrefix(lower, "data:") {
+		return false
+	}
+	return strings.HasPrefix(lower, "http://") ||
+		strings.HasPrefix(lower, "https://") ||
+		strings.HasPrefix(lower, "/") ||
+		strings.HasPrefix(lower, "./") ||
+		strings.HasPrefix(lower, "../")
 }
