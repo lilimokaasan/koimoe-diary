@@ -40,6 +40,20 @@ func TestParseFocusCards(t *testing.T) {
 	}
 }
 
+func TestParseSocialLinks(t *testing.T) {
+	links := parseSocialLinks("GitHub | https://github.com/example | fa-github\nMail | mailto:hello@example.com | envelope-o\nBad | javascript:alert(1) | fa-bug")
+
+	if len(links) != 2 {
+		t.Fatalf("len(parseSocialLinks) = %d, want 2", len(links))
+	}
+	if links[0].Label != "GitHub" || links[0].Icon != "fa-github" {
+		t.Fatalf("first social link = %#v", links[0])
+	}
+	if links[1].Icon != "fa-envelope-o" {
+		t.Fatalf("second social icon = %q, want fa-envelope-o", links[1].Icon)
+	}
+}
+
 func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 	fallback := config.Site{
 		Name:             "KoiMoe Diary",
@@ -53,6 +67,7 @@ func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 		PostLicenseURL:   "https://example.com/license",
 		FooterText:       "footer",
 		FooterCredit:     "credit",
+		SocialLinks:      []config.SocialLink{{Label: "Feed", URL: "/feed", Icon: "fa-rss"}},
 	}
 	site := normalizeSiteSettings(config.Site{
 		Name:            "KoiMoe Diary",

@@ -89,6 +89,12 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 			site.FocusCards = focusCards
 		}
 	}
+	if values["social_links"] != "" {
+		var socialLinks []config.SocialLink
+		if err := json.Unmarshal([]byte(values["social_links"]), &socialLinks); err == nil {
+			site.SocialLinks = socialLinks
+		}
+	}
 	return site, nil
 }
 
@@ -98,6 +104,10 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		return err
 	}
 	focusCards, err := json.Marshal(site.FocusCards)
+	if err != nil {
+		return err
+	}
+	socialLinks, err := json.Marshal(site.SocialLinks)
 	if err != nil {
 		return err
 	}
@@ -118,6 +128,7 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"footer_credit":        site.FooterCredit,
 		"navigation":           string(navigation),
 		"focus_cards":          string(focusCards),
+		"social_links":         string(socialLinks),
 	}
 	for key, value := range settings {
 		if _, err := s.db.ExecContext(ctx, `
@@ -226,6 +237,10 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 	if err != nil {
 		return err
 	}
+	socialLinks, err := json.Marshal(defaults.SocialLinks)
+	if err != nil {
+		return err
+	}
 	settings := map[string]string{
 		"site_name":            defaults.Name,
 		"site_description":     defaults.Description,
@@ -243,6 +258,7 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		"footer_credit":        defaults.FooterCredit,
 		"navigation":           string(navigation),
 		"focus_cards":          string(focusCards),
+		"social_links":         string(socialLinks),
 	}
 	for key, value := range settings {
 		if _, err := s.db.Exec(`

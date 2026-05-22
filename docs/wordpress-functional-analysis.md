@@ -22,7 +22,7 @@
 - 内容模型：`posts`、`pages`、`categories`、`tags`、`post_tags`、`comments`、`moments`、`friend_link_categories`、`friend_links`、`media_assets`、`site_settings`。
 - 后台管理：登录、仪表盘、文章、页面、预览、媒体库、友情链接、说说、分类/标签、评论、站点设置、SMTP 测试邮件、管理员密码邮件验证码。
 - 评论系统：公开提交、蜜罐字段、轻量垃圾过滤、Markdown 渲染与 HTML sanitize、嵌套回复、私密评论、后台审核/删除/私密切换、新评论管理员通知、父评论作者 opt-in 回复邮件通知。
-- 站点设置：标题、副标题、Profile Name/Profile Avatar、公告、导航、首页 hero、overlay 透明度、默认文章封面、页脚文案、Focus Cards、sakura 特效。
+- 站点设置：标题、副标题、Profile Name/Profile Avatar、公告、导航、社交链接、首页 hero、overlay 透明度、默认文章封面、页脚文案、Focus Cards、sakura 特效。
 - 阅读与发现：浏览量、点赞、上一篇/下一篇、作者卡、可配置版权声明、实时搜索 overlay、搜索索引 API、随机封面/特色图 API、Atom feed、sitemap、robots.txt、SEO/Open Graph/Twitter metadata。
 - 部署与运维：Git-based deploy script、本地/远端部署锁、健康检查 build metadata、请求日志、SMTP 配置文档。
 
@@ -32,7 +32,6 @@
 - 评论审核体验：更明确的 review states、批量操作、垃圾评论隔离与恢复。
 - 旧内容兼容 renderer：`[toc]`、`[collapse]`、`[begin]`、旧图片语法、旧下载/提示类短代码。
 - 文章页配置化：分享区、打赏二维码、目录、复制版权提示。
-- 社交链接模型：用 JSON 或独立表管理 GitHub、Bilibili、Email 等链接，并复用到首页、侧栏、作者卡和页脚。
 - 媒体库增强：搜索/筛选、标签或用途分类、缩略图/压缩、批量删除、未来 R2/CDN 存储。
 - WordPress 导入工具：从 XML 或数据库导入文章、分类、标签、评论、链接和媒体 URL，并做旧短代码转换。
 - 视觉 parity 清单：浮动工具、字体/皮肤控制、移动导航、文章目录、首页文章卡和分类/标签/归档页细节。
@@ -182,10 +181,10 @@ Go 版建议：
 
 - WeChat, Weibo, QQ, Telegram, Qzone, GitHub, Lofter, Bilibili, Youku, Netease Cloud Music, Twitter, Facebook, Jianshu, CSDN, Zhihu, Email。
 
-Go 版建议：
+Go 版实现：
 
 - 不要为每个平台固定建列。
-- 使用 `social_links` JSON 或独立表：`platform`, `label`, `url`, `icon`, `sort_order`, `enabled`。
+- 已使用 `site_settings.social_links` JSON 保存 `label`, `url`, `icon`，后台用 `Label | URL | Icon` 行编辑，并复用到首页首屏、侧栏、作者卡和页脚。
 
 ### 3.5 功能设置
 
@@ -703,7 +702,7 @@ posts.license_type
 - 简单键值继续放 `site_settings`。
 - 复杂列表用 JSON 或独立表：
   - navigation：已实现 JSON
-  - social_links：建议 JSON 或独立表
+  - social_links：已实现 JSON
   - focus_cards：已实现为后台可编辑的文本配置，运行时解析为卡片列表
   - random image sources：长期建议独立表
 
@@ -713,7 +712,7 @@ posts.license_type
 
 - 文章列表、文章详情、独立页面、分类、标签、搜索、普通归档和月度归档。
 - 评论提交、嵌套回复、私密评论、邮件通知和后台评论管理。
-- 站点基础设置、导航设置、Profile、footer、Focus Cards 和 sakura 特效开关。
+- 站点基础设置、导航设置、Profile、社交链接、footer、Focus Cards 和 sakura 特效开关。
 - 文章封面、默认封面、分类封面、媒体库和文章编辑器媒体选择。
 - 友情链接、说说/短动态、分类/标签后台管理。
 - 文章浏览量、点赞、上一篇/下一篇、作者卡片、Feed、sitemap、robots.txt 和 SEO/social metadata。
@@ -724,7 +723,6 @@ posts.license_type
 - 更完整的评论审核工作流，包括 review states、垃圾评论隔离、批量操作。
 - 旧短代码兼容 renderer：`[toc]`、`[collapse]`、`[begin]`、旧图片语法和下载/提示类短代码。
 - 文章页配置化：分享区、打赏配置、目录、复制版权提示。
-- 社交链接模型：`social_links` JSON 或独立表，并复用到首页、侧栏、作者卡和页脚。
 - WordPress 导入路径：XML 或数据库导入，包含文章、分类、标签、评论、友情链接和媒体 URL。
 
 ### P2：体验增强，可逐步迁移

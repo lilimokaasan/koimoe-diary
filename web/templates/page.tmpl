@@ -23,6 +23,11 @@
 				<p>Kept by</p>
 				<h2>{{.Site.Author}}</h2>
 				<span>{{.Site.Description}}</span>
+				{{if .Site.SocialLinks}}
+				<div class="koimoe-social-links author-social-links">
+					{{range .Site.SocialLinks}}<a href="{{.URL}}" target="_blank" rel="nofollow noreferrer" aria-label="{{.Label}}" title="{{.Label}}"><i class="fa {{.Icon}}" aria-hidden="true"></i></a>{{end}}
+				</div>
+				{{end}}
 			</div>
 			<div class="single-actions">
 				<a href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a>

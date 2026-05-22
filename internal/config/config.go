@@ -24,6 +24,7 @@ type Site struct {
 	FooterCredit       string
 	Navigation         []NavItem
 	FocusCards         []FocusCard
+	SocialLinks        []SocialLink
 }
 
 type NavItem struct {
@@ -35,6 +36,12 @@ type FocusCard struct {
 	Title string `json:"title"`
 	URL   string `json:"url"`
 	Image string `json:"image"`
+}
+
+type SocialLink struct {
+	Label string `json:"label"`
+	URL   string `json:"url"`
+	Icon  string `json:"icon"`
 }
 
 type Mail struct {
@@ -143,6 +150,9 @@ func FromEnv() Config {
 				{Title: "Archive", URL: "/archives", Image: "/static/theme/content-image/d-1.jpg"},
 				{Title: "Search", URL: "/search", Image: "/static/theme/content-image/d-2.jpg"},
 				{Title: "KoiMoe Diary", URL: "/", Image: "/static/theme/content-image/d-3.jpg"},
+			},
+			SocialLinks: []SocialLink{
+				{Label: "Feed", URL: "/feed", Icon: "fa-rss"},
 			},
 		},
 	}

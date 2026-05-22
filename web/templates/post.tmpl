@@ -40,6 +40,11 @@
 				<p>Written by</p>
 				<h2>{{.Site.Author}}</h2>
 				<span>{{.Site.Description}}</span>
+				{{if .Site.SocialLinks}}
+				<div class="koimoe-social-links author-social-links">
+					{{range .Site.SocialLinks}}<a href="{{.URL}}" target="_blank" rel="nofollow noreferrer" aria-label="{{.Label}}" title="{{.Label}}"><i class="fa {{.Icon}}" aria-hidden="true"></i></a>{{end}}
+				</div>
+				{{end}}
 			</div>
 			<div class="single-actions">
 				<button class="post-like-button" type="button" data-post-id="{{.Post.ID}}" data-like-key="koimoe-liked-{{.Post.ID}}">

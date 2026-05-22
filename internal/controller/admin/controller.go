@@ -88,6 +88,7 @@ type PageData struct {
 	MailPasswordSet bool
 	Navigation      string
 	FocusCards      string
+	SocialLinks     string
 	ContentHTML     string
 	PostTags        string
 	IsNew           bool
@@ -169,6 +170,9 @@ func (c *Controller) Settings(r *ghttp.Request) {
 		FocusCards: formatFocusCards(
 			c.cfg.GetSite().FocusCards,
 		),
+		SocialLinks: formatSocialLinks(
+			c.cfg.GetSite().SocialLinks,
+		),
 		Mail:            mailCfg,
 		MailReady:       mailReady(mailCfg),
 		MailPasswordSet: mailCfg.Password != "",
@@ -197,6 +201,7 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
 		Navigation:         parseNavigation(r.GetForm("navigation").String()),
 		FocusCards:         parseFocusCards(r.GetForm("focus_cards").String()),
+		SocialLinks:        parseSocialLinks(r.GetForm("social_links").String()),
 	}
 	site = normalizeSiteSettings(site, c.cfg.GetSite())
 	mailCfg := normalizeMailSettings(config.Mail{
@@ -218,6 +223,7 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 			Settings:        site,
 			Navigation:      formatNavigation(site.Navigation),
 			FocusCards:      formatFocusCards(site.FocusCards),
+			SocialLinks:     formatSocialLinks(site.SocialLinks),
 			Mail:            mailCfg,
 			MailReady:       mailReady(mailCfg),
 			MailPasswordSet: mailCfg.Password != "",
@@ -233,6 +239,7 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 			Settings:        site,
 			Navigation:      formatNavigation(site.Navigation),
 			FocusCards:      formatFocusCards(site.FocusCards),
+			SocialLinks:     formatSocialLinks(site.SocialLinks),
 			Mail:            mailCfg,
 			MailReady:       mailReady(mailCfg),
 			MailPasswordSet: mailCfg.Password != "",
@@ -374,6 +381,7 @@ func (c *Controller) settingsPageData(errText string, message string) PageData {
 		Settings:        c.cfg.GetSite(),
 		Navigation:      formatNavigation(c.cfg.GetSite().Navigation),
 		FocusCards:      formatFocusCards(c.cfg.GetSite().FocusCards),
+		SocialLinks:     formatSocialLinks(c.cfg.GetSite().SocialLinks),
 		Mail:            mailCfg,
 		MailReady:       mailReady(mailCfg),
 		MailPasswordSet: mailCfg.Password != "",
@@ -1880,6 +1888,7 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	if len(site.FocusCards) == 0 {
 		site.FocusCards = fallback.FocusCards
 	}
+	site.SocialLinks = normalizeSocialLinks(site.SocialLinks)
 	return site
 }
 
@@ -1970,6 +1979,84 @@ func formatFocusCards(cards []config.FocusCard) string {
 		lines = append(lines, card.Title+" | "+card.URL+" | "+card.Image)
 	}
 	return strings.Join(lines, "\n")
+}
+
+func parseSocialLinks(value string) []config.SocialLink {
+	var links []config.SocialLink
+	for _, line := range strings.Split(value, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		parts := strings.Split(line, "|")
+		if len(parts) < 2 {
+			continue
+		}
+		label := strings.TrimSpace(parts[0])
+		url := strings.TrimSpace(parts[1])
+		icon := "fa-link"
+		if len(parts) >= 3 {
+			icon = strings.TrimSpace(strings.Join(parts[2:], "|"))
+		}
+		if label == "" || !isAllowedSocialURL(url) {
+			continue
+		}
+		links = append(links, config.SocialLink{Label: label, URL: url, Icon: normalizeSocialIcon(icon)})
+		if len(links) == 12 {
+			break
+		}
+	}
+	return links
+}
+
+func formatSocialLinks(links []config.SocialLink) string {
+	lines := make([]string, 0, len(links))
+	for _, link := range normalizeSocialLinks(links) {
+		lines = append(lines, link.Label+" | "+link.URL+" | "+link.Icon)
+	}
+	return strings.Join(lines, "\n")
+}
+
+func normalizeSocialLinks(links []config.SocialLink) []config.SocialLink {
+	normalized := make([]config.SocialLink, 0, len(links))
+	for _, link := range links {
+		link.Label = strings.TrimSpace(link.Label)
+		link.URL = strings.TrimSpace(link.URL)
+		link.Icon = normalizeSocialIcon(link.Icon)
+		if link.Label == "" || !isAllowedSocialURL(link.URL) {
+			continue
+		}
+		normalized = append(normalized, link)
+		if len(normalized) == 12 {
+			break
+		}
+	}
+	return normalized
+}
+
+func normalizeSocialIcon(icon string) string {
+	icon = strings.TrimSpace(icon)
+	if icon == "" {
+		return "fa-link"
+	}
+	icon = strings.TrimPrefix(icon, "fa ")
+	if !strings.HasPrefix(icon, "fa-") {
+		icon = "fa-" + icon
+	}
+	icon = strings.Map(func(r rune) rune {
+		if r >= 'a' && r <= 'z' || r >= '0' && r <= '9' || r == '-' {
+			return r
+		}
+		return -1
+	}, strings.ToLower(icon))
+	if icon == "" || icon == "fa-" {
+		return "fa-link"
+	}
+	return icon
+}
+
+func isAllowedSocialURL(url string) bool {
+	return isAllowedNavURL(url) || strings.HasPrefix(url, "mailto:")
 }
 
 func isAllowedNavURL(url string) bool {
