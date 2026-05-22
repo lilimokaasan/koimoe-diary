@@ -118,6 +118,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/admin/password", c.ChangePassword)
 	server.BindHandler("GET:/admin/media", c.Media)
 	server.BindHandler("POST:/admin/media", c.UploadMedia)
+	server.BindHandler("POST:/admin/media/bulk", c.BulkDeleteMedia)
 	server.BindHandler("POST:/admin/media/{id}/update", c.UpdateMedia)
 	server.BindHandler("POST:/admin/media/{id}/delete", c.DeleteMedia)
 	server.BindHandler("GET:/admin/links", c.Links)
@@ -616,6 +617,39 @@ func (c *Controller) DeleteMedia(r *ghttp.Request) {
 		log.Printf("delete media file: %v", err)
 	}
 	r.Response.RedirectTo("/admin/media?deleted=1", http.StatusSeeOther)
+}
+
+func (c *Controller) BulkDeleteMedia(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	if c.media == nil {
+		c.error(r, errors.New("media store is not available"))
+		return
+	}
+	ids := mediaIDsFromRequest(r)
+	if len(ids) == 0 || strings.TrimSpace(r.GetForm("bulk_action").String()) != "delete" {
+		r.Response.RedirectTo("/admin/media?error=Select+media+assets+and+an+action", http.StatusSeeOther)
+		return
+	}
+	for _, id := range ids {
+		asset, err := c.media.ByID(r.Context(), id)
+		if errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+		if err != nil {
+			c.error(r, err)
+			return
+		}
+		if err := c.media.Delete(r.Context(), id); err != nil {
+			c.error(r, err)
+			return
+		}
+		if err := c.deleteLocalMediaFile(asset); err != nil {
+			log.Printf("delete media file: %v", err)
+		}
+	}
+	r.Response.RedirectTo("/admin/media?deleted=bulk", http.StatusSeeOther)
 }
 
 func mediaMessage(r *ghttp.Request) string {
@@ -1897,10 +1931,24 @@ func commentIDsFromRequest(r *ghttp.Request) []int64 {
 	if err := r.Request.ParseForm(); err != nil {
 		return nil
 	}
-	return normalizeCommentIDs(r.Request.PostForm["comment_ids"])
+	return normalizePositiveIDs(r.Request.PostForm["comment_ids"], 100)
 }
 
 func normalizeCommentIDs(values []string) []int64 {
+	return normalizePositiveIDs(values, 100)
+}
+
+func mediaIDsFromRequest(r *ghttp.Request) []int64 {
+	if err := r.Request.ParseForm(); err != nil {
+		return nil
+	}
+	return normalizePositiveIDs(r.Request.PostForm["media_ids"], 100)
+}
+
+func normalizePositiveIDs(values []string, limit int) []int64 {
+	if limit <= 0 {
+		return nil
+	}
 	seen := make(map[int64]bool, len(values))
 	ids := make([]int64, 0, len(values))
 	for _, value := range values {
@@ -1910,7 +1958,7 @@ func normalizeCommentIDs(values []string) []int64 {
 		}
 		seen[id] = true
 		ids = append(ids, id)
-		if len(ids) == 100 {
+		if len(ids) == limit {
 			break
 		}
 	}
