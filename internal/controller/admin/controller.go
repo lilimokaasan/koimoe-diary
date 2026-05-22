@@ -62,6 +62,7 @@ type PageData struct {
 	MetaType        string
 	Error           string
 	Message         string
+	MediaQuery      string
 	Posts           []models.Post
 	Pages           []models.Page
 	Comments        []models.Comment
@@ -115,6 +116,8 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/admin/password", c.ChangePassword)
 	server.BindHandler("GET:/admin/media", c.Media)
 	server.BindHandler("POST:/admin/media", c.UploadMedia)
+	server.BindHandler("POST:/admin/media/{id}/update", c.UpdateMedia)
+	server.BindHandler("POST:/admin/media/{id}/delete", c.DeleteMedia)
 	server.BindHandler("GET:/admin/links", c.Links)
 	server.BindHandler("GET:/admin/links/new", c.NewLink)
 	server.BindHandler("POST:/admin/links", c.SaveLink)
@@ -504,7 +507,8 @@ func (c *Controller) Media(r *ghttp.Request) {
 	if err := c.backfillLocalMediaAssets(r.Context()); err != nil {
 		log.Printf("backfill media assets: %v", err)
 	}
-	assets, err := c.listMediaAssets()
+	query := strings.TrimSpace(r.GetQuery("q").String())
+	assets, err := c.listMediaAssets(r.Context(), query, 240)
 	if err != nil {
 		c.error(r, err)
 		return
@@ -512,8 +516,9 @@ func (c *Controller) Media(r *ghttp.Request) {
 	c.render(r, "admin_media.tmpl", PageData{
 		Site:        c.cfg.GetSite(),
 		Title:       "Media - " + c.cfg.GetSite().Name,
-		Message:     r.GetQuery("uploaded").String(),
+		Message:     mediaMessage(r),
 		Error:       r.GetQuery("error").String(),
+		MediaQuery:  query,
 		MediaAssets: assets,
 		Now:         time.Now(),
 	})
@@ -545,6 +550,65 @@ func (c *Controller) UploadMedia(r *ghttp.Request) {
 		return
 	}
 	r.Response.RedirectTo("/admin/media?uploaded=1", http.StatusSeeOther)
+}
+
+func (c *Controller) UpdateMedia(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	if c.media == nil {
+		c.error(r, errors.New("media store is not available"))
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	if err := c.media.UpdateDetails(r.Context(), store.MediaAssetInput{
+		ID:          id,
+		Title:       r.GetForm("title").String(),
+		AltText:     r.GetForm("alt_text").String(),
+		Description: r.GetForm("description").String(),
+	}); err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/media?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) DeleteMedia(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	if c.media == nil {
+		c.error(r, errors.New("media store is not available"))
+		return
+	}
+	id := r.GetRouter("id").Int64()
+	asset, err := c.media.ByID(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		r.Response.RedirectTo("/admin/media?error=Asset+not+found", http.StatusSeeOther)
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	if err := c.media.Delete(r.Context(), id); err != nil {
+		c.error(r, err)
+		return
+	}
+	if err := c.deleteLocalMediaFile(asset); err != nil {
+		log.Printf("delete media file: %v", err)
+	}
+	r.Response.RedirectTo("/admin/media?deleted=1", http.StatusSeeOther)
+}
+
+func mediaMessage(r *ghttp.Request) string {
+	if r.GetQuery("deleted").String() != "" {
+		return "deleted"
+	}
+	if r.GetQuery("saved").String() != "" {
+		return "saved"
+	}
+	return r.GetQuery("uploaded").String()
 }
 
 func (c *Controller) Login(r *ghttp.Request) {
@@ -1476,7 +1540,7 @@ func (c *Controller) saveImageUpload(r *ghttp.Request, field string, label strin
 }
 
 func (c *Controller) mustListMediaAssets() []models.MediaAsset {
-	assets, err := c.listMediaAssets()
+	assets, err := c.listMediaAssets(context.Background(), "", 120)
 	if err != nil {
 		log.Printf("list media assets: %v", err)
 		return nil
@@ -1484,9 +1548,9 @@ func (c *Controller) mustListMediaAssets() []models.MediaAsset {
 	return assets
 }
 
-func (c *Controller) listMediaAssets() ([]models.MediaAsset, error) {
+func (c *Controller) listMediaAssets(ctx context.Context, query string, limit int) ([]models.MediaAsset, error) {
 	if c.media != nil {
-		assets, err := c.media.List(context.Background(), 240)
+		assets, err := c.media.ListWithOptions(ctx, store.MediaListOptions{Query: query, Limit: limit})
 		if err == nil && len(assets) > 0 {
 			return assets, nil
 		}
@@ -1494,11 +1558,11 @@ func (c *Controller) listMediaAssets() ([]models.MediaAsset, error) {
 			return nil, err
 		}
 	}
-	if err := c.backfillLocalMediaAssets(context.Background()); err != nil {
+	if err := c.backfillLocalMediaAssets(ctx); err != nil {
 		return nil, err
 	}
 	if c.media != nil {
-		return c.media.List(context.Background(), 240)
+		return c.media.ListWithOptions(ctx, store.MediaListOptions{Query: query, Limit: limit})
 	}
 	return c.scanLocalMediaAssets()
 }
@@ -1613,6 +1677,30 @@ func (c *Controller) indexLocalMediaURL(ctx context.Context, url string, origina
 		UpdatedAt:    info.ModTime(),
 	})
 	return err
+}
+
+func (c *Controller) deleteLocalMediaFile(asset models.MediaAsset) error {
+	if asset.Storage != "local" || !strings.HasPrefix(asset.URL, "/static/uploads/") {
+		return nil
+	}
+	rel := strings.TrimPrefix(asset.URL, "/static/")
+	path := filepath.Join(c.cfg.StaticDir, filepath.FromSlash(rel))
+	uploadsRoot := filepath.Join(c.cfg.StaticDir, "uploads")
+	resolvedPath, err := filepath.Abs(path)
+	if err != nil {
+		return err
+	}
+	resolvedRoot, err := filepath.Abs(uploadsRoot)
+	if err != nil {
+		return err
+	}
+	if resolvedPath != resolvedRoot && !strings.HasPrefix(resolvedPath, resolvedRoot+string(os.PathSeparator)) {
+		return fmt.Errorf("refusing to delete media path outside uploads: %s", resolvedPath)
+	}
+	if err := os.Remove(resolvedPath); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	return nil
 }
 
 func imageDimensions(path string) (int, int) {

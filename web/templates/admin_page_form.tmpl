@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260522-media-assets">
+	<link rel="stylesheet" href="/static/admin.css?v=20260522-media-v2">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -77,33 +77,46 @@
 					<label>Content HTML
 						<span class="editor-tools">
 							<button class="soft-tool" type="button" data-insert-cover>Insert cover image</button>
+							<button class="soft-tool" type="button" data-open-media-picker>Choose from media</button>
 						</span>
 						<textarea class="content-input" name="content_html" rows="18" required>{{.ContentHTML}}</textarea>
 					</label>
-					<div class="editor-media-picker">
-						<div class="curated-media-heading">
-							<div>
-								<p>Media Library</p>
-								<h2>Pick an uploaded image</h2>
-							</div>
-							<a class="button" href="/admin/media" target="_blank" rel="noopener noreferrer">Open Library</a>
+					<div class="editor-media-picker compact">
+						<div>
+							<p>Media Library</p>
+							<h2>Pick images without leaving the editor.</h2>
 						</div>
-						<div class="editor-media-strip">
-							{{range .MediaAssets}}
-							<article class="editor-media-item">
-								<img src="{{.URL}}" alt="{{.Name}}">
+						<button class="button" type="button" data-open-media-picker>Open Picker</button>
+					</div>
+					<div class="media-picker-modal" aria-hidden="true">
+						<div class="media-picker-dialog" role="dialog" aria-modal="true" aria-label="Media picker">
+							<div class="curated-media-heading">
 								<div>
-									<strong>{{.Name}}</strong>
-									<span>{{.SizeLabel}}</span>
+									<p>Media Library</p>
+									<h2>Choose an uploaded image</h2>
 								</div>
-								<div class="editor-media-actions">
-									<button type="button" data-use-cover="{{.URL}}">Set cover</button>
-									<button type="button" data-insert-media="{{.URL}}">Insert</button>
-								</div>
-							</article>
-							{{else}}
-							<p class="empty-state">No uploaded images yet. Use Media to upload images, then come back to insert them into a page.</p>
-							{{end}}
+								<button class="media-picker-close" type="button" data-close-media-picker aria-label="Close media picker"></button>
+							</div>
+							<div class="editor-media-strip">
+								{{range .MediaAssets}}
+								<article class="editor-media-item">
+									<img src="{{.URL}}" alt="{{.Name}}">
+									<div>
+										<strong>{{.Name}}</strong>
+										<span>{{.SizeLabel}}{{if .Width}} &middot; {{.Width}}x{{.Height}}{{end}}</span>
+									</div>
+									<div class="editor-media-actions">
+										<button type="button" data-use-cover="{{.URL}}">Set cover</button>
+										<button type="button" data-insert-media="{{.URL}}" data-media-alt="{{if .AltText}}{{.AltText}}{{else}}{{.Name}}{{end}}">Insert</button>
+									</div>
+								</article>
+								{{else}}
+								<p class="empty-state">No uploaded images yet. Use Media to upload images, then come back to insert them into a page.</p>
+								{{end}}
+							</div>
+							<div class="media-picker-footer">
+								<a class="button" href="/admin/media" target="_blank" rel="noopener noreferrer">Open Library</a>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -133,10 +146,10 @@
 			var content = document.querySelector("textarea[name='content_html']");
 			var cover = document.querySelector("input[name='cover_image']");
 			if (!content) return;
-			function insertImage(url) {
+			function insertImage(url, altText) {
 				if (!url) return;
 				var titleInput = document.querySelector("input[name='title']");
-				var alt = ((titleInput && titleInput.value) || "Page image").replace(/"/g, "&quot;");
+				var alt = (altText || (titleInput && titleInput.value) || "Page image").replace(/"/g, "&quot;");
 				var snippet = '<figure><img src="' + url + '" alt="' + alt + '"></figure>';
 				var start = typeof content.selectionStart === "number" ? content.selectionStart : content.value.length;
 				var end = typeof content.selectionEnd === "number" ? content.selectionEnd : start;
@@ -174,11 +187,11 @@
 			});
 			document.querySelectorAll("[data-insert-media]").forEach(function (button) {
 				button.addEventListener("click", function () {
-					insertImage(button.getAttribute("data-insert-media") || "");
+					insertImage(button.getAttribute("data-insert-media") || "", button.getAttribute("data-media-alt") || "");
 				});
 			});
 		})();
 	</script>
-	<script src="/static/admin.js?v=20260522-media-assets"></script>
+	<script src="/static/admin.js?v=20260522-media-v2"></script>
 </body>
 </html>

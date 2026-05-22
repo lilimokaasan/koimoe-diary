@@ -73,6 +73,9 @@ type MediaAsset struct {
 	ID           int64
 	Filename     string
 	OriginalName string
+	Title        string
+	AltText      string
+	Description  string
 	MimeType     string
 	SizeBytes    int64
 	Width        int
@@ -84,6 +87,9 @@ type MediaAsset struct {
 }
 
 func (asset MediaAsset) Name() string {
+	if asset.Title != "" {
+		return asset.Title
+	}
 	if asset.OriginalName != "" {
 		return asset.OriginalName
 	}

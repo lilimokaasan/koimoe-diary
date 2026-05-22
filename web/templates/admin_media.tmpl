@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260522-media-assets">
+	<link rel="stylesheet" href="/static/admin.css?v=20260522-media-v2">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -58,12 +58,19 @@
 				<h1>Media</h1>
 				<a class="button" href="/admin/posts/new">New Post</a>
 			</div>
-			{{if .Message}}<div class="admin-alert success">Uploaded.</div>{{end}}
+			{{if .Message}}<div class="admin-alert success">{{if eq .Message "deleted"}}Deleted.{{else if eq .Message "saved"}}Saved.{{else}}Uploaded.{{end}}</div>{{end}}
 			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
-			<form class="media-upload-panel" method="post" enctype="multipart/form-data" action="/admin/media">
-				<label>Upload Image<input type="file" name="media_upload" accept="image/jpeg,image/png,image/gif,image/webp" required></label>
-				<button class="primary" type="submit">Upload</button>
-			</form>
+			<div class="media-tools-panel">
+				<form class="media-upload-panel" method="post" enctype="multipart/form-data" action="/admin/media">
+					<label>Upload Image<input type="file" name="media_upload" accept="image/jpeg,image/png,image/gif,image/webp" required></label>
+					<button class="primary" type="submit">Upload</button>
+				</form>
+				<form class="media-filter-panel" method="get" action="/admin/media">
+					<label>Search Assets<input type="search" name="q" value="{{.MediaQuery}}" placeholder="Title, alt text, filename, URL..."></label>
+					<button type="submit">Filter</button>
+					{{if .MediaQuery}}<a class="button" href="/admin/media">Clear</a>{{end}}
+				</form>
+			</div>
 			<div class="curated-media-panel">
 				<div class="curated-media-heading">
 					<div>
@@ -81,9 +88,18 @@
 							<span>{{.SizeLabel}}{{if .Width}} &middot; {{.Width}}x{{.Height}}{{end}} &middot; {{.UpdatedAt.Format "2006-01-02 15:04"}}</span>
 							<input class="media-url-input" type="text" value="{{.URL}}" readonly>
 						</div>
+						<form class="media-detail-form" method="post" action="/admin/media/{{.ID}}/update">
+							<label>Title<input type="text" name="title" value="{{.Title}}" placeholder="{{.OriginalName}}"></label>
+							<label>Alt Text<input type="text" name="alt_text" value="{{.AltText}}" placeholder="Describe the image for readers"></label>
+							<label>Description<textarea name="description" rows="2" placeholder="Optional note for future you">{{.Description}}</textarea></label>
+							<button type="submit">Save Details</button>
+						</form>
 						<div class="curated-media-actions">
 							<a class="button" href="{{.URL}}" target="_blank" rel="noopener noreferrer">Open</a>
 							<button type="button" data-copy-media="{{.URL}}">Copy URL</button>
+							<form method="post" action="/admin/media/{{.ID}}/delete" data-confirm-delete="Delete this asset and its uploaded file?">
+								<button class="danger" type="submit">Delete</button>
+							</form>
 						</div>
 					</article>
 					{{else}}
@@ -107,6 +123,6 @@
 			});
 		});
 	</script>
-	<script src="/static/admin.js?v=20260522-media-assets"></script>
+	<script src="/static/admin.js?v=20260522-media-v2"></script>
 </body>
 </html>

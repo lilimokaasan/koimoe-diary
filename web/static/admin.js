@@ -89,6 +89,8 @@
 		shell.replaceWith(nextShell);
 		if (doc.title) document.title = doc.title;
 		runInlineScripts(doc);
+		initMediaPicker();
+		initDangerConfirmations();
 		return true;
 	}
 
@@ -207,6 +209,60 @@
 		});
 	}
 
+	function initMediaPicker() {
+		Array.prototype.slice.call(document.querySelectorAll(".media-picker-modal")).forEach(function (modal) {
+			if (modal.dataset.mediaPickerBound === "1") return;
+			modal.dataset.mediaPickerBound = "1";
+			var openButtons = Array.prototype.slice.call(document.querySelectorAll("[data-open-media-picker]"));
+			var closeButtons = Array.prototype.slice.call(modal.querySelectorAll("[data-close-media-picker]"));
+
+			function setOpen(open) {
+				modal.classList.toggle("is-open", open);
+				modal.setAttribute("aria-hidden", open ? "false" : "true");
+				document.body.classList.toggle("media-picker-open", open);
+			}
+
+			openButtons.forEach(function (button) {
+				button.addEventListener("click", function () {
+					setOpen(true);
+				});
+			});
+			closeButtons.forEach(function (button) {
+				button.addEventListener("click", function () {
+					setOpen(false);
+				});
+			});
+			modal.addEventListener("click", function (event) {
+				if (event.target === modal) setOpen(false);
+			});
+			modal.addEventListener("click", function (event) {
+				if (event.target.closest("[data-use-cover], [data-insert-media]")) {
+					setOpen(false);
+				}
+			});
+			document.addEventListener("keydown", function (event) {
+				if (event.key === "Escape" && modal.classList.contains("is-open")) {
+					setOpen(false);
+				}
+			});
+		});
+	}
+
+	function initDangerConfirmations() {
+		Array.prototype.slice.call(document.querySelectorAll("[data-confirm-delete]")).forEach(function (form) {
+			if (form.dataset.confirmBound === "1") return;
+			form.dataset.confirmBound = "1";
+			form.addEventListener("submit", function (event) {
+				var message = form.getAttribute("data-confirm-delete") || "Delete this item?";
+				if (!window.confirm(message)) {
+					event.preventDefault();
+				}
+			});
+		});
+	}
+
 	initNav();
 	initUserMenu();
+	initMediaPicker();
+	initDangerConfirmations();
 })();
