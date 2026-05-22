@@ -106,6 +106,7 @@ body.admin-is-loading .admin-shell {
 	border-radius: 8px;
 	box-shadow: 0 26px 80px rgba(92, 58, 78, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.72);
 	box-sizing: border-box;
+	min-width: 0;
 	padding: 24px;
 	position: relative;
 }
@@ -659,9 +660,11 @@ button.admin-user-chip::after {
 .panel-title {
 	align-items: center;
 	display: flex;
+	flex-wrap: wrap;
 	gap: 16px;
 	justify-content: space-between;
 	margin-bottom: 18px;
+	min-width: 0;
 }
 
 .panel-title h1 {
@@ -1236,7 +1239,12 @@ button.danger {
 .settings-grid {
 	display: grid;
 	gap: 24px;
-	grid-template-columns: minmax(0, 1fr) minmax(300px, 0.72fr);
+	grid-template-columns: minmax(0, 1fr) minmax(240px, 0.68fr);
+	min-width: 0;
+}
+
+.settings-grid > section {
+	min-width: 0;
 }
 
 .toggle-field {
@@ -1506,8 +1514,9 @@ button:disabled {
 
 .admin-page .admin-shell {
 	box-sizing: border-box;
-	height: calc(100vh - var(--admin-frame-gap) * 2 - 60px - 178px);
+	height: calc(100vh - var(--admin-frame-gap) * 2 - 76px - 178px);
 	margin: 0 var(--admin-frame-gap) var(--admin-frame-gap) calc(var(--admin-sidebar) + 18px);
+	max-width: calc(100vw - var(--admin-sidebar) - 18px - var(--admin-frame-gap) * 2);
 	overflow-x: hidden;
 	overflow-y: auto;
 	padding: 28px 44px 46px;
@@ -1516,7 +1525,7 @@ button:disabled {
 }
 
 .admin-page .admin-hero.compact + .admin-shell {
-	height: calc(100vh - var(--admin-frame-gap) * 2 - 60px - 154px);
+	height: calc(100vh - var(--admin-frame-gap) * 2 - 76px - 154px);
 }
 
 .admin-page .admin-shell::-webkit-scrollbar {
@@ -1868,6 +1877,7 @@ button:disabled {
 	.admin-page .admin-shell {
 		height: auto;
 		margin: 0;
+		max-width: none;
 		overflow: visible;
 		padding: 22px 14px 42px;
 	}
