@@ -1096,6 +1096,118 @@ textarea:disabled,
 	scroll-margin-top: 104px;
 }
 
+.legacy-begin {
+	color: var(--sakura-rose);
+	float: left;
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 3.1em;
+	line-height: 0.92;
+	margin: 0.08em 0.14em 0 0;
+}
+
+.legacy-shortcode,
+.legacy-collapse,
+.legacy-download {
+	border-radius: 8px;
+	box-sizing: border-box;
+	margin: 20px 0;
+}
+
+.legacy-shortcode {
+	align-items: flex-start;
+	border: 1px solid rgba(251, 152, 192, 0.2);
+	box-shadow: 0 12px 26px rgba(117, 79, 99, 0.08);
+	display: flex;
+	gap: 12px;
+	padding: 15px 16px;
+}
+
+.legacy-shortcode i {
+	margin-top: 0.2em;
+}
+
+.legacy-shortcode > div > :first-child,
+.legacy-collapse-content > :first-child {
+	margin-top: 0;
+}
+
+.legacy-shortcode > div > :last-child,
+.legacy-collapse-content > :last-child {
+	margin-bottom: 0;
+}
+
+.legacy-warning {
+	background: rgba(255, 248, 218, 0.86);
+	color: #8a6422;
+}
+
+.legacy-task {
+	background: rgba(255, 250, 253, 0.86);
+	color: #6f5a65;
+}
+
+.legacy-noway {
+	background: rgba(255, 239, 241, 0.9);
+	color: #9d2f45;
+}
+
+.legacy-buy {
+	background: rgba(229, 248, 252, 0.9);
+	color: #256273;
+}
+
+.legacy-collapse {
+	background: rgba(255, 250, 253, 0.78);
+	border: 1px solid rgba(251, 152, 192, 0.24);
+	box-shadow: 0 12px 28px rgba(117, 79, 99, 0.08);
+	overflow: hidden;
+}
+
+.legacy-collapse summary {
+	align-items: center;
+	color: var(--sakura-deep);
+	cursor: pointer;
+	display: flex;
+	font-weight: 700;
+	gap: 10px;
+	list-style: none;
+	padding: 14px 16px;
+}
+
+.legacy-collapse summary::-webkit-details-marker {
+	display: none;
+}
+
+.legacy-collapse summary i {
+	transition: transform 0.2s ease;
+}
+
+.legacy-collapse[open] summary i {
+	transform: rotate(180deg);
+}
+
+.legacy-collapse-content {
+	border-top: 1px solid rgba(251, 152, 192, 0.16);
+	padding: 16px;
+}
+
+.legacy-download {
+	align-items: center;
+	background: rgba(251, 152, 192, 0.12);
+	border: 1px solid rgba(251, 152, 192, 0.26);
+	color: var(--sakura-rose);
+	display: inline-flex;
+	font-weight: 700;
+	gap: 9px;
+	padding: 11px 15px;
+	text-decoration: none;
+}
+
+.legacy-download:hover {
+	background: rgba(251, 152, 192, 0.2);
+	color: var(--sakura-deep);
+}
+
 .hero-social-links {
 	justify-content: center;
 	margin-top: 14px;

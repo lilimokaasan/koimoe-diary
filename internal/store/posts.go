@@ -14,6 +14,7 @@ import (
 
 	"sakurairo-go/internal/commentrender"
 	"sakurairo-go/internal/contentoutline"
+	"sakurairo-go/internal/legacyshortcode"
 	"sakurairo-go/internal/models"
 )
 
@@ -1545,10 +1546,12 @@ func (s *PostStore) count(ctx context.Context, query string, args ...any) (int, 
 }
 
 func enhancePostContent(post *models.Post) {
+	post.ContentHTML = legacyshortcode.Apply(post.ContentHTML)
 	post.ContentHTML, post.Outline = contentoutline.Apply(post.ContentHTML)
 }
 
 func enhancePageContent(page *models.Page) {
+	page.ContentHTML = legacyshortcode.Apply(page.ContentHTML)
 	page.ContentHTML, page.Outline = contentoutline.Apply(page.ContentHTML)
 }
 

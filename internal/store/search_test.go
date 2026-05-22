@@ -1,6 +1,12 @@
 package store
 
-import "testing"
+import (
+	"html/template"
+	"strings"
+	"testing"
+
+	"sakurairo-go/internal/models"
+)
 
 func TestNormalizeSearchQuery(t *testing.T) {
 	got := normalizeSearchQuery("  Koi&nbsp;Moe\n\tDiary  ")
@@ -34,5 +40,17 @@ func TestNormalizePostInputKeepsPrivateStatus(t *testing.T) {
 	})
 	if input.Status != "private" {
 		t.Fatalf("Status = %q, want private", input.Status)
+	}
+}
+
+func TestEnhancePostContentAppliesLegacyShortcodes(t *testing.T) {
+	post := models.Post{ContentHTML: template.HTML(`[begin]Tiny[/begin] [collapse title="More"]<p>Hidden</p>[/collapse]`)}
+	enhancePostContent(&post)
+	rendered := string(post.ContentHTML)
+	if !strings.Contains(rendered, `class="legacy-begin"`) {
+		t.Fatalf("enhancePostContent missing begin compatibility: %s", rendered)
+	}
+	if !strings.Contains(rendered, `class="legacy-collapse"`) {
+		t.Fatalf("enhancePostContent missing collapse compatibility: %s", rendered)
 	}
 }
