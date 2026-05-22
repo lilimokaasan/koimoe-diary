@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"strconv"
 	"testing"
 
 	"sakurairo-go/internal/config"
@@ -125,5 +126,28 @@ func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 	}
 	if site.PostRewardText != "Thanks" {
 		t.Fatalf("PostRewardText = %q, want custom text", site.PostRewardText)
+	}
+}
+
+func TestNormalizeCommentIDs(t *testing.T) {
+	values := []string{"1", "2", "bad", "2", "0", "-4", " 3 "}
+	got := normalizeCommentIDs(values)
+	want := []int64{1, 2, 3}
+	if len(got) != len(want) {
+		t.Fatalf("len(normalizeCommentIDs) = %d, want %d: %#v", len(got), len(want), got)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("normalizeCommentIDs[%d] = %d, want %d", i, got[i], want[i])
+		}
+	}
+
+	many := make([]string, 0, 105)
+	for i := 1; i <= 105; i++ {
+		many = append(many, strconv.Itoa(i))
+	}
+	got = normalizeCommentIDs(many)
+	if len(got) != 100 {
+		t.Fatalf("len(normalizeCommentIDs many) = %d, want 100", len(got))
 	}
 }

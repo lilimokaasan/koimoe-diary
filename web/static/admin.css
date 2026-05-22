@@ -1344,14 +1344,49 @@ input[type="file"] {
 	gap: 14px;
 }
 
+.comment-bulk-bar {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.58);
+	border: 1px solid rgba(231, 211, 222, 0.72);
+	border-radius: 8px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 14px;
+	padding: 12px;
+}
+
+.comment-bulk-bar select {
+	max-width: 220px;
+}
+
+.comment-select-all,
+.comment-admin-check {
+	align-items: center;
+	color: var(--muted);
+	display: inline-flex;
+	font-size: 13px;
+	gap: 8px;
+}
+
+.comment-select-all input,
+.comment-admin-check input {
+	accent-color: var(--sakura);
+}
+
 .comment-admin-card {
+	align-items: start;
 	background: rgba(255, 255, 255, 0.62);
 	border: 1px solid rgba(231, 211, 222, 0.72);
 	border-radius: 8px;
 	display: grid;
 	gap: 16px;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: auto minmax(0, 1fr) auto;
 	padding: 16px;
+}
+
+.comment-admin-check {
+	padding-top: 3px;
 }
 
 .comment-admin-meta {
@@ -2075,6 +2110,10 @@ button:disabled {
 
 	.comment-admin-card {
 		display: block;
+	}
+
+	.comment-admin-check {
+		margin-bottom: 12px;
 	}
 
 	.comment-admin-actions {

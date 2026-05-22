@@ -107,6 +107,7 @@ func (c *Controller) Register(server *ghttp.Server) {
 	server.BindHandler("POST:/admin/login", c.LoginPost)
 	server.BindHandler("POST:/admin/logout", c.Logout)
 	server.BindHandler("GET:/admin/comments", c.Comments)
+	server.BindHandler("POST:/admin/comments/bulk", c.BulkUpdateComments)
 	server.BindHandler("POST:/admin/comments/{id}/status", c.UpdateCommentStatus)
 	server.BindHandler("POST:/admin/comments/{id}/private", c.UpdateCommentPrivacy)
 	server.BindHandler("POST:/admin/comments/{id}/delete", c.DeleteComment)
@@ -768,6 +769,39 @@ func (c *Controller) UpdateCommentStatus(r *ghttp.Request) {
 		return
 	}
 	r.Response.RedirectTo("/admin/comments?saved=1", http.StatusSeeOther)
+}
+
+func (c *Controller) BulkUpdateComments(r *ghttp.Request) {
+	if !c.requireLogin(r) {
+		return
+	}
+	ids := commentIDsFromRequest(r)
+	if len(ids) == 0 {
+		r.Response.RedirectTo("/admin/comments?saved=none", http.StatusSeeOther)
+		return
+	}
+	action := strings.TrimSpace(r.GetForm("bulk_action").String())
+	var err error
+	switch action {
+	case "approve":
+		_, err = c.posts.UpdateCommentsStatus(r.Context(), ids, "approved")
+	case "hide":
+		_, err = c.posts.UpdateCommentsStatus(r.Context(), ids, "hidden")
+	case "private":
+		_, err = c.posts.UpdateCommentsPrivacy(r.Context(), ids, true)
+	case "public":
+		_, err = c.posts.UpdateCommentsPrivacy(r.Context(), ids, false)
+	case "delete":
+		_, err = c.posts.DeleteComments(r.Context(), ids)
+	default:
+		r.Response.RedirectTo("/admin/comments?saved=none", http.StatusSeeOther)
+		return
+	}
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	r.Response.RedirectTo("/admin/comments?saved=bulk", http.StatusSeeOther)
 }
 
 func (c *Controller) UpdateCommentPrivacy(r *ghttp.Request) {
@@ -1857,6 +1891,30 @@ func checkboxValue(r *ghttp.Request, name string) string {
 		return "1"
 	}
 	return "0"
+}
+
+func commentIDsFromRequest(r *ghttp.Request) []int64 {
+	if err := r.Request.ParseForm(); err != nil {
+		return nil
+	}
+	return normalizeCommentIDs(r.Request.PostForm["comment_ids"])
+}
+
+func normalizeCommentIDs(values []string) []int64 {
+	seen := make(map[int64]bool, len(values))
+	ids := make([]int64, 0, len(values))
+	for _, value := range values {
+		id, err := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
+		if err != nil || id <= 0 || seen[id] {
+			continue
+		}
+		seen[id] = true
+		ids = append(ids, id)
+		if len(ids) == 100 {
+			break
+		}
+	}
+	return ids
 }
 
 func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {

@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	stdhtml "html"
 	"html/template"
 	"math"
@@ -1138,14 +1139,55 @@ func (s *PostStore) UpdateCommentStatus(ctx context.Context, id int64, status st
 	return err
 }
 
+func (s *PostStore) UpdateCommentsStatus(ctx context.Context, ids []int64, status string) (int64, error) {
+	if status != "approved" {
+		status = "hidden"
+	}
+	return s.execCommentBulk(ctx, `UPDATE comments SET status = ? WHERE id IN (%s)`, append([]any{status}, int64Args(ids)...), ids)
+}
+
 func (s *PostStore) UpdateCommentPrivacy(ctx context.Context, id int64, isPrivate bool) error {
 	_, err := s.db.ExecContext(ctx, `UPDATE comments SET is_private = ? WHERE id = ?`, isPrivate, id)
 	return err
 }
 
+func (s *PostStore) UpdateCommentsPrivacy(ctx context.Context, ids []int64, isPrivate bool) (int64, error) {
+	return s.execCommentBulk(ctx, `UPDATE comments SET is_private = ? WHERE id IN (%s)`, append([]any{isPrivate}, int64Args(ids)...), ids)
+}
+
 func (s *PostStore) DeleteComment(ctx context.Context, id int64) error {
 	_, err := s.db.ExecContext(ctx, `DELETE FROM comments WHERE id = ?`, id)
 	return err
+}
+
+func (s *PostStore) DeleteComments(ctx context.Context, ids []int64) (int64, error) {
+	return s.execCommentBulk(ctx, `DELETE FROM comments WHERE id IN (%s)`, int64Args(ids), ids)
+}
+
+func (s *PostStore) execCommentBulk(ctx context.Context, query string, args []any, ids []int64) (int64, error) {
+	if len(ids) == 0 {
+		return 0, nil
+	}
+	result, err := s.db.ExecContext(ctx, fmt.Sprintf(query, placeholders(len(ids))), args...)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+func int64Args(values []int64) []any {
+	args := make([]any, 0, len(values))
+	for _, value := range values {
+		args = append(args, value)
+	}
+	return args
+}
+
+func placeholders(count int) string {
+	if count <= 0 {
+		return ""
+	}
+	return strings.TrimRight(strings.Repeat("?,", count), ",")
 }
 
 func buildCommentTree(comments []models.Comment) []models.Comment {

@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260522-comment-replies">
+	<link rel="stylesheet" href="/static/admin.css?v=20260523-comment-bulk">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -58,9 +58,22 @@
 				<h1>Comments</h1>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Updated.</div>{{end}}
+			<form id="comment-bulk-form" class="comment-bulk-bar" method="post" action="/admin/comments/bulk">
+				<label class="comment-select-all"><input type="checkbox" data-comment-select-all> Select all</label>
+				<select name="bulk_action" aria-label="Bulk action">
+					<option value="">Bulk action</option>
+					<option value="approve">Approve selected</option>
+					<option value="hide">Hide selected</option>
+					<option value="public">Make public</option>
+					<option value="private">Make private</option>
+					<option value="delete">Delete selected</option>
+				</select>
+				<button type="submit">Apply</button>
+			</form>
 			<div class="comment-admin-list">
 				{{range .Comments}}
 				<article class="comment-admin-card">
+					<label class="comment-admin-check"><input form="comment-bulk-form" type="checkbox" name="comment_ids" value="{{.ID}}" data-comment-select-item aria-label="Select comment from {{.Author}}"></label>
 					<div class="comment-admin-main">
 						<div class="comment-admin-meta">
 							<strong>{{.Author}}</strong>
@@ -96,7 +109,7 @@
 							<button type="submit">Make Private</button>
 						</form>
 						{{end}}
-						<form method="post" action="/admin/comments/{{.ID}}/delete">
+						<form method="post" action="/admin/comments/{{.ID}}/delete" data-confirm-delete="Delete this comment?">
 							<button class="danger" type="submit">Delete</button>
 						</form>
 					</div>
@@ -107,6 +120,6 @@
 			</div>
 		</section>
 	</main>
-	<script src="/static/admin.js?v=20260522-media-v2"></script>
+	<script src="/static/admin.js?v=20260523-comment-bulk"></script>
 </body>
 </html>

@@ -91,6 +91,7 @@
 		runInlineScripts(doc);
 		initMediaPicker();
 		initDangerConfirmations();
+		initCommentBulkActions();
 		return true;
 	}
 
@@ -261,8 +262,38 @@
 		});
 	}
 
+	function initCommentBulkActions() {
+		var form = document.querySelector("#comment-bulk-form");
+		if (!form || form.dataset.bulkBound === "1") return;
+		form.dataset.bulkBound = "1";
+		var selectAll = form.querySelector("[data-comment-select-all]");
+		var action = form.querySelector("select[name='bulk_action']");
+
+		function items() {
+			return Array.prototype.slice.call(document.querySelectorAll("[data-comment-select-item]"));
+		}
+
+		selectAll && selectAll.addEventListener("change", function () {
+			items().forEach(function (item) {
+				item.checked = selectAll.checked;
+			});
+		});
+
+		form.addEventListener("submit", function (event) {
+			var selected = items().filter(function (item) { return item.checked; });
+			if (!action || !action.value || !selected.length) {
+				event.preventDefault();
+				return;
+			}
+			if (action.value === "delete" && !window.confirm("Delete selected comments?")) {
+				event.preventDefault();
+			}
+		});
+	}
+
 	initNav();
 	initUserMenu();
 	initMediaPicker();
 	initDangerConfirmations();
+	initCommentBulkActions();
 })();

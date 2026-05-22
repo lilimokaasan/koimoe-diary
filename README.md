@@ -126,7 +126,7 @@ journalctl -u sakurairo-go.service -n 80 --no-pager
 
 ## Next Useful Work
 
-- Add safer comment moderation workflow, review states, and bulk actions.
+- Add safer comment moderation workflow with review states and spam quarantine.
 - Add a compatibility renderer for legacy Sakurairo shortcodes such as `[toc]`, `[collapse]`, and older image syntax.
 - Improve post editor ergonomics around drafts, richer image insertion, and publish-readiness checks.
 - Add WordPress import path from XML or database.
