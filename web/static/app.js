@@ -3,10 +3,14 @@
 	var search = document.querySelector(".js-search");
 	var close = document.querySelector(".search_close");
 	var searchInput = search && search.querySelector('input[name="q"]');
+	var liveSearchPanel = search && search.querySelector("[data-live-search-results]");
 	var userEntry = document.querySelector(".user-entry");
 	var userToggle = userEntry && userEntry.querySelector(".js-toggle-user-menu");
 	var progressBar = document.querySelector("#bar, .scrollbar-progress");
 	var progressFrame;
+	var liveSearchIndex = null;
+	var liveSearchLoading = null;
+	var liveSearchTimer = null;
 
 	function updateReadingProgress() {
 		if (!progressBar) {
@@ -94,6 +98,8 @@
 			closeUserEntry();
 			search.classList.add("is-visible");
 			document.body.classList.add("search-open");
+			renderLiveSearch((searchInput && searchInput.value) || "");
+			loadLiveSearchIndex();
 			window.setTimeout(function () {
 				searchInput && searchInput.focus();
 			}, 80);
@@ -110,12 +116,189 @@
 		}
 	});
 
+	searchInput && searchInput.addEventListener("input", function () {
+		window.clearTimeout(liveSearchTimer);
+		liveSearchTimer = window.setTimeout(function () {
+			renderLiveSearch(searchInput.value || "");
+			loadLiveSearchIndex();
+		}, 80);
+	});
+
 	function closeSearch() {
 		if (!search) {
 			return;
 		}
 		search.classList.remove("is-visible");
 		document.body.classList.remove("search-open");
+	}
+
+	function loadLiveSearchIndex() {
+		if (liveSearchIndex || liveSearchLoading || !liveSearchPanel) {
+			return liveSearchLoading || Promise.resolve(liveSearchIndex);
+		}
+		try {
+			var cached = window.sessionStorage && window.sessionStorage.getItem("koimoe_live_search_index");
+			if (cached) {
+				var parsed = JSON.parse(cached);
+				if (parsed && parsed.cached_at && Date.now() - parsed.cached_at < 5 * 60 * 1000) {
+					liveSearchIndex = parsed.index;
+					renderLiveSearch((searchInput && searchInput.value) || "");
+					return Promise.resolve(liveSearchIndex);
+				}
+			}
+		} catch (error) {
+			// Search still works without sessionStorage.
+		}
+		liveSearchLoading = fetch("/api/search-index", { headers: { Accept: "application/json" } })
+			.then(function (response) {
+				if (!response.ok) {
+					throw new Error("search index failed");
+				}
+				return response.json();
+			})
+			.then(function (payload) {
+				liveSearchIndex = payload || {};
+				try {
+					if (window.sessionStorage) {
+						window.sessionStorage.setItem("koimoe_live_search_index", JSON.stringify({
+							cached_at: Date.now(),
+							index: liveSearchIndex
+						}));
+					}
+				} catch (error) {
+					// Cache failure should not block live search.
+				}
+				renderLiveSearch((searchInput && searchInput.value) || "");
+				return liveSearchIndex;
+			})
+			.catch(function () {
+				if (liveSearchPanel) {
+					liveSearchPanel.innerHTML = '<p class="live-search-hint">Live search is resting for a moment. Press Enter for the full search page.</p>';
+				}
+			})
+			.finally(function () {
+				liveSearchLoading = null;
+			});
+		return liveSearchLoading;
+	}
+
+	function renderLiveSearch(rawQuery) {
+		if (!liveSearchPanel) {
+			return;
+		}
+		var query = normalizeLiveSearch(rawQuery);
+		if (!query) {
+			liveSearchPanel.innerHTML = '<p class="live-search-hint">Start typing to search posts, pages, categories, and tags.</p>';
+			return;
+		}
+		if (!liveSearchIndex) {
+			liveSearchPanel.innerHTML = '<p class="live-search-hint">Gathering tiny fragments...</p>';
+			return;
+		}
+		var groups = [
+			{ label: "Posts", icon: "file", items: matchPostItems(liveSearchIndex.posts || [], query).slice(0, 5) },
+			{ label: "Pages", icon: "bookmark", items: matchPostItems(liveSearchIndex.pages || [], query).slice(0, 4) },
+			{ label: "Categories", icon: "folder-o", items: matchTaxonomyItems(liveSearchIndex.categories || [], query).slice(0, 4) },
+			{ label: "Tags", icon: "tag", items: matchTaxonomyItems(liveSearchIndex.tags || [], query).slice(0, 6) }
+		];
+		var html = "";
+		var total = 0;
+		groups.forEach(function (group) {
+			if (!group.items.length) {
+				return;
+			}
+			total += group.items.length;
+			html += '<section class="live-search-section"><h3>' + escapeHTML(group.label) + '</h3>';
+			group.items.forEach(function (item) {
+				html += liveSearchItemHTML(item, query, group.icon);
+			});
+			html += '</section>';
+		});
+		if (!total) {
+			liveSearchPanel.innerHTML = '<p class="live-search-hint">No tiny fragment matched yet. Press Enter to search deeper.</p>';
+			return;
+		}
+		liveSearchPanel.innerHTML = html;
+	}
+
+	function matchPostItems(items, query) {
+		return items.map(function (item) {
+			var haystack = normalizeLiveSearch([
+				item.title,
+				item.excerpt,
+				item.content,
+				item.category,
+				(item.tags || []).join(" ")
+			].join(" "));
+			return Object.assign({ _score: scoreLiveSearch(item.title, haystack, query) }, item);
+		}).filter(function (item) {
+			return item._score > 0;
+		}).sort(function (a, b) {
+			return b._score - a._score;
+		});
+	}
+
+	function matchTaxonomyItems(items, query) {
+		return items.map(function (item) {
+			var haystack = normalizeLiveSearch(item.name || "");
+			return Object.assign({ _score: scoreLiveSearch(item.name, haystack, query) }, item);
+		}).filter(function (item) {
+			return item._score > 0;
+		}).sort(function (a, b) {
+			return b._score - a._score;
+		});
+	}
+
+	function scoreLiveSearch(title, haystack, query) {
+		var normalizedTitle = normalizeLiveSearch(title || "");
+		if (normalizedTitle === query) return 100;
+		if (normalizedTitle.indexOf(query) === 0) return 80;
+		if (normalizedTitle.indexOf(query) >= 0) return 60;
+		if (haystack.indexOf(query) >= 0) return 30;
+		var parts = query.split(/\s+/).filter(Boolean);
+		if (parts.length > 1 && parts.every(function (part) { return haystack.indexOf(part) >= 0; })) {
+			return 20;
+		}
+		return 0;
+	}
+
+	function liveSearchItemHTML(item, query, icon) {
+		var title = item.title || item.name || "Untitled";
+		var excerpt = item.excerpt || item.content || (typeof item.post_count === "number" ? item.post_count + " posts" : "");
+		if (excerpt.length > 112) {
+			excerpt = excerpt.slice(0, 112).replace(/\s+\S*$/, "") + "...";
+		}
+		return '<a class="live-search-item" href="' + escapeHTML(item.url || "/search") + '">' +
+			'<span class="live-search-icon"><i class="fa fa-' + escapeHTML(icon) + '" aria-hidden="true"></i></span>' +
+			'<span><strong>' + highlightSearchText(title, query) + '</strong>' +
+			(excerpt ? '<em>' + highlightSearchText(excerpt, query) + '</em>' : '') +
+			'</span></a>';
+	}
+
+	function highlightSearchText(value, query) {
+		var safe = escapeHTML(value || "");
+		var trimmed = (query || "").trim();
+		if (!trimmed) return safe;
+		var first = trimmed.split(/\s+/)[0];
+		if (!first || first.length < 2) return safe;
+		var escaped = first.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+		return safe.replace(new RegExp("(" + escaped + ")", "ig"), "<mark>$1</mark>");
+	}
+
+	function normalizeLiveSearch(value) {
+		return (value || "").toString().toLowerCase().replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+	}
+
+	function escapeHTML(value) {
+		return (value || "").toString().replace(/[&<>"']/g, function (char) {
+			return {
+				"&": "&amp;",
+				"<": "&lt;",
+				">": "&gt;",
+				'"': "&quot;",
+				"'": "&#39;"
+			}[char];
+		});
 	}
 
 	var topButton = document.querySelector("#moblieGoTop, .cd-top");
