@@ -1292,7 +1292,9 @@ textarea:disabled,
 
 .taxonomy-hero {
 	backdrop-filter: blur(14px);
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 252, 0.76));
+	background:
+		radial-gradient(circle at 92% 14%, rgba(251, 152, 192, 0.12), transparent 28%),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 252, 0.76));
 	border: 1px solid rgba(255, 255, 255, 0.84);
 	border-radius: 8px;
 	box-shadow: 0 18px 44px rgba(117, 79, 99, 0.12);
@@ -1304,6 +1306,20 @@ textarea:disabled,
 	overflow: hidden;
 	padding: 30px 28px;
 	position: relative;
+}
+
+.taxonomy-hero::after {
+	background:
+		radial-gradient(circle, rgba(251, 152, 192, 0.16) 0 2px, transparent 3px);
+	background-size: 18px 18px;
+	bottom: 18px;
+	content: "";
+	height: 44px;
+	opacity: 0.7;
+	pointer-events: none;
+	position: absolute;
+	right: 22px;
+	width: 150px;
 }
 
 .taxonomy-hero.has-cover {
@@ -1338,6 +1354,123 @@ textarea:disabled,
 	font-size: 14px;
 	line-height: 1.8;
 	margin: 0;
+}
+
+.taxonomy-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 18px 0 0;
+}
+
+.taxonomy-meta span {
+	background: rgba(251, 152, 192, 0.1);
+	border: 1px solid rgba(251, 152, 192, 0.18);
+	border-radius: 999px;
+	color: #8f7e89;
+	font: 700 12px/1 "Ubuntu", sans-serif;
+	padding: 8px 12px;
+}
+
+.taxonomy-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 16px;
+}
+
+.taxonomy-actions a {
+	background: rgba(255, 255, 255, 0.78);
+	border: 1px solid rgba(251, 152, 192, 0.24);
+	border-radius: 999px;
+	box-shadow: 0 10px 24px rgba(117, 79, 99, 0.08);
+	color: var(--sakura-rose);
+	font: 700 12px/1 "Ubuntu", sans-serif;
+	padding: 10px 14px;
+	text-decoration: none;
+	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.taxonomy-actions a:hover {
+	background: rgba(251, 152, 192, 0.14);
+	border-color: rgba(251, 152, 192, 0.46);
+	transform: translateY(-1px);
+}
+
+.taxonomy-results-bar {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.7);
+	border: 1px solid rgba(251, 152, 192, 0.14);
+	border-radius: 8px;
+	box-shadow: 0 12px 32px rgba(117, 79, 99, 0.08);
+	box-sizing: border-box;
+	color: #91858f;
+	display: flex;
+	font: 700 13px/1.4 "Ubuntu", sans-serif;
+	justify-content: space-between;
+	margin: 0 0 18px;
+	padding: 14px 18px;
+}
+
+.taxonomy-results-bar i {
+	color: var(--sakura-rose);
+	margin-right: 6px;
+}
+
+.taxonomy-results-bar small {
+	color: #b4a6b0;
+	font-size: 12px;
+}
+
+.taxonomy-empty-state {
+	background:
+		radial-gradient(circle at 50% 22%, rgba(251, 152, 192, 0.12), transparent 30%),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 248, 252, 0.72));
+	border: 1px solid rgba(251, 152, 192, 0.16);
+	border-radius: 8px;
+	box-shadow: 0 22px 58px rgba(117, 79, 99, 0.1);
+	box-sizing: border-box;
+	margin: 0 0 30px;
+	padding: 40px 24px;
+	text-align: center;
+}
+
+.taxonomy-empty-mark,
+.koimoe-empty-mark {
+	align-items: center;
+	background: rgba(251, 152, 192, 0.12);
+	border-radius: 50%;
+	color: var(--sakura-rose);
+	display: inline-flex;
+	font-size: 24px;
+	height: 58px;
+	justify-content: center;
+	margin: 0 0 16px;
+	width: 58px;
+}
+
+.taxonomy-empty-state h2,
+.koimoe-empty-state h2 {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: clamp(26px, 3.6vw, 36px);
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 1.25;
+	margin: 0 0 12px;
+}
+
+.taxonomy-empty-state p,
+.koimoe-empty-state p {
+	color: var(--sakura-muted);
+	font-size: 14px;
+	line-height: 1.8;
+	margin: 0 auto;
+	max-width: 520px;
+}
+
+.taxonomy-empty-actions {
+	justify-content: center;
 }
 
 .sakurairo-moments-layout {
@@ -1630,9 +1763,34 @@ textarea:disabled,
 	margin: 32px 0;
 }
 
+.sakurairo-pagination a {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.76);
+	border: 1px solid rgba(251, 152, 192, 0.2);
+	border-radius: 50%;
+	box-shadow: 0 12px 28px rgba(117, 79, 99, 0.1);
+	color: var(--sakura-rose);
+	display: inline-flex;
+	height: 42px;
+	justify-content: center;
+	text-decoration: none;
+	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+	width: 42px;
+}
+
+.sakurairo-pagination a:hover {
+	background: rgba(251, 152, 192, 0.14);
+	border-color: rgba(251, 152, 192, 0.44);
+	transform: translateY(-1px);
+}
+
 .sakurairo-pagination span {
+	background: rgba(255, 255, 255, 0.62);
+	border: 1px solid rgba(251, 152, 192, 0.14);
+	border-radius: 999px;
 	color: #999;
 	font-family: "Ubuntu", sans-serif;
+	padding: 10px 16px;
 }
 
 .search-form input[name="q"] {
@@ -1899,6 +2057,29 @@ body.search-open {
 	max-width: 640px;
 }
 
+.koimoe-search-results-bar {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.68);
+	border: 1px solid rgba(251, 152, 192, 0.16);
+	border-radius: 8px;
+	box-shadow: 0 12px 34px rgba(107, 74, 92, 0.08);
+	box-sizing: border-box;
+	color: #91858f;
+	display: flex;
+	flex-wrap: wrap;
+	font: 700 12px/1 "Ubuntu", sans-serif;
+	gap: 10px;
+	margin: -10px 0 22px;
+	padding: 14px 16px;
+}
+
+.koimoe-search-results-bar span {
+	background: rgba(251, 152, 192, 0.1);
+	border: 1px solid rgba(251, 152, 192, 0.16);
+	border-radius: 999px;
+	padding: 8px 12px;
+}
+
 .koimoe-search-taxonomy,
 .koimoe-search-suggestions {
 	display: grid;
@@ -1948,6 +2129,41 @@ body.search-open {
 	font-size: 14px;
 	letter-spacing: 0;
 	margin: 0 0 14px;
+}
+
+.koimoe-empty-state {
+	background:
+		radial-gradient(circle at 50% 24%, rgba(251, 152, 192, 0.12), transparent 30%),
+		linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 247, 251, 0.7));
+	border: 1px solid rgba(251, 152, 192, 0.16);
+	border-radius: 8px;
+	box-shadow: 0 22px 58px rgba(107, 74, 92, 0.1);
+	box-sizing: border-box;
+	margin: 0 0 30px;
+	padding: 40px 24px;
+	text-align: center;
+}
+
+.koimoe-empty-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+	margin-top: 18px;
+}
+
+.koimoe-empty-actions a {
+	background: rgba(255, 255, 255, 0.78);
+	border: 1px solid rgba(251, 152, 192, 0.24);
+	border-radius: 999px;
+	color: var(--sakura-rose);
+	font: 700 12px/1 "Ubuntu", sans-serif;
+	padding: 10px 14px;
+	text-decoration: none;
+}
+
+.koimoe-empty-actions a:hover {
+	background: rgba(251, 152, 192, 0.14);
 }
 
 .sakurairo-comments {
@@ -2494,6 +2710,27 @@ body.search-open {
 		max-height: none;
 	}
 
+	.taxonomy-hero::after {
+		bottom: 12px;
+		right: 12px;
+		width: 96px;
+	}
+
+	.taxonomy-actions,
+	.koimoe-empty-actions {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.taxonomy-actions a,
+	.koimoe-empty-actions a {
+		text-align: center;
+	}
+
+	.taxonomy-results-bar {
+		align-items: flex-start;
+		flex-direction: column;
+	}
 
 	.koimoe-search-hero {
 		padding: 26px 18px;
@@ -2513,6 +2750,9 @@ body.search-open {
 		grid-template-columns: 1fr;
 	}
 
+	.koimoe-search-results-bar {
+		margin-top: -4px;
+	}
 
 	.koimoe-error-layout {
 		margin-top: 42px;

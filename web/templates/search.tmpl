@@ -41,6 +41,11 @@
 			{{end}}
 
 			<h1 class="main-title sakurairo-main-title"><i class="fa fa-search" aria-hidden="true"></i> Search Results</h1>
+			<div class="koimoe-search-results-bar" aria-label="Search result summary">
+				<span>{{.Page.Total}} posts</span>
+				{{if .Pages}}<span>{{len .Pages}} pages</span>{{end}}
+				{{if or .SearchCategories .SearchTags}}<span>taxonomy matches</span>{{end}}
+			</div>
 			{{if .Pages}}
 			<section class="koimoe-search-taxonomy koimoe-search-pages" aria-label="Matched pages">
 				{{range .Pages}}
@@ -53,12 +58,15 @@
 			</section>
 			{{end}}
 			{{if .Posts}}{{range .Posts}}{{template "post_card" .}}{{end}}{{else if not .Pages}}
-			<article class="post post-list koimoe-empty-search">
-				<div class="post-entry">
-					<h1 class="entry-title">Nothing has bloomed here yet.</h1>
-					<p>Try a softer keyword, a category name, or a tag you remember.</p>
+			<section class="koimoe-empty-state" aria-label="No search results">
+				<div class="koimoe-empty-mark"><i class="iconfont icon-search"></i></div>
+				<h2>Nothing has bloomed here yet.</h2>
+				<p>Try a softer keyword, a category name, or a tag you remember.</p>
+				<div class="koimoe-empty-actions">
+					<a href="/search">Clear search</a>
+					<a href="/archives">Browse archives</a>
 				</div>
-			</article>
+			</section>
 			{{end}}
 			{{template "pagination" .}}
 		{{else}}

@@ -1,6 +1,6 @@
 {{template "head" .}}
 {{template "site_header" .}}
-<div id="primary" class="content-area with-sidebar">
+<div id="primary" class="content-area with-sidebar sakurairo-taxonomy-layout">
 	<main id="main" class="site-main" role="main">
 		{{if .Category.ID}}
 		<section class="taxonomy-hero {{if .Category.CoverImage}}has-cover{{end}}">
@@ -9,6 +9,14 @@
 				<p class="home-kicker"><i class="fa fa-folder-o" aria-hidden="true"></i> Category</p>
 				<h1>{{.Category.Name}}</h1>
 				{{if .Category.Description}}<p>{{.Category.Description}}</p>{{else}}<p>Softly gathered diary fragments from this shelf.</p>{{end}}
+				<div class="taxonomy-meta">
+					<span>{{.Page.Total}} fragments</span>
+					<span>Category shelf</span>
+				</div>
+				<div class="taxonomy-actions">
+					<a href="/archives">Browse archives</a>
+					<a href="/search?q={{.Category.Name}}">Search this shelf</a>
+				</div>
 			</div>
 		</section>
 		{{else if .Tag.ID}}
@@ -17,13 +25,53 @@
 				<p class="home-kicker"><i class="iconfont icon-tags"></i> Tag</p>
 				<h1>{{.Tag.Name}}</h1>
 				<p>Small signals gathered from the diary.</p>
+				<div class="taxonomy-meta">
+					<span>{{.Page.Total}} fragments</span>
+					<span>Tag signal</span>
+				</div>
+				<div class="taxonomy-actions">
+					<a href="/archives">Browse archives</a>
+					<a href="/search?q={{.Tag.Name}}">Search this tag</a>
+				</div>
 			</div>
 		</section>
 		{{else}}
-		<h1 class="main-title" style="font-family:'Ubuntu',sans-serif"><i class="fa fa-archive" aria-hidden="true"></i> {{.SectionTitle}}</h1>
+		<section class="taxonomy-hero taxonomy-hero-archive">
+			<div>
+				<p class="home-kicker"><i class="fa fa-archive" aria-hidden="true"></i> Archive</p>
+				<h1>{{.SectionTitle}}</h1>
+				<p>Published diary fragments gathered in one gentle stream.</p>
+				<div class="taxonomy-meta">
+					<span>{{.Page.Total}} fragments</span>
+					{{if gt .Page.TotalPages 0}}<span>Page {{.Page.Page}} of {{.Page.TotalPages}}</span>{{end}}
+				</div>
+			</div>
+		</section>
 		{{end}}
-		{{range .Posts}}{{template "post_card" .}}{{else}}
-		<article class="post post-list"><div class="post-entry"><h1 class="entry-title">No posts found</h1><p>There is no published content here yet.</p></div></article>
+		{{if .Posts}}
+		<div class="taxonomy-results-bar" aria-label="Archive result summary">
+			<span><i class="fa fa-leaf" aria-hidden="true"></i> {{.Page.Total}} fragments gathered</span>
+			{{if gt .Page.TotalPages 1}}<small>Page {{.Page.Page}} / {{.Page.TotalPages}}</small>{{end}}
+		</div>
+		{{range .Posts}}{{template "post_card" .}}{{end}}
+		{{else}}
+		<section class="taxonomy-empty-state" aria-label="No posts found">
+			<div class="taxonomy-empty-mark"><i class="fa fa-pencil" aria-hidden="true"></i></div>
+			{{if .Category.ID}}
+			<h2>This shelf is still waiting for its first note.</h2>
+			<p>No published diary fragment lives in {{.Category.Name}} yet. The archives may still have something nearby.</p>
+			{{else if .Tag.ID}}
+			<h2>No fragment has carried this signal yet.</h2>
+			<p>The tag {{.Tag.Name}} is quiet for now. Try searching for a softer word or browsing the archives.</p>
+			{{else}}
+			<h2>No diary fragments are published yet.</h2>
+			<p>This stream is empty for now, but the little room is ready for its first page.</p>
+			{{end}}
+			<div class="taxonomy-actions taxonomy-empty-actions">
+				<a href="/archives">Browse archives</a>
+				<a href="/search">Open search</a>
+			</div>
+		</section>
 		{{end}}
 		{{template "pagination" .}}
 	</main>
