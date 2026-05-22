@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-comment-review">
+	<link rel="stylesheet" href="/static/admin.css?v=20260523-publish-check">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -139,6 +139,13 @@
 					</label>
 					<label>Category<input type="text" name="category" value="{{.Post.Category.Name}}" placeholder="Blog"></label>
 					<label>Tags<input type="text" name="tags" value="{{.PostTags}}" placeholder="Go, Sakurairo"></label>
+					<div class="publish-checklist" data-publish-checklist>
+						<div class="publish-checklist-head">
+							<p>Publish Check</p>
+							<strong data-publish-check-summary>Ready when the little details are in place.</strong>
+						</div>
+						<ul data-publish-check-items></ul>
+					</div>
 					<div class="cover-box">
 						{{if .Post.CoverImage}}<img src="{{.Post.CoverImage}}" alt="Cover preview">{{end}}
 						<label>Cover Image<input type="text" name="cover_image" value="{{.Post.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
@@ -160,9 +167,13 @@
 			var title = document.querySelector("input[name='title']");
 			var slug = document.querySelector("input[name='slug']");
 			var status = document.querySelector("select[name='status']");
+			var category = document.querySelector("input[name='category']");
+			var tags = document.querySelector("input[name='tags']");
 			var saveDraft = document.querySelector("[data-save-draft]");
 			var count = document.querySelector("[data-editor-count]");
 			var autosave = document.querySelector("[data-editor-autosave]");
+			var checkSummary = document.querySelector("[data-publish-check-summary]");
+			var checkItems = document.querySelector("[data-publish-check-items]");
 			var autosaveTimer;
 			var initialSnapshot = "";
 			if (!content) return;
@@ -180,7 +191,9 @@
 					excerpt: excerpt && excerpt.value || "",
 					content: content && content.value || "",
 					cover: cover && cover.value || "",
-					status: status && status.value || ""
+					status: status && status.value || "",
+					category: category && category.value || "",
+					tags: tags && tags.value || ""
 				});
 			}
 			function setAutosaveText(text) {
@@ -195,6 +208,47 @@
 				var words = text ? text.split(/\s+/).filter(Boolean).length : 0;
 				count.textContent = chars + " chars · " + words + " words";
 			}
+			function contentText() {
+				var holder = document.createElement("div");
+				holder.innerHTML = content.value || "";
+				return (holder.textContent || holder.innerText || "").replace(/\s+/g, " ").trim();
+			}
+			function publishIssues() {
+				var text = contentText();
+				var issues = [];
+				if (!title || !title.value.trim()) issues.push("Add a title.");
+				if (!slug || !slug.value.trim()) issues.push("Confirm the slug.");
+				if (text.length < 120) issues.push("Write at least 120 characters of readable content.");
+				if (!excerpt || !excerpt.value.trim()) issues.push("Add an excerpt for cards and metadata.");
+				if (!cover || !cover.value.trim()) issues.push("Choose a cover image.");
+				if (!category || !category.value.trim()) issues.push("Choose a category.");
+				if (!tags || !tags.value.trim()) issues.push("Add one or two tags.");
+				return issues;
+			}
+			function updatePublishChecklist() {
+				if (!checkItems || !checkSummary) return;
+				var issues = publishIssues();
+				checkItems.innerHTML = "";
+				if (status && status.value !== "published") {
+					checkSummary.textContent = "Drafts can stay loose until publishing.";
+				} else if (!issues.length) {
+					checkSummary.textContent = "Ready to publish.";
+				} else {
+					checkSummary.textContent = issues.length + " item" + (issues.length === 1 ? "" : "s") + " to check before publishing.";
+				}
+				issues.forEach(function (issue) {
+					var item = document.createElement("li");
+					item.textContent = issue;
+					checkItems.appendChild(item);
+				});
+				if (!issues.length) {
+					var item = document.createElement("li");
+					item.className = "is-ok";
+					item.textContent = "Title, slug, excerpt, cover, category, tags, and readable content look set.";
+					checkItems.appendChild(item);
+				}
+			}
+
 			function scheduleAutosave() {
 				window.clearTimeout(autosaveTimer);
 				autosaveTimer = window.setTimeout(function () {
@@ -241,6 +295,8 @@
 					if (excerpt && saved.excerpt) excerpt.value = saved.excerpt;
 					if (cover && saved.cover) cover.value = saved.cover;
 					if (status && saved.status) status.value = saved.status;
+					if (category && saved.category) category.value = saved.category;
+					if (tags && saved.tags) tags.value = saved.tags;
 					content.value = saved.content;
 					setAutosaveText("Local draft restored.");
 				}
@@ -249,17 +305,22 @@
 			}
 			initialSnapshot = snapshot();
 			updateCount();
+			updatePublishChecklist();
 			title && title.addEventListener("input", function () {
 				if (slug && !slug.value.trim()) slug.value = slugify(title.value);
 				scheduleAutosave();
+				updatePublishChecklist();
 			});
 			content.addEventListener("input", function () {
 				updateCount();
 				scheduleAutosave();
+				updatePublishChecklist();
 			});
-			[slug, excerpt, cover, status].forEach(function (field) {
+			[slug, excerpt, cover, status, category, tags].forEach(function (field) {
 				field && field.addEventListener("input", scheduleAutosave);
 				field && field.addEventListener("change", scheduleAutosave);
+				field && field.addEventListener("input", updatePublishChecklist);
+				field && field.addEventListener("change", updatePublishChecklist);
 			});
 			document.querySelectorAll("[data-editor-snippet]").forEach(function (button) {
 				button.addEventListener("click", function () {
@@ -279,7 +340,12 @@
 				event.preventDefault();
 				event.returnValue = "";
 			});
-			form && form.addEventListener("submit", function () {
+			form && form.addEventListener("submit", function (event) {
+				var issues = publishIssues();
+				if (status && status.value === "published" && issues.length && !window.confirm("Publish with " + issues.length + " checklist item" + (issues.length === 1 ? "" : "s") + " still open?")) {
+					event.preventDefault();
+					return;
+				}
 				initialSnapshot = snapshot();
 				try { localStorage.removeItem(draftKey); } catch (error) {}
 			});
@@ -292,6 +358,7 @@
 				if (text.length > 128) text = text.slice(0, 128).replace(/[,.!?;:\s]+$/, "") + "...";
 				excerpt.value = text;
 				excerpt.focus();
+				updatePublishChecklist();
 			});
 			if (imageTrigger && cover) imageTrigger.addEventListener("click", function () {
 				var url = (cover.value || "").trim();
@@ -306,6 +373,7 @@
 					if (!cover) return;
 					cover.value = button.getAttribute("data-use-cover") || "";
 					cover.focus();
+					updatePublishChecklist();
 				});
 			});
 			document.querySelectorAll("[data-insert-media]").forEach(function (button) {
@@ -315,6 +383,6 @@
 			});
 		})();
 	</script>
-	<script src="/static/admin.js?v=20260523-comment-review"></script>
+	<script src="/static/admin.js?v=20260523-publish-check"></script>
 </body>
 </html>
