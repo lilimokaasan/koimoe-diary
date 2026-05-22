@@ -1090,6 +1090,12 @@ textarea:disabled,
 	padding-left: 36px;
 }
 
+.entry-content h2,
+.entry-content h3,
+.entry-content h4 {
+	scroll-margin-top: 104px;
+}
+
 .hero-social-links {
 	justify-content: center;
 	margin-top: 14px;

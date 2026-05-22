@@ -310,6 +310,45 @@
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	});
 
+	document.querySelectorAll(".article-toc a[href^='#']").forEach(function (link) {
+		link.addEventListener("click", function (event) {
+			var target = findHashTarget(link.getAttribute("href"));
+			if (!target) {
+				return;
+			}
+			event.preventDefault();
+			scrollToHashTarget(target);
+			if (window.history && window.history.pushState) {
+				window.history.pushState(null, "", "#" + encodeURIComponent(target.id));
+			} else {
+				window.location.hash = target.id;
+			}
+		});
+	});
+
+	function findHashTarget(hash) {
+		if (!hash || hash === "#") {
+			return null;
+		}
+		var id = hash.charAt(0) === "#" ? hash.slice(1) : hash;
+		try {
+			id = decodeURIComponent(id);
+		} catch (error) {
+			// Keep the raw hash when the browser gives us a non-encoded ID.
+		}
+		return document.getElementById(id);
+	}
+
+	function scrollToHashTarget(target) {
+		var header = document.querySelector("#masthead");
+		var offset = (header && header.offsetHeight ? header.offsetHeight : 0) + 22;
+		var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+		window.scrollTo({
+			top: Math.max(0, top),
+			behavior: window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+		});
+	}
+
 
 	document.querySelectorAll(".post-like-button").forEach(function (button) {
 		var postID = button.getAttribute("data-post-id");
