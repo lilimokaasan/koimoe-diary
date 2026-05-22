@@ -84,6 +84,10 @@
 					<label>Article License Text<input type="text" name="post_license_text" value="{{.Settings.PostLicenseText}}" placeholder="Attribution-NonCommercial-ShareAlike 4.0 International"></label>
 					<label>Article License URL<input type="url" name="post_license_url" value="{{.Settings.PostLicenseURL}}" placeholder="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"></label>
 					<label class="toggle-field">
+						<input type="checkbox" name="post_share" value="1" {{if ne .Settings.PostShare "0"}}checked{{end}}>
+						<span>Show article share links</span>
+					</label>
+					<label class="toggle-field">
 						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
 						<span>Enable subtle sakura petals</span>
 					</label>

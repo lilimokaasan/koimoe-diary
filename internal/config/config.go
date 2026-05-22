@@ -19,6 +19,7 @@ type Site struct {
 	DefaultPostCover   string
 	PostLicenseText    string
 	PostLicenseURL     string
+	PostShare          string
 	SakuraEffects      string
 	FooterText         string
 	FooterCredit       string
@@ -135,6 +136,7 @@ func FromEnv() Config {
 			DefaultPostCover:   env("DEFAULT_POST_COVER", "/static/theme/content-image/d-1.jpg"),
 			PostLicenseText:    env("POST_LICENSE_TEXT", "Attribution-NonCommercial-ShareAlike 4.0 International"),
 			PostLicenseURL:     env("POST_LICENSE_URL", "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"),
+			PostShare:          env("POST_SHARE", "1"),
 			SakuraEffects:      env("SAKURA_EFFECTS", "0"),
 			FooterText:         env("SITE_FOOTER_TEXT", "A soft diary for tiny heartbeats, cute things, and everyday fragments."),
 			FooterCredit:       env("SITE_FOOTER_CREDIT", "A KoiMoe diary shaped with Sakurairo."),

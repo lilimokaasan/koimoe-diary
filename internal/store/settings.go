@@ -68,6 +68,9 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 	if values["post_license_url"] != "" {
 		site.PostLicenseURL = values["post_license_url"]
 	}
+	if values["post_share"] != "" {
+		site.PostShare = values["post_share"]
+	}
 	if values["sakura_effects"] != "" {
 		site.SakuraEffects = values["sakura_effects"]
 	}
@@ -123,6 +126,7 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"default_post_cover":   site.DefaultPostCover,
 		"post_license_text":    site.PostLicenseText,
 		"post_license_url":     site.PostLicenseURL,
+		"post_share":           site.PostShare,
 		"sakura_effects":       site.SakuraEffects,
 		"footer_text":          site.FooterText,
 		"footer_credit":        site.FooterCredit,
@@ -253,6 +257,7 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		"default_post_cover":   defaults.DefaultPostCover,
 		"post_license_text":    defaults.PostLicenseText,
 		"post_license_url":     defaults.PostLicenseURL,
+		"post_share":           defaults.PostShare,
 		"sakura_effects":       defaults.SakuraEffects,
 		"footer_text":          defaults.FooterText,
 		"footer_credit":        defaults.FooterCredit,

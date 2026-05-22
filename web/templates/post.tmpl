@@ -36,6 +36,16 @@
 					{{end}}
 				</div>
 				{{end}}
+				{{if eq .Site.PostShare "1"}}
+				<div class="post-share" aria-label="Share article">
+					<span><i class="fa fa-share-alt" aria-hidden="true"></i> Share</span>
+					<a href="https://twitter.com/intent/tweet?url={{urlquery .CanonicalURL}}&text={{urlquery .Post.Title}}" target="_blank" rel="nofollow noreferrer" aria-label="Share to X"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+					<a href="https://www.facebook.com/sharer/sharer.php?u={{urlquery .CanonicalURL}}" target="_blank" rel="nofollow noreferrer" aria-label="Share to Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+					<a href="https://t.me/share/url?url={{urlquery .CanonicalURL}}&text={{urlquery .Post.Title}}" target="_blank" rel="nofollow noreferrer" aria-label="Share to Telegram"><i class="fa fa-telegram" aria-hidden="true"></i></a>
+					<a href="https://service.weibo.com/share/share.php?url={{urlquery .CanonicalURL}}&title={{urlquery .Post.Title}}" target="_blank" rel="nofollow noreferrer" aria-label="Share to Weibo"><i class="fa fa-weibo" aria-hidden="true"></i></a>
+					<button type="button" data-copy-share="{{.CanonicalURL}}" aria-label="Copy article link"><i class="fa fa-link" aria-hidden="true"></i><span>Copy link</span></button>
+				</div>
+				{{end}}
 				<div class="single-taxonomy">
 					{{if .Post.Category.ID}}<div class="post-tags"><i class="fa fa-folder-o" aria-hidden="true"></i> <a href="/category/{{.Post.Category.Slug}}">{{.Post.Category.Name}}</a></div>{{end}}
 					{{if .Post.Tags}}<div class="post-tags"><i class="iconfont icon-tags"></i> {{range .Post.Tags}}<a href="/tag/{{.Slug}}">{{.Name}}</a> {{end}}</div>{{end}}

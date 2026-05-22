@@ -364,6 +364,45 @@
 		});
 	});
 
+	document.querySelectorAll("[data-copy-share]").forEach(function (button) {
+		button.addEventListener("click", function () {
+			var url = button.getAttribute("data-copy-share") || window.location.href;
+			copyText(url).then(function () {
+				var label = button.querySelector("span");
+				var original = label && label.textContent;
+				button.classList.add("is-copied");
+				if (label) {
+					label.textContent = "Copied";
+				}
+				window.setTimeout(function () {
+					button.classList.remove("is-copied");
+					if (label && original) {
+						label.textContent = original;
+					}
+				}, 1400);
+			});
+		});
+	});
+
+	function copyText(value) {
+		if (navigator.clipboard && window.isSecureContext) {
+			return navigator.clipboard.writeText(value);
+		}
+		var textarea = document.createElement("textarea");
+		textarea.value = value;
+		textarea.setAttribute("readonly", "");
+		textarea.style.position = "fixed";
+		textarea.style.left = "-9999px";
+		document.body.appendChild(textarea);
+		textarea.select();
+		try {
+			document.execCommand("copy");
+		} finally {
+			textarea.remove();
+		}
+		return Promise.resolve();
+	}
+
 	var commentForm = document.querySelector(".comment-form");
 	if (commentForm) {
 		var parentInput = commentForm.querySelector('input[name="parent_id"]');

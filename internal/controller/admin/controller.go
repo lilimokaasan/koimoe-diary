@@ -196,6 +196,7 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		DefaultPostCover:   strings.TrimSpace(r.GetForm("default_post_cover").String()),
 		PostLicenseText:    strings.TrimSpace(r.GetForm("post_license_text").String()),
 		PostLicenseURL:     strings.TrimSpace(r.GetForm("post_license_url").String()),
+		PostShare:          checkboxValue(r, "post_share"),
 		SakuraEffects:      strings.TrimSpace(r.GetForm("sakura_effects").String()),
 		FooterText:         strings.TrimSpace(r.GetForm("footer_text").String()),
 		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
@@ -1846,6 +1847,13 @@ func splitTags(value string) []string {
 	return tags
 }
 
+func checkboxValue(r *ghttp.Request, name string) string {
+	if r.GetForm(name).String() == "1" {
+		return "1"
+	}
+	return "0"
+}
+
 func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	if site.Name == "" {
 		site.Name = fallback.Name
@@ -1873,6 +1881,9 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 		site.PostLicenseText = fallback.PostLicenseText
 	}
 	site.PostLicenseURL = strings.TrimSpace(site.PostLicenseURL)
+	if site.PostShare != "0" {
+		site.PostShare = "1"
+	}
 	if site.SakuraEffects != "1" {
 		site.SakuraEffects = "0"
 	}

@@ -837,6 +837,48 @@ textarea:disabled,
 	text-decoration: none;
 }
 
+.post-share {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.post-share > span {
+	color: #8a7d86;
+	font-size: 13px;
+	font-weight: 700;
+	margin-right: 2px;
+}
+
+.post-share a,
+.post-share button {
+	align-items: center;
+	background: rgba(251, 152, 192, 0.1);
+	border: 0;
+	border-radius: 999px;
+	color: var(--sakura-rose);
+	cursor: pointer;
+	display: inline-flex;
+	font: inherit;
+	font-size: 13px;
+	gap: 6px;
+	height: 34px;
+	justify-content: center;
+	min-width: 34px;
+	padding: 0 11px;
+	text-decoration: none;
+	transition: background-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.post-share a:hover,
+.post-share button:hover,
+.post-share button.is-copied {
+	background: rgba(251, 152, 192, 0.18);
+	box-shadow: 0 10px 22px rgba(251, 152, 192, 0.14);
+	transform: translateY(-1px);
+}
+
 .single-taxonomy {
 	display: flex;
 	flex-wrap: wrap;
@@ -2830,6 +2872,7 @@ body.search-open {
 
 	.sakurairo-single .entry-header,
 	.sakurairo-single .entry-content,
+	.article-toc,
 	.sakurairo-single .post-footer {
 		max-width: 680px;
 		padding-left: 20px;
