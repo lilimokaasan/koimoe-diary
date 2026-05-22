@@ -1928,6 +1928,20 @@ body.search-open {
 	width: 42px;
 }
 
+.live-search-thumb {
+	background: rgba(255, 247, 251, 0.72);
+	border: 2px solid rgba(255, 255, 255, 0.9);
+	box-shadow: 0 10px 22px rgba(113, 78, 96, 0.12);
+	overflow: hidden;
+}
+
+.live-search-thumb img {
+	display: block;
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
 .live-search-item strong,
 .live-search-item em {
 	display: block;

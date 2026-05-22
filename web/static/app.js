@@ -265,11 +265,15 @@
 	function liveSearchItemHTML(item, query, icon) {
 		var title = item.title || item.name || "Untitled";
 		var excerpt = item.excerpt || item.content || (typeof item.post_count === "number" ? item.post_count + " posts" : "");
+		var cover = (item.cover_image || "").trim();
 		if (excerpt.length > 112) {
 			excerpt = excerpt.slice(0, 112).replace(/\s+\S*$/, "") + "...";
 		}
+		var visual = cover ?
+			'<span class="live-search-icon live-search-thumb"><img src="' + escapeHTML(cover) + '" alt=""></span>' :
+			'<span class="live-search-icon"><i class="fa fa-' + escapeHTML(icon) + '" aria-hidden="true"></i></span>';
 		return '<a class="live-search-item" href="' + escapeHTML(item.url || "/search") + '">' +
-			'<span class="live-search-icon"><i class="fa fa-' + escapeHTML(icon) + '" aria-hidden="true"></i></span>' +
+			visual +
 			'<span><strong>' + highlightSearchText(title, query) + '</strong>' +
 			(excerpt ? '<em>' + highlightSearchText(excerpt, query) + '</em>' : '') +
 			'</span></a>';
