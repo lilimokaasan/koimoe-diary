@@ -26,6 +26,17 @@ body.admin-page {
 	position: relative;
 }
 
+body.admin-login-page {
+	background: #fff7fb;
+	color: var(--ink);
+	font-family: "Merriweather Sans", "Noto Serif SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	letter-spacing: 0;
+	margin: 0;
+	min-height: 100vh;
+	overflow: hidden;
+	position: relative;
+}
+
 body.admin-page::before {
 	background:
 		radial-gradient(circle at 96% 92%, rgba(251, 152, 192, 0.24), transparent 28%),
@@ -71,7 +82,7 @@ body.admin-is-loading .admin-shell {
 	filter: saturate(1.1);
 	inset: 0;
 	position: fixed;
-	z-index: -2;
+	z-index: 0;
 }
 
 .auth-bg::after {
