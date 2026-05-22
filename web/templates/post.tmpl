@@ -46,6 +46,16 @@
 					<button type="button" data-copy-share="{{.CanonicalURL}}" aria-label="Copy article link"><i class="fa fa-link" aria-hidden="true"></i><span>Copy link</span></button>
 				</div>
 				{{end}}
+				{{if eq .Site.PostReward "1"}}
+				<div class="post-reward">
+					<button type="button" class="post-reward-toggle" aria-expanded="false"><i class="fa fa-coffee" aria-hidden="true"></i><span>Support</span></button>
+					<p>{{.Site.PostRewardText}}</p>
+					<div class="post-reward-codes" hidden>
+						{{if .Site.PostRewardAlipay}}<figure><img src="{{.Site.PostRewardAlipay}}" alt="Alipay reward QR code"><figcaption>Alipay</figcaption></figure>{{end}}
+						{{if .Site.PostRewardWechat}}<figure><img src="{{.Site.PostRewardWechat}}" alt="WeChat reward QR code"><figcaption>WeChat</figcaption></figure>{{end}}
+					</div>
+				</div>
+				{{end}}
 				<div class="single-taxonomy">
 					{{if .Post.Category.ID}}<div class="post-tags"><i class="fa fa-folder-o" aria-hidden="true"></i> <a href="/category/{{.Post.Category.Slug}}">{{.Post.Category.Name}}</a></div>{{end}}
 					{{if .Post.Tags}}<div class="post-tags"><i class="iconfont icon-tags"></i> {{range .Post.Tags}}<a href="/tag/{{.Slug}}">{{.Name}}</a> {{end}}</div>{{end}}

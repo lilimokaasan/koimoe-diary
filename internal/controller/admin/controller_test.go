@@ -67,6 +67,8 @@ func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 		PostLicenseURL:   "https://example.com/license",
 		PostShare:        "1",
 		PostCopyNotice:   "1",
+		PostReward:       "0",
+		PostRewardText:   "Support text",
 		FooterText:       "footer",
 		FooterCredit:     "credit",
 		SocialLinks:      []config.SocialLink{{Label: "Feed", URL: "/feed", Icon: "fa-rss"}},
@@ -94,19 +96,34 @@ func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 	if site.PostCopyNotice != "1" {
 		t.Fatalf("PostCopyNotice = %q, want enabled by default", site.PostCopyNotice)
 	}
+	if site.PostReward != "0" {
+		t.Fatalf("PostReward = %q, want disabled without images", site.PostReward)
+	}
+	if site.PostRewardText != fallback.PostRewardText {
+		t.Fatalf("PostRewardText = %q, want fallback %q", site.PostRewardText, fallback.PostRewardText)
+	}
 	if site.SakuraEffects != "0" {
 		t.Fatalf("SakuraEffects = %q, want normalized off", site.SakuraEffects)
 	}
 
 	site = normalizeSiteSettings(config.Site{
-		Name:           "KoiMoe Diary",
-		PostShare:      "0",
-		PostCopyNotice: "0",
+		Name:             "KoiMoe Diary",
+		PostShare:        "0",
+		PostCopyNotice:   "0",
+		PostReward:       "1",
+		PostRewardText:   "Thanks",
+		PostRewardAlipay: "/alipay.png",
 	}, fallback)
 	if site.PostShare != "0" {
 		t.Fatalf("PostShare = %q, want disabled", site.PostShare)
 	}
 	if site.PostCopyNotice != "0" {
 		t.Fatalf("PostCopyNotice = %q, want disabled", site.PostCopyNotice)
+	}
+	if site.PostReward != "1" {
+		t.Fatalf("PostReward = %q, want enabled with image", site.PostReward)
+	}
+	if site.PostRewardText != "Thanks" {
+		t.Fatalf("PostRewardText = %q, want custom text", site.PostRewardText)
 	}
 }

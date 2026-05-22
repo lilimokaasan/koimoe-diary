@@ -879,6 +879,72 @@ textarea:disabled,
 	transform: translateY(-1px);
 }
 
+.post-reward {
+	background: rgba(255, 250, 253, 0.82);
+	border: 1px solid rgba(251, 152, 192, 0.18);
+	border-radius: 16px;
+	padding: 16px;
+	text-align: center;
+}
+
+.post-reward-toggle {
+	align-items: center;
+	background: linear-gradient(135deg, rgba(251, 152, 192, 0.92), rgba(255, 194, 220, 0.92));
+	border: 0;
+	border-radius: 999px;
+	box-shadow: 0 12px 28px rgba(251, 152, 192, 0.18);
+	color: #fff;
+	cursor: pointer;
+	display: inline-flex;
+	font: inherit;
+	font-weight: 700;
+	gap: 7px;
+	padding: 9px 18px;
+}
+
+.post-reward p {
+	color: #8a7d86;
+	font-size: 13px;
+	line-height: 1.7;
+	margin: 12px auto 0;
+	max-width: 520px;
+}
+
+.post-reward-codes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: center;
+	margin-top: 16px;
+}
+
+.post-reward-codes[hidden] {
+	display: none;
+}
+
+.post-reward-codes figure {
+	background: rgba(255, 255, 255, 0.82);
+	border: 1px solid rgba(251, 152, 192, 0.16);
+	border-radius: 14px;
+	margin: 0;
+	padding: 10px;
+}
+
+.post-reward-codes img {
+	aspect-ratio: 1;
+	border-radius: 8px;
+	display: block;
+	height: 150px;
+	object-fit: cover;
+	width: 150px;
+}
+
+.post-reward-codes figcaption {
+	color: #8a7d86;
+	font-size: 12px;
+	margin-top: 8px;
+}
+
 .single-taxonomy {
 	display: flex;
 	flex-wrap: wrap;

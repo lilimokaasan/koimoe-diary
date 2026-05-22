@@ -21,6 +21,10 @@ type Site struct {
 	PostLicenseURL     string
 	PostShare          string
 	PostCopyNotice     string
+	PostReward         string
+	PostRewardText     string
+	PostRewardAlipay   string
+	PostRewardWechat   string
 	SakuraEffects      string
 	FooterText         string
 	FooterCredit       string
@@ -139,6 +143,10 @@ func FromEnv() Config {
 			PostLicenseURL:     env("POST_LICENSE_URL", "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"),
 			PostShare:          env("POST_SHARE", "1"),
 			PostCopyNotice:     env("POST_COPY_NOTICE", "1"),
+			PostReward:         env("POST_REWARD", "0"),
+			PostRewardText:     env("POST_REWARD_TEXT", "If this tiny fragment warmed your day, a small support is deeply appreciated."),
+			PostRewardAlipay:   env("POST_REWARD_ALIPAY", ""),
+			PostRewardWechat:   env("POST_REWARD_WECHAT", ""),
 			SakuraEffects:      env("SAKURA_EFFECTS", "0"),
 			FooterText:         env("SITE_FOOTER_TEXT", "A soft diary for tiny heartbeats, cute things, and everyday fragments."),
 			FooterCredit:       env("SITE_FOOTER_CREDIT", "A KoiMoe diary shaped with Sakurairo."),

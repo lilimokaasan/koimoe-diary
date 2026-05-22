@@ -431,6 +431,19 @@
 		});
 	});
 
+	document.querySelectorAll(".post-reward-toggle").forEach(function (button) {
+		button.addEventListener("click", function () {
+			var panel = button.closest(".post-reward");
+			var codes = panel && panel.querySelector(".post-reward-codes");
+			if (!codes) {
+				return;
+			}
+			var isOpen = codes.hasAttribute("hidden");
+			codes.hidden = !isOpen;
+			button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+		});
+	});
+
 	var commentForm = document.querySelector(".comment-form");
 	if (commentForm) {
 		var parentInput = commentForm.querySelector('input[name="parent_id"]');

@@ -92,6 +92,13 @@
 						<span>Append source when visitors copy article text</span>
 					</label>
 					<label class="toggle-field">
+						<input type="checkbox" name="post_reward" value="1" {{if eq .Settings.PostReward "1"}}checked{{end}}>
+						<span>Show article reward panel</span>
+					</label>
+					<label>Reward Text<input type="text" name="post_reward_text" value="{{.Settings.PostRewardText}}" placeholder="If this tiny fragment warmed your day..."></label>
+					<label>Alipay Reward Image URL<input type="text" name="post_reward_alipay" value="{{.Settings.PostRewardAlipay}}" placeholder="/static/uploads/alipay.jpg"></label>
+					<label>WeChat Reward Image URL<input type="text" name="post_reward_wechat" value="{{.Settings.PostRewardWechat}}" placeholder="/static/uploads/wechat.jpg"></label>
+					<label class="toggle-field">
 						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
 						<span>Enable subtle sakura petals</span>
 					</label>

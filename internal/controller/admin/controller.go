@@ -198,6 +198,10 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		PostLicenseURL:     strings.TrimSpace(r.GetForm("post_license_url").String()),
 		PostShare:          checkboxValue(r, "post_share"),
 		PostCopyNotice:     checkboxValue(r, "post_copy_notice"),
+		PostReward:         checkboxValue(r, "post_reward"),
+		PostRewardText:     strings.TrimSpace(r.GetForm("post_reward_text").String()),
+		PostRewardAlipay:   strings.TrimSpace(r.GetForm("post_reward_alipay").String()),
+		PostRewardWechat:   strings.TrimSpace(r.GetForm("post_reward_wechat").String()),
 		SakuraEffects:      strings.TrimSpace(r.GetForm("sakura_effects").String()),
 		FooterText:         strings.TrimSpace(r.GetForm("footer_text").String()),
 		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
@@ -1887,6 +1891,12 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	}
 	if site.PostCopyNotice != "0" {
 		site.PostCopyNotice = "1"
+	}
+	if site.PostReward != "1" || site.PostRewardAlipay == "" && site.PostRewardWechat == "" {
+		site.PostReward = "0"
+	}
+	if site.PostRewardText == "" {
+		site.PostRewardText = fallback.PostRewardText
 	}
 	if site.SakuraEffects != "1" {
 		site.SakuraEffects = "0"

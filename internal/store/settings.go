@@ -74,6 +74,18 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 	if values["post_copy_notice"] != "" {
 		site.PostCopyNotice = values["post_copy_notice"]
 	}
+	if values["post_reward"] != "" {
+		site.PostReward = values["post_reward"]
+	}
+	if values["post_reward_text"] != "" {
+		site.PostRewardText = values["post_reward_text"]
+	}
+	if values["post_reward_alipay"] != "" {
+		site.PostRewardAlipay = values["post_reward_alipay"]
+	}
+	if values["post_reward_wechat"] != "" {
+		site.PostRewardWechat = values["post_reward_wechat"]
+	}
 	if values["sakura_effects"] != "" {
 		site.SakuraEffects = values["sakura_effects"]
 	}
@@ -131,6 +143,10 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"post_license_url":     site.PostLicenseURL,
 		"post_share":           site.PostShare,
 		"post_copy_notice":     site.PostCopyNotice,
+		"post_reward":          site.PostReward,
+		"post_reward_text":     site.PostRewardText,
+		"post_reward_alipay":   site.PostRewardAlipay,
+		"post_reward_wechat":   site.PostRewardWechat,
 		"sakura_effects":       site.SakuraEffects,
 		"footer_text":          site.FooterText,
 		"footer_credit":        site.FooterCredit,
@@ -263,6 +279,10 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		"post_license_url":     defaults.PostLicenseURL,
 		"post_share":           defaults.PostShare,
 		"post_copy_notice":     defaults.PostCopyNotice,
+		"post_reward":          defaults.PostReward,
+		"post_reward_text":     defaults.PostRewardText,
+		"post_reward_alipay":   defaults.PostRewardAlipay,
+		"post_reward_wechat":   defaults.PostRewardWechat,
 		"sakura_effects":       defaults.SakuraEffects,
 		"footer_text":          defaults.FooterText,
 		"footer_credit":        defaults.FooterCredit,
