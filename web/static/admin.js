@@ -289,6 +289,9 @@
 			if (action.value === "delete" && !window.confirm("Delete selected comments?")) {
 				event.preventDefault();
 			}
+			if (action.value === "spam" && !window.confirm("Move selected comments to spam?")) {
+				event.preventDefault();
+			}
 		});
 	}
 

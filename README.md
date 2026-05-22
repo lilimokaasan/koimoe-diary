@@ -59,7 +59,7 @@ For this workspace, local development should use the `sakurairo` database. If My
 - Configurable article share links with copy-link support.
 - Optional source/license notice when visitors copy longer article text.
 - Optional article reward panel with configurable support text and payment images.
-- Public comments with honeypot, lightweight spam filtering, Markdown rendering with sanitized HTML, nested replies, private comment option, optional reply notification opt-in, and admin comment management.
+- Public comments with honeypot, lightweight spam quarantine, Markdown rendering with sanitized HTML, nested replies, private comment option, optional reply notification opt-in, and admin moderation with filters and bulk actions.
 - Admin login, sidebar navigation, post list, post editor, preview, excerpt helper, cover upload, media library with search and bulk delete, and post editor media picker.
 - Site settings for title, description, profile name/avatar, notice, navigation, social links, hero image, overlay opacity, default cover, article license copy, footer copy, Focus Cards, and sakura effects.
 - Category/tag management, category covers, friend links, and moments management.
@@ -127,7 +127,7 @@ journalctl -u sakurairo-go.service -n 80 --no-pager
 
 ## Next Useful Work
 
-- Add safer comment moderation workflow with review states and spam quarantine.
+- Add richer comment moderation metrics and a pending-review workflow for comments that need human approval before publishing.
 - Extend the compatibility renderer for any remaining imported-content edge cases.
 - Improve post editor ergonomics around drafts, richer image insertion, and publish-readiness checks.
 - Add WordPress import path from XML or database.

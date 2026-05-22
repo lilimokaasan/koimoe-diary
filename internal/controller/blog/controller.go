@@ -61,6 +61,7 @@ type PageData struct {
 	FeaturedCards    []config.FocusCard
 	Comments         []models.Comment
 	CommentOK        bool
+	CommentReview    bool
 	CommentErr       string
 	Category         models.Category
 	Tag              models.Tag
@@ -182,15 +183,16 @@ func (c *Controller) Post(r *ghttp.Request) {
 	}
 
 	c.render(r, "post.tmpl", PageData{
-		Site:         c.cfg.GetSite(),
-		Title:        post.Title + " - " + c.cfg.GetSite().Name,
-		Description:  post.Excerpt,
-		Post:         post,
-		PreviousPost: previousPost,
-		NextPost:     nextPost,
-		Comments:     comments,
-		CommentOK:    r.GetQuery("comment").String() == "ok",
-		Now:          time.Now(),
+		Site:          c.cfg.GetSite(),
+		Title:         post.Title + " - " + c.cfg.GetSite().Name,
+		Description:   post.Excerpt,
+		Post:          post,
+		PreviousPost:  previousPost,
+		NextPost:      nextPost,
+		Comments:      comments,
+		CommentOK:     r.GetQuery("comment").String() == "ok",
+		CommentReview: r.GetQuery("comment").String() == "review",
+		Now:           time.Now(),
 	})
 }
 
@@ -301,8 +303,19 @@ func (c *Controller) CreateComment(r *ghttp.Request) {
 		return
 	}
 
+	spamReason := detectCommentSpam(comment)
+	if spamReason != "" {
+		comment.Status = "spam"
+	} else {
+		comment.Status = "approved"
+	}
 	if err := c.posts.CreateComment(r.Context(), comment, r.GetClientIp(), r.UserAgent()); err != nil {
 		c.error(r, err)
+		return
+	}
+	if comment.Status == "spam" {
+		log.Printf("comment quarantined as spam: post=%d author=%q reason=%q", post.ID, comment.Author, spamReason)
+		r.Response.RedirectTo("/post/"+slug+"?comment=review#comments", http.StatusSeeOther)
 		return
 	}
 	c.notifyNewComment(comment, post, requestBaseURL(r)+"/post/"+post.Slug+"#comments")
@@ -1098,7 +1111,6 @@ func currentPage(r *ghttp.Request) int {
 }
 
 func validateComment(comment models.Comment) string {
-	spamReason := detectCommentSpam(comment)
 	switch {
 	case comment.Author == "":
 		return "Name is required."
@@ -1112,8 +1124,6 @@ func validateComment(comment models.Comment) string {
 		return "Name is too long."
 	case len([]rune(comment.Content)) > 2000:
 		return "Comment is too long."
-	case spamReason != "":
-		return spamReason
 	default:
 		return ""
 	}

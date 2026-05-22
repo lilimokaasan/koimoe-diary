@@ -7,7 +7,7 @@ import (
 	"sakurairo-go/internal/models"
 )
 
-func TestValidateCommentSpam(t *testing.T) {
+func TestDetectCommentSpam(t *testing.T) {
 	tests := []struct {
 		name    string
 		comment models.Comment
@@ -62,13 +62,24 @@ func TestValidateCommentSpam(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := validateComment(tt.comment)
+			got := detectCommentSpam(tt.comment)
 			if tt.want == "" && got != "" {
-				t.Fatalf("validateComment() = %q, want empty", got)
+				t.Fatalf("detectCommentSpam() = %q, want empty", got)
 			}
 			if tt.want != "" && !strings.Contains(got, tt.want) {
-				t.Fatalf("validateComment() = %q, want substring %q", got, tt.want)
+				t.Fatalf("detectCommentSpam() = %q, want substring %q", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestValidateCommentLeavesSpamForQuarantine(t *testing.T) {
+	comment := models.Comment{
+		Author:  "SEO Team",
+		Email:   "seo@example.com",
+		Content: "Need backlink traffic now",
+	}
+	if got := validateComment(comment); got != "" {
+		t.Fatalf("validateComment() = %q, want empty so spam can be quarantined", got)
 	}
 }

@@ -1075,13 +1075,26 @@ ORDER BY created_at ASC`, postID)
 }
 
 func (s *PostStore) ListAllComments(ctx context.Context, limit int) ([]models.Comment, error) {
+	return s.ListAllCommentsByStatus(ctx, "", limit)
+}
+
+func (s *PostStore) ListAllCommentsByStatus(ctx context.Context, status string, limit int) ([]models.Comment, error) {
+	status = commentStatusFilter(status)
+	where := ""
+	args := make([]any, 0, 2)
+	if status != "" {
+		where = "WHERE cm.status = ?"
+		args = append(args, status)
+	}
+	args = append(args, limit)
 	rows, err := s.db.QueryContext(ctx, `
 SELECT cm.id, cm.post_id, cm.parent_id, parent.author, p.title, p.slug, cm.author, cm.email, cm.website, cm.content, cm.status, cm.is_private, cm.mail_notify, cm.created_at
 FROM comments cm
 JOIN posts p ON p.id = cm.post_id
 LEFT JOIN comments parent ON parent.id = cm.parent_id
+`+where+`
 ORDER BY cm.created_at DESC
-LIMIT ?`, limit)
+LIMIT ?`, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -1124,16 +1137,21 @@ WHERE cm.id = ?`, id).Scan(
 }
 
 func (s *PostStore) CreateComment(ctx context.Context, comment models.Comment, ip string, userAgent string) error {
+	status := normalizeCommentStatus(comment.Status)
+	if status == "" {
+		status = "approved"
+	}
 	_, err := s.db.ExecContext(ctx, `
 INSERT INTO comments (post_id, parent_id, author, email, website, content, status, is_private, mail_notify, ip, user_agent)
-VALUES (?, ?, ?, ?, ?, ?, 'approved', ?, ?, ?, ?)`,
-		comment.PostID, comment.ParentID, comment.Author, comment.Email, comment.Website, comment.Content, comment.IsPrivate, comment.MailNotify, ip, userAgent,
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		comment.PostID, comment.ParentID, comment.Author, comment.Email, comment.Website, comment.Content, status, comment.IsPrivate, comment.MailNotify, ip, userAgent,
 	)
 	return err
 }
 
 func (s *PostStore) UpdateCommentStatus(ctx context.Context, id int64, status string) error {
-	if status != "approved" {
+	status = normalizeCommentStatus(status)
+	if status == "" {
 		status = "hidden"
 	}
 	_, err := s.db.ExecContext(ctx, `UPDATE comments SET status = ? WHERE id = ?`, status, id)
@@ -1141,10 +1159,33 @@ func (s *PostStore) UpdateCommentStatus(ctx context.Context, id int64, status st
 }
 
 func (s *PostStore) UpdateCommentsStatus(ctx context.Context, ids []int64, status string) (int64, error) {
-	if status != "approved" {
+	status = normalizeCommentStatus(status)
+	if status == "" {
 		status = "hidden"
 	}
 	return s.execCommentBulk(ctx, `UPDATE comments SET status = ? WHERE id IN (%s)`, append([]any{status}, int64Args(ids)...), ids)
+}
+
+func normalizeCommentStatus(status string) string {
+	switch strings.TrimSpace(strings.ToLower(status)) {
+	case "approved":
+		return "approved"
+	case "hidden":
+		return "hidden"
+	case "spam":
+		return "spam"
+	default:
+		return ""
+	}
+}
+
+func commentStatusFilter(status string) string {
+	switch strings.TrimSpace(strings.ToLower(status)) {
+	case "approved", "hidden", "spam":
+		return strings.TrimSpace(strings.ToLower(status))
+	default:
+		return ""
+	}
 }
 
 func (s *PostStore) UpdateCommentPrivacy(ctx context.Context, id int64, isPrivate bool) error {

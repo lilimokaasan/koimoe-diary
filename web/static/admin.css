@@ -903,6 +903,11 @@ button.primary,
 	color: #71717a;
 }
 
+.status.spam {
+	background: rgba(254, 226, 226, 0.96);
+	color: #b42318;
+}
+
 .status.private {
 	background: rgba(251, 152, 192, 0.14);
 	color: var(--sakura-deep);
@@ -1389,6 +1394,30 @@ input[type="file"] {
 .comment-admin-list {
 	display: grid;
 	gap: 14px;
+}
+
+.comment-filter-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.comment-filter-tabs a {
+	background: rgba(255, 255, 255, 0.58);
+	border: 1px solid rgba(231, 211, 222, 0.72);
+	border-radius: 999px;
+	color: var(--muted);
+	font-size: 13px;
+	padding: 8px 13px;
+	text-decoration: none;
+}
+
+.comment-filter-tabs a:hover,
+.comment-filter-tabs a.is-active {
+	background: rgba(251, 152, 192, 0.16);
+	border-color: rgba(251, 152, 192, 0.45);
+	color: var(--sakura-deep);
 }
 
 .comment-bulk-bar {

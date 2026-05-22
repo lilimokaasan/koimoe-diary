@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-media-bulk">
+	<link rel="stylesheet" href="/static/admin.css?v=20260523-comment-review">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -58,12 +58,19 @@
 				<h1>Comments</h1>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Updated.</div>{{end}}
+			<nav class="comment-filter-tabs" aria-label="Comment filters">
+				<a href="/admin/comments" class="{{if eq .CommentStatus ""}}is-active{{end}}">All</a>
+				<a href="/admin/comments?status=approved" class="{{if eq .CommentStatus "approved"}}is-active{{end}}">Approved</a>
+				<a href="/admin/comments?status=hidden" class="{{if eq .CommentStatus "hidden"}}is-active{{end}}">Hidden</a>
+				<a href="/admin/comments?status=spam" class="{{if eq .CommentStatus "spam"}}is-active{{end}}">Spam</a>
+			</nav>
 			<form id="comment-bulk-form" class="comment-bulk-bar" method="post" action="/admin/comments/bulk">
 				<label class="comment-select-all"><input type="checkbox" data-comment-select-all> Select all</label>
 				<select name="bulk_action" aria-label="Bulk action">
 					<option value="">Bulk action</option>
 					<option value="approve">Approve selected</option>
 					<option value="hide">Hide selected</option>
+					<option value="spam">Move to spam</option>
 					<option value="public">Make public</option>
 					<option value="private">Make private</option>
 					<option value="delete">Delete selected</option>
@@ -87,15 +94,22 @@
 						<a href="/post/{{.PostSlug}}" target="_blank">{{.PostTitle}}</a>
 					</div>
 					<div class="comment-admin-actions">
-						{{if eq .Status "approved"}}
+						{{if ne .Status "approved"}}
+						<form method="post" action="/admin/comments/{{.ID}}/status">
+							<input type="hidden" name="status" value="approved">
+							<button type="submit">Approve</button>
+						</form>
+						{{end}}
+						{{if ne .Status "hidden"}}
 						<form method="post" action="/admin/comments/{{.ID}}/status">
 							<input type="hidden" name="status" value="hidden">
 							<button type="submit">Hide</button>
 						</form>
-						{{else}}
+						{{end}}
+						{{if ne .Status "spam"}}
 						<form method="post" action="/admin/comments/{{.ID}}/status">
-							<input type="hidden" name="status" value="approved">
-							<button type="submit">Approve</button>
+							<input type="hidden" name="status" value="spam">
+							<button type="submit">Spam</button>
 						</form>
 						{{end}}
 						{{if .IsPrivate}}
@@ -120,6 +134,6 @@
 			</div>
 		</section>
 	</main>
-	<script src="/static/admin.js?v=20260523-media-bulk"></script>
+	<script src="/static/admin.js?v=20260523-comment-review"></script>
 </body>
 </html>

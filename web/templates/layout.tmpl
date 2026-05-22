@@ -275,6 +275,7 @@
 <section id="comments" class="comments-area sakurairo-comments">
 	<h2 class="comments-title"><i class="iconfont icon-mark"></i> Comments</h2>
 	{{if .CommentOK}}<div class="comment-message success">Comment posted.</div>{{end}}
+	{{if .CommentReview}}<div class="comment-message success">Comment received. It is waiting softly in review.</div>{{end}}
 	{{if .CommentErr}}<div class="comment-message error">{{.CommentErr}}</div>{{end}}
 	<div class="comment-list">
 		{{range .Comments}}

@@ -63,6 +63,7 @@ type PageData struct {
 	Error           string
 	Message         string
 	MediaQuery      string
+	CommentStatus   string
 	Posts           []models.Post
 	Pages           []models.Page
 	Comments        []models.Comment
@@ -778,17 +779,19 @@ func (c *Controller) Comments(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
 	}
-	comments, err := c.posts.ListAllComments(r.Context(), 200)
+	status := normalizeCommentStatusFilter(r.GetQuery("status").String())
+	comments, err := c.posts.ListAllCommentsByStatus(r.Context(), status, 200)
 	if err != nil {
 		c.error(r, err)
 		return
 	}
 	c.render(r, "admin_comments.tmpl", PageData{
-		Site:     c.cfg.GetSite(),
-		Title:    "Comments - " + c.cfg.GetSite().Name,
-		Message:  r.GetQuery("saved").String(),
-		Comments: comments,
-		Now:      time.Now(),
+		Site:          c.cfg.GetSite(),
+		Title:         "Comments - " + c.cfg.GetSite().Name,
+		Message:       r.GetQuery("saved").String(),
+		CommentStatus: status,
+		Comments:      comments,
+		Now:           time.Now(),
 	})
 }
 
@@ -821,6 +824,8 @@ func (c *Controller) BulkUpdateComments(r *ghttp.Request) {
 		_, err = c.posts.UpdateCommentsStatus(r.Context(), ids, "approved")
 	case "hide":
 		_, err = c.posts.UpdateCommentsStatus(r.Context(), ids, "hidden")
+	case "spam":
+		_, err = c.posts.UpdateCommentsStatus(r.Context(), ids, "spam")
 	case "private":
 		_, err = c.posts.UpdateCommentsPrivacy(r.Context(), ids, true)
 	case "public":
@@ -1936,6 +1941,15 @@ func commentIDsFromRequest(r *ghttp.Request) []int64 {
 
 func normalizeCommentIDs(values []string) []int64 {
 	return normalizePositiveIDs(values, 100)
+}
+
+func normalizeCommentStatusFilter(status string) string {
+	switch strings.TrimSpace(strings.ToLower(status)) {
+	case "approved", "hidden", "spam":
+		return strings.TrimSpace(strings.ToLower(status))
+	default:
+		return ""
+	}
 }
 
 func mediaIDsFromRequest(r *ghttp.Request) []int64 {

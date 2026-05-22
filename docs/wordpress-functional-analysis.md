@@ -21,7 +21,7 @@
 - 公开页面：主页、文章详情、普通归档 `/archive`、月度归档 `/archives`、搜索、分类、标签、友情链接 `/links`、说说/短动态 `/moments`、独立页面 `/page/{slug}`、404/500 软风格错误页。
 - 内容模型：`posts`、`pages`、`categories`、`tags`、`post_tags`、`comments`、`moments`、`friend_link_categories`、`friend_links`、`media_assets`、`site_settings`。
 - 后台管理：登录、仪表盘、文章、页面、预览、媒体库、友情链接、说说、分类/标签、评论、站点设置、SMTP 测试邮件、管理员密码邮件验证码。
-- 评论系统：公开提交、蜜罐字段、轻量垃圾过滤、Markdown 渲染与 HTML sanitize、嵌套回复、私密评论、后台审核/删除/私密切换、后台批量评论操作、新评论管理员通知、父评论作者 opt-in 回复邮件通知。
+- 评论系统：公开提交、蜜罐字段、轻量垃圾过滤与 spam 隔离、Markdown 渲染与 HTML sanitize、嵌套回复、私密评论、后台按状态筛选/审核/删除/私密切换、后台批量评论操作、新评论管理员通知、父评论作者 opt-in 回复邮件通知。
 - 站点设置：标题、副标题、Profile Name/Profile Avatar、公告、导航、社交链接、首页 hero、overlay 透明度、默认文章封面、页脚文案、Focus Cards、sakura 特效。
 - 阅读与发现：浏览量、点赞、上一篇/下一篇、作者卡、自动文章/页面目录、旧短代码兼容 renderer、可配置版权声明、可配置分享区、打赏面板、复制来源提示、实时搜索 overlay、搜索索引 API、随机封面/特色图 API、Atom feed、sitemap、robots.txt、SEO/Open Graph/Twitter metadata。
 - 媒体库：本地上传、详情编辑、搜索/筛选、批量删除、文章/页面编辑器媒体选择器。
@@ -30,7 +30,7 @@
 当前仍值得完善的功能：
 
 - 评论表情兼容、评论图片插入/上传。
-- 评论审核体验：更明确的 review states、垃圾评论隔离与恢复。
+- 评论审核体验：继续补齐 pending/review 状态、审核数量提示与误判恢复提示文案。
 - 旧内容兼容 renderer：剩余导入边界场景。
 - 媒体库增强：标签或用途分类、缩略图/压缩、未来 R2/CDN 存储。
 - WordPress 导入工具：从 XML 或数据库导入文章、分类、标签、评论、链接和媒体 URL，并做旧短代码转换。
@@ -720,7 +720,7 @@ posts.license_type
 
 ### P1：建议下一阶段迁移
 
-- 更完整的评论审核工作流，包括 review states、垃圾评论隔离与恢复。
+- 更完整的评论审核工作流，包括 pending/review states、审核数量提示与误判恢复提示文案。
 - 旧短代码兼容 renderer：剩余导入边界场景。
 - WordPress 导入路径：XML 或数据库导入，包含文章、分类、标签、评论、友情链接和媒体 URL。
 
