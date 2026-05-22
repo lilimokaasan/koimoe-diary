@@ -190,6 +190,8 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		HeroOverlayOpacity: strings.TrimSpace(r.GetForm("hero_overlay_opacity").String()),
 		Avatar:             strings.TrimSpace(r.GetForm("site_avatar").String()),
 		DefaultPostCover:   strings.TrimSpace(r.GetForm("default_post_cover").String()),
+		PostLicenseText:    strings.TrimSpace(r.GetForm("post_license_text").String()),
+		PostLicenseURL:     strings.TrimSpace(r.GetForm("post_license_url").String()),
 		SakuraEffects:      strings.TrimSpace(r.GetForm("sakura_effects").String()),
 		FooterText:         strings.TrimSpace(r.GetForm("footer_text").String()),
 		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
@@ -1859,6 +1861,10 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	if site.DefaultPostCover == "" {
 		site.DefaultPostCover = fallback.DefaultPostCover
 	}
+	if site.PostLicenseText == "" {
+		site.PostLicenseText = fallback.PostLicenseText
+	}
+	site.PostLicenseURL = strings.TrimSpace(site.PostLicenseURL)
 	if site.SakuraEffects != "1" {
 		site.SakuraEffects = "0"
 	}

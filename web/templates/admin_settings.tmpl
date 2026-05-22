@@ -80,6 +80,8 @@
 					<label>Profile Avatar URL<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
 					<label>Upload Profile Avatar<input type="file" name="avatar_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
 					<label>Default Post Cover<input type="text" name="default_post_cover" value="{{.Settings.DefaultPostCover}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<label>Article License Text<input type="text" name="post_license_text" value="{{.Settings.PostLicenseText}}" placeholder="Attribution-NonCommercial-ShareAlike 4.0 International"></label>
+					<label>Article License URL<input type="url" name="post_license_url" value="{{.Settings.PostLicenseURL}}" placeholder="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"></label>
 					<label class="toggle-field">
 						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
 						<span>Enable subtle sakura petals</span>

@@ -23,7 +23,15 @@
 				{{.Post.ContentHTML}}
 			</div>
 			<footer class="post-footer">
-				<div class="post-lincenses"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="nofollow"><i class="fa fa-creative-commons" aria-hidden="true"></i> Attribution-NonCommercial-ShareAlike 4.0 International</a></div>
+				{{if .Site.PostLicenseText}}
+				<div class="post-lincenses">
+					{{if .Site.PostLicenseURL}}
+					<a href="{{.Site.PostLicenseURL}}" target="_blank" rel="nofollow noreferrer"><i class="fa fa-creative-commons" aria-hidden="true"></i> {{.Site.PostLicenseText}}</a>
+					{{else}}
+					<span><i class="fa fa-creative-commons" aria-hidden="true"></i> {{.Site.PostLicenseText}}</span>
+					{{end}}
+				</div>
+				{{end}}
 				<div class="single-taxonomy">
 					{{if .Post.Category.ID}}<div class="post-tags"><i class="fa fa-folder-o" aria-hidden="true"></i> <a href="/category/{{.Post.Category.Slug}}">{{.Post.Category.Name}}</a></div>{{end}}
 					{{if .Post.Tags}}<div class="post-tags"><i class="iconfont icon-tags"></i> {{range .Post.Tags}}<a href="/tag/{{.Slug}}">{{.Name}}</a> {{end}}</div>{{end}}

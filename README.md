@@ -56,7 +56,7 @@ For this workspace, local development should use the `sakurairo` database. If My
 - Sakurairo-style hero, post cards, sidebar, reading page, comments, error pages, scroll/progress effects, and soft admin styling.
 - Public comments with honeypot, lightweight spam filtering, Markdown rendering with sanitized HTML, nested replies, private comment option, optional reply notification opt-in, and admin comment management.
 - Admin login, sidebar navigation, post list, post editor, preview, excerpt helper, cover upload, media library, and post editor media picker.
-- Site settings for title, description, profile name/avatar, notice, navigation, hero image, overlay opacity, default cover, footer copy, Focus Cards, and sakura effects.
+- Site settings for title, description, profile name/avatar, notice, navigation, hero image, overlay opacity, default cover, article license copy, footer copy, Focus Cards, and sakura effects.
 - Category/tag management, category covers, friend links, and moments management.
 - Likes, views, RSS/Atom feed, sitemap, SEO metadata, Open Graph/Twitter card metadata, random image APIs, and search-index API.
 - SMTP mail notifications for new comments, reply notifications for opted-in parent commenters, and admin password verification emails.

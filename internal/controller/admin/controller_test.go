@@ -1,6 +1,10 @@
 package admin
 
-import "testing"
+import (
+	"testing"
+
+	"sakurairo-go/internal/config"
+)
 
 func TestNormalizeHeroOverlayOpacity(t *testing.T) {
 	tests := []struct {
@@ -33,5 +37,41 @@ func TestParseFocusCards(t *testing.T) {
 	}
 	if cards[0].Title != "Archive" || cards[0].URL != "/archives" || cards[0].Image != "/static/theme/content-image/d-1.jpg" {
 		t.Fatalf("first focus card = %#v", cards[0])
+	}
+}
+
+func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
+	fallback := config.Site{
+		Name:             "KoiMoe Diary",
+		Description:      "soft",
+		Author:           "Lilim",
+		ThemeColor:       "#fb98c0",
+		HeroImage:        "/hero.jpg",
+		Avatar:           "/avatar.jpg",
+		DefaultPostCover: "/cover.jpg",
+		PostLicenseText:  "Default license",
+		PostLicenseURL:   "https://example.com/license",
+		FooterText:       "footer",
+		FooterCredit:     "credit",
+	}
+	site := normalizeSiteSettings(config.Site{
+		Name:            "KoiMoe Diary",
+		Description:     "soft",
+		Author:          "Lilim",
+		PostLicenseURL:  "",
+		SakuraEffects:   "yes",
+		FooterText:      "footer",
+		FooterCredit:    "credit",
+		PostLicenseText: "",
+	}, fallback)
+
+	if site.PostLicenseText != fallback.PostLicenseText {
+		t.Fatalf("PostLicenseText = %q, want fallback %q", site.PostLicenseText, fallback.PostLicenseText)
+	}
+	if site.PostLicenseURL != "" {
+		t.Fatalf("PostLicenseURL = %q, want empty URL allowed", site.PostLicenseURL)
+	}
+	if site.SakuraEffects != "0" {
+		t.Fatalf("SakuraEffects = %q, want normalized off", site.SakuraEffects)
 	}
 }
