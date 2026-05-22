@@ -891,6 +891,11 @@ button.primary,
 	color: var(--sakura-deep);
 }
 
+.status.reply {
+	background: rgba(255, 232, 243, 0.82);
+	color: var(--sakura-rose);
+}
+
 .editor-grid {
 	display: grid;
 	gap: 22px;

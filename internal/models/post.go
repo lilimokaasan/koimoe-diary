@@ -39,18 +39,21 @@ type Page struct {
 }
 
 type Comment struct {
-	ID         int64
-	PostID     int64
-	PostTitle  string
-	PostSlug   string
-	Author     string
-	Email      string
-	Website    string
-	Content    string
-	Status     string
-	IsPrivate  bool
-	MailNotify bool
-	CreatedAt  time.Time
+	ID           int64
+	PostID       int64
+	ParentID     int64
+	PostTitle    string
+	PostSlug     string
+	ParentAuthor string
+	Author       string
+	Email        string
+	Website      string
+	Content      string
+	Status       string
+	IsPrivate    bool
+	MailNotify   bool
+	CreatedAt    time.Time
+	Replies      []Comment
 }
 
 type Category struct {

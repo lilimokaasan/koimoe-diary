@@ -5,11 +5,10 @@ Sakurairo Go has a lightweight SMTP mail foundation for comment notifications.
 ## Current Scope
 
 - Sends an asynchronous admin notification when a new public comment is saved.
+- Sends a reply notification to the parent commenter when they choose `Email me on reply`.
 - Shows mail status on `/admin/settings`.
 - Provides a `Send test mail` action on `/admin/settings`.
-- Keeps `comments.mail_notify` in the database for future reply notifications.
-
-Nested comment replies are not implemented yet, so visitor reply-notification emails are only prepared at the data-model level. The public comment form does not show a reply-notice checkbox until replies can actually send mail.
+- Stores `comments.parent_id` for comment threads and `comments.mail_notify` for reply notices.
 
 ## Environment Variables
 

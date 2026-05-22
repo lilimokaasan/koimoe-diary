@@ -247,12 +247,41 @@ func (c *Controller) CreateComment(r *ghttp.Request) {
 
 	comment := models.Comment{
 		PostID:     post.ID,
+		ParentID:   r.GetForm("parent_id").Int64(),
 		Author:     strings.TrimSpace(r.GetForm("author").String()),
 		Email:      strings.TrimSpace(r.GetForm("email").String()),
 		Website:    strings.TrimSpace(r.GetForm("website").String()),
 		Content:    strings.TrimSpace(r.GetForm("content").String()),
 		IsPrivate:  r.GetForm("is_private").Bool(),
 		MailNotify: r.GetForm("mail_notify").Bool(),
+	}
+	var parentComment models.Comment
+	if comment.ParentID > 0 {
+		parentComment, err = c.posts.CommentByID(r.Context(), comment.ParentID)
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			c.error(r, err)
+			return
+		}
+		if errors.Is(err, sql.ErrNoRows) || parentComment.PostID != post.ID || parentComment.Status != "approved" {
+			comments, listErr := c.posts.ListComments(r.Context(), post.ID)
+			if listErr != nil {
+				c.error(r, listErr)
+				return
+			}
+			c.render(r, "post.tmpl", PageData{
+				Site:        c.cfg.GetSite(),
+				Title:       post.Title + " - " + c.cfg.GetSite().Name,
+				Description: post.Excerpt,
+				Post:        post,
+				Comments:    comments,
+				CommentErr:  "The reply target could not be found.",
+				Now:         time.Now(),
+			})
+			return
+		}
+		if parentComment.ParentID > 0 {
+			comment.ParentID = parentComment.ParentID
+		}
 	}
 	if errText := validateComment(comment); errText != "" {
 		comments, listErr := c.posts.ListComments(r.Context(), post.ID)
@@ -277,6 +306,9 @@ func (c *Controller) CreateComment(r *ghttp.Request) {
 		return
 	}
 	c.notifyNewComment(comment, post, requestBaseURL(r)+"/post/"+post.Slug+"#comments")
+	if parentComment.ID > 0 && parentComment.MailNotify && !strings.EqualFold(parentComment.Email, comment.Email) {
+		c.notifyCommentReply(comment, parentComment, post, requestBaseURL(r)+"/post/"+post.Slug+"#comment-"+strconv.FormatInt(parentComment.ID, 10))
+	}
 	r.Response.RedirectTo("/post/"+slug+"?comment=ok#comments", http.StatusSeeOther)
 }
 
@@ -743,6 +775,17 @@ func (c *Controller) notifyNewComment(comment models.Comment, post models.Post, 
 	go func() {
 		if err := c.mailer.SendNewComment(comment, post, c.cfg.GetSite(), postURL); err != nil && c.cfg.GetMail().Enabled {
 			log.Printf("send comment notification: %v", err)
+		}
+	}()
+}
+
+func (c *Controller) notifyCommentReply(reply models.Comment, parent models.Comment, post models.Post, postURL string) {
+	if c.mailer == nil {
+		return
+	}
+	go func() {
+		if err := c.mailer.SendCommentReply(reply, parent, post, c.cfg.GetSite(), postURL); err != nil && c.cfg.GetMail().Enabled {
+			log.Printf("send comment reply notification: %v", err)
 		}
 	}()
 }

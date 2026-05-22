@@ -181,7 +181,7 @@
 	}
 </script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260522-live-search"></script>
+<script src="/static/app.js?v=20260522-comment-replies"></script>
 </body>
 </html>
 {{end}}
@@ -263,26 +263,17 @@
 	{{if .CommentErr}}<div class="comment-message error">{{.CommentErr}}</div>{{end}}
 	<div class="comment-list">
 		{{range .Comments}}
-		<article class="comment-body">
-			<div class="comment-avatar">{{printf "%.1s" .Author}}</div>
-			<div class="comment-main">
-				<div class="comment-meta">
-					<strong>{{.Author}}</strong>
-					<span>{{since .CreatedAt}}</span>
-					{{if .IsPrivate}}<span class="comment-private-badge"><i class="fa fa-lock" aria-hidden="true"></i> Private</span>{{end}}
-				</div>
-				{{if .IsPrivate}}
-				<p class="comment-private-text"><i class="fa fa-heart-o" aria-hidden="true"></i> This whisper is tucked away for the site owner.</p>
-				{{else}}
-				<p>{{.Content}}</p>
-				{{end}}
-			</div>
-		</article>
+		{{template "comment_item" .}}
 		{{else}}
 		<p class="no-comments">No comments yet.</p>
 		{{end}}
 	</div>
 	<form class="comment-form" method="post" action="/post/{{.Post.Slug}}/comments">
+		<input type="hidden" name="parent_id" value="">
+		<div class="comment-reply-context" hidden>
+			<span>Replying to <strong></strong></span>
+			<button type="button" class="comment-cancel-reply">Cancel</button>
+		</div>
 		<div class="comment-grid">
 			<input type="text" name="author" placeholder="Nickname (Name*)" maxlength="80" required>
 			<input type="email" name="email" placeholder="email (Must*)" maxlength="255" required>
@@ -298,10 +289,43 @@
 				<input type="checkbox" name="is_private" value="1">
 				<span><i class="fa fa-lock" aria-hidden="true"></i> Private whisper</span>
 			</label>
+			<label class="comment-private-option">
+				<input type="checkbox" name="mail_notify" value="1">
+				<span><i class="fa fa-envelope-o" aria-hidden="true"></i> Email me on reply</span>
+			</label>
 			<button type="submit">BiuBiuBiu~</button>
 		</div>
 	</form>
 </section>
+{{end}}
+
+{{define "comment_item"}}
+<article id="comment-{{.ID}}" class="comment-body {{if .ParentID}}comment-reply{{end}}">
+	<div class="comment-avatar">{{printf "%.1s" .Author}}</div>
+	<div class="comment-main">
+		<div class="comment-meta">
+			<strong>{{.Author}}</strong>
+			<span>{{since .CreatedAt}}</span>
+			{{if .ParentAuthor}}<span class="comment-reply-to"><i class="fa fa-reply" aria-hidden="true"></i> {{.ParentAuthor}}</span>{{end}}
+			{{if .IsPrivate}}<span class="comment-private-badge"><i class="fa fa-lock" aria-hidden="true"></i> Private</span>{{end}}
+		</div>
+		{{if .IsPrivate}}
+		<p class="comment-private-text"><i class="fa fa-heart-o" aria-hidden="true"></i> This whisper is tucked away for the site owner.</p>
+		{{else}}
+		<p>{{.Content}}</p>
+		{{end}}
+		{{if not .IsPrivate}}
+		<div class="comment-actions">
+			<button type="button" class="comment-reply-button" data-comment-id="{{.ID}}" data-comment-author="{{.Author}}"><i class="fa fa-reply" aria-hidden="true"></i> Reply</button>
+		</div>
+		{{end}}
+	</div>
+	{{if .Replies}}
+	<div class="comment-replies">
+		{{range .Replies}}{{template "comment_item" .}}{{end}}
+	</div>
+	{{end}}
+</article>
 {{end}}
 
 {{define "pagination"}}

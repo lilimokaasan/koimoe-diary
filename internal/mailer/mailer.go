@@ -21,6 +21,7 @@ import (
 type Sender interface {
 	Send(message Message) error
 	SendNewComment(comment models.Comment, post models.Post, site config.Site, postURL string) error
+	SendCommentReply(reply models.Comment, parent models.Comment, post models.Post, site config.Site, postURL string) error
 }
 
 type Message struct {
@@ -90,6 +91,31 @@ func (m *SMTPMailer) SendNewComment(comment models.Comment, post models.Post, si
 	text := fmt.Sprintf("New comment by %s on %s:\n\n%s\n\n%s", comment.Author, post.Title, comment.Content, postURL)
 	return m.Send(Message{
 		To:      m.config().AdminEmail,
+		Subject: subject,
+		Text:    text,
+		HTML:    body,
+	})
+}
+
+func (m *SMTPMailer) SendCommentReply(reply models.Comment, parent models.Comment, post models.Post, site config.Site, postURL string) error {
+	if !m.Enabled() {
+		return errors.New("mail is not configured")
+	}
+	subject := "[" + site.Name + "] New reply on " + post.Title
+	replyContent := strings.ReplaceAll(html.EscapeString(reply.Content), "\n", "<br>")
+	parentAuthor := html.EscapeString(parent.Author)
+	replyAuthor := html.EscapeString(reply.Author)
+	postTitle := html.EscapeString(post.Title)
+	body := fmt.Sprintf(`
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.7;color:#4b4350">
+  <h2 style="color:#e674a0;margin:0 0 12px">Someone replied to your comment</h2>
+  <p>Hello %s, <strong>%s</strong> replied to you on <strong>%s</strong>.</p>
+  <div style="border-left:4px solid #fb98c0;background:#fff6fa;padding:14px 16px;border-radius:8px">%s</div>
+  <p style="font-size:13px;color:#8f8791">Open the conversation: <a href="%s">%s</a></p>
+</div>`, parentAuthor, replyAuthor, postTitle, replyContent, html.EscapeString(postURL), html.EscapeString(postURL))
+	text := fmt.Sprintf("Hello %s,\n\n%s replied to your comment on %s:\n\n%s\n\n%s", parent.Author, reply.Author, post.Title, reply.Content, postURL)
+	return m.Send(Message{
+		To:      parent.Email,
 		Subject: subject,
 		Text:    text,
 		HTML:    body,

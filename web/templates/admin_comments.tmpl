@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260522-media-v2">
+	<link rel="stylesheet" href="/static/admin.css?v=20260522-comment-replies">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -67,6 +67,7 @@
 							<span>{{.Email}}</span>
 							<span>{{since .CreatedAt}}</span>
 							<span class="status {{.Status}}">{{.Status}}</span>
+							{{if .ParentAuthor}}<span class="status reply">reply to {{.ParentAuthor}}</span>{{end}}
 							{{if .IsPrivate}}<span class="status private">private</span>{{end}}
 						</div>
 						<p>{{.Content}}</p>

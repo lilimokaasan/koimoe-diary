@@ -359,4 +359,45 @@
 				});
 		});
 	});
+
+	var commentForm = document.querySelector(".comment-form");
+	if (commentForm) {
+		var parentInput = commentForm.querySelector('input[name="parent_id"]');
+		var replyContext = commentForm.querySelector(".comment-reply-context");
+		var replyName = replyContext && replyContext.querySelector("strong");
+		var cancelReply = commentForm.querySelector(".comment-cancel-reply");
+		var commentTextarea = commentForm.querySelector("textarea");
+		document.querySelectorAll(".comment-reply-button").forEach(function (button) {
+			button.addEventListener("click", function () {
+				var commentID = button.getAttribute("data-comment-id") || "";
+				var author = button.getAttribute("data-comment-author") || "this comment";
+				if (parentInput) {
+					parentInput.value = commentID;
+				}
+				if (replyContext) {
+					replyContext.hidden = false;
+				}
+				if (replyName) {
+					replyName.textContent = author;
+				}
+				commentForm.classList.add("is-replying");
+				commentForm.scrollIntoView({ behavior: "smooth", block: "center" });
+				window.setTimeout(function () {
+					commentTextarea && commentTextarea.focus();
+				}, 280);
+			});
+		});
+		cancelReply && cancelReply.addEventListener("click", function () {
+			if (parentInput) {
+				parentInput.value = "";
+			}
+			if (replyContext) {
+				replyContext.hidden = true;
+			}
+			if (replyName) {
+				replyName.textContent = "";
+			}
+			commentForm.classList.remove("is-replying");
+		});
+	}
 })();
