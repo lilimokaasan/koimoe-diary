@@ -893,6 +893,11 @@ button.primary,
 	color: #147a42;
 }
 
+.status.scheduled {
+	background: rgba(239, 246, 255, 0.96);
+	color: #2563eb;
+}
+
 .status.draft {
 	background: rgba(255, 247, 237, 0.96);
 	color: #b45309;
@@ -927,6 +932,13 @@ button.primary,
 .editor-main,
 .editor-side {
 	min-width: 0;
+}
+
+.editor-side-note {
+	color: var(--muted);
+	font-size: 12px;
+	line-height: 1.6;
+	margin: -8px 0 2px;
 }
 
 .cover-box {

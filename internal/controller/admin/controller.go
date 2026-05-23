@@ -1273,9 +1273,10 @@ func (c *Controller) NewPost(r *ghttp.Request) {
 		Title:       "New Post - " + c.cfg.GetSite().Name,
 		MediaAssets: c.mustListMediaAssets(),
 		Post: models.Post{
-			Status:     "published",
-			CoverImage: "/static/theme/content-image/d-1.jpg",
-			Category:   models.Category{Name: "Blog"},
+			Status:      "published",
+			CoverImage:  "/static/theme/content-image/d-1.jpg",
+			Category:    models.Category{Name: "Blog"},
+			PublishedAt: time.Now(),
 		},
 		IsNew: true,
 		Now:   time.Now(),
@@ -1339,6 +1340,13 @@ func (c *Controller) SavePost(r *ghttp.Request) {
 		CategoryName: r.GetForm("category").String(),
 		Tags:         splitTags(r.GetForm("tags").String()),
 	}
+	publishedAt, parseErr := parsePostPublishedAt(r.GetForm("published_at").String())
+	if parseErr != nil {
+		post := postFromInput(input)
+		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.GetSite().Name, "Publish time must use the date and time picker format."))
+		return
+	}
+	input.PublishedAt = publishedAt
 	if uploadedCover, uploadErr := c.saveCoverUpload(r); uploadErr != "" {
 		post := postFromInput(input)
 		c.render(r, "admin_post_form.tmpl", c.formData(post, "Post Form - "+c.cfg.GetSite().Name, uploadErr))
@@ -1848,7 +1856,16 @@ func postFromInput(input store.PostInput) models.Post {
 		Category:    models.Category{Name: input.CategoryName},
 		Tags:        tags,
 		ContentHTML: template.HTML(input.ContentHTML),
+		PublishedAt: input.PublishedAt,
 	}
+}
+
+func parsePostPublishedAt(value string) (time.Time, error) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return time.Time{}, nil
+	}
+	return time.ParseInLocation("2006-01-02T15:04", value, time.Local)
 }
 
 func pageFromInput(input store.PageInput) models.Page {

@@ -32,6 +32,7 @@ type PostInput struct {
 	Status       string
 	CategoryName string
 	Tags         []string
+	PublishedAt  time.Time
 }
 
 type CommentStatusCounts struct {
@@ -241,6 +242,7 @@ func (s *PostStore) DistinctCoverImages(ctx context.Context, limit int) ([]strin
 SELECT cover_image
 FROM posts
 WHERE status = 'published' AND cover_image <> ''
+  AND published_at <= CURRENT_TIMESTAMP
 GROUP BY cover_image
 ORDER BY MAX(published_at) DESC
 LIMIT ?`, limit)
@@ -318,6 +320,7 @@ SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
 WHERE p.status = 'published'
+  AND p.published_at <= CURRENT_TIMESTAMP
 ORDER BY p.published_at DESC
 LIMIT ? OFFSET ?`, pageSize, (page-1)*pageSize)
 	if err != nil {
@@ -349,7 +352,7 @@ SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published' AND (
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND (
 	p.title LIKE ? ESCAPE '\\' OR
 	p.excerpt LIKE ? ESCAPE '\\' OR
 	p.content_html LIKE ? ESCAPE '\\' OR
@@ -410,7 +413,7 @@ SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        c.id, c.slug, c.name, c.description
 FROM posts p
 JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published' AND c.slug = ?
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND c.slug = ?
 ORDER BY p.published_at DESC
 LIMIT ? OFFSET ?`, slug, pageSize, (page-1)*pageSize)
 	if err != nil {
@@ -439,7 +442,7 @@ FROM posts p
 JOIN post_tags pt ON pt.post_id = p.id
 JOIN tags t ON t.id = pt.tag_id
 LEFT JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published' AND t.slug = ?
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND t.slug = ?
 ORDER BY p.published_at DESC
 LIMIT ? OFFSET ?`, slug, pageSize, (page-1)*pageSize)
 	if err != nil {
@@ -454,7 +457,7 @@ LIMIT ? OFFSET ?`, slug, pageSize, (page-1)*pageSize)
 }
 
 func (s *PostStore) CountPublished(ctx context.Context) (int, error) {
-	return s.count(ctx, `SELECT COUNT(*) FROM posts WHERE status = 'published'`)
+	return s.count(ctx, `SELECT COUNT(*) FROM posts WHERE status = 'published' AND published_at <= CURRENT_TIMESTAMP`)
 }
 
 func (s *PostStore) CountSearch(ctx context.Context, query string) (int, error) {
@@ -467,7 +470,7 @@ func (s *PostStore) CountSearch(ctx context.Context, query string) (int, error) 
 SELECT COUNT(*)
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published' AND (
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND (
 	p.title LIKE ? ESCAPE '\\' OR
 	p.excerpt LIKE ? ESCAPE '\\' OR
 	p.content_html LIKE ? ESCAPE '\\' OR
@@ -502,7 +505,7 @@ func (s *PostStore) CountByCategory(ctx context.Context, slug string) (int, erro
 SELECT COUNT(*)
 FROM posts p
 JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published' AND c.slug = ?`, slug)
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND c.slug = ?`, slug)
 }
 
 func (s *PostStore) CountByTag(ctx context.Context, slug string) (int, error) {
@@ -511,7 +514,7 @@ SELECT COUNT(*)
 FROM posts p
 JOIN post_tags pt ON pt.post_id = p.id
 JOIN tags t ON t.id = pt.tag_id
-WHERE p.status = 'published' AND t.slug = ?`, slug)
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND t.slug = ?`, slug)
 }
 
 func (s *PostStore) ArchiveGroups(ctx context.Context) ([]models.ArchiveGroup, error) {
@@ -522,7 +525,7 @@ SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published'
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP
 ORDER BY p.published_at DESC`)
 	if err != nil {
 		return nil, err
@@ -563,7 +566,7 @@ func (s *PostStore) BySlugForAdmin(ctx context.Context, slug string) (models.Pos
 func (s *PostStore) bySlug(ctx context.Context, slug string, includePrivate bool) (models.Post, error) {
 	var post models.Post
 	var content string
-	statusClause := "AND p.status = 'published'"
+	statusClause := "AND p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP"
 	if includePrivate {
 		statusClause = "AND p.status IN ('published', 'private')"
 	}
@@ -696,7 +699,7 @@ func (s *PostStore) ListCategories(ctx context.Context) ([]models.Category, erro
 	rows, err := s.db.QueryContext(ctx, `
 SELECT c.id, c.slug, c.name, c.description, COUNT(p.id) AS post_count
 FROM categories c
-LEFT JOIN posts p ON p.category_id = c.id AND p.status = 'published'
+LEFT JOIN posts p ON p.category_id = c.id AND p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP
 GROUP BY c.id, c.slug, c.name, c.description
 HAVING post_count > 0
 ORDER BY c.name`)
@@ -721,7 +724,7 @@ func (s *PostStore) ListTags(ctx context.Context) ([]models.Tag, error) {
 SELECT t.id, t.slug, t.name, COUNT(pt.post_id) AS post_count
 FROM tags t
 JOIN post_tags pt ON pt.tag_id = t.id
-JOIN posts p ON p.id = pt.post_id AND p.status = 'published'
+JOIN posts p ON p.id = pt.post_id AND p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP
 GROUP BY t.id, t.slug, t.name
 ORDER BY t.name`)
 	if err != nil {
@@ -898,7 +901,7 @@ func (s *PostStore) SearchCategories(ctx context.Context, query string, limit in
 	rows, err := s.db.QueryContext(ctx, `
 SELECT c.id, c.slug, c.name, c.description, COUNT(p.id) AS post_count
 FROM categories c
-LEFT JOIN posts p ON p.category_id = c.id AND p.status = 'published'
+LEFT JOIN posts p ON p.category_id = c.id AND p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP
 WHERE c.name LIKE ? ESCAPE '\\' OR c.slug LIKE ? ESCAPE '\\' OR c.description LIKE ? ESCAPE '\\'
 GROUP BY c.id, c.slug, c.name, c.description
 HAVING post_count > 0
@@ -933,7 +936,7 @@ func (s *PostStore) SearchTags(ctx context.Context, query string, limit int) ([]
 SELECT t.id, t.slug, t.name, COUNT(pt.post_id) AS post_count
 FROM tags t
 JOIN post_tags pt ON pt.tag_id = t.id
-JOIN posts p ON p.id = pt.post_id AND p.status = 'published'
+JOIN posts p ON p.id = pt.post_id AND p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP
 WHERE t.name LIKE ? ESCAPE '\\' OR t.slug LIKE ? ESCAPE '\\'
 GROUP BY t.id, t.slug, t.name
 ORDER BY post_count DESC, t.name
@@ -1063,7 +1066,7 @@ func (s *PostStore) IncrementViews(ctx context.Context, id int64) error {
 }
 
 func (s *PostStore) IncrementLikes(ctx context.Context, id int64) (int64, error) {
-	result, err := s.db.ExecContext(ctx, `UPDATE posts SET likes = likes + 1 WHERE id = ? AND status = 'published'`, id)
+	result, err := s.db.ExecContext(ctx, `UPDATE posts SET likes = likes + 1 WHERE id = ? AND status = 'published' AND published_at <= CURRENT_TIMESTAMP`, id)
 	if err != nil {
 		return 0, err
 	}
@@ -1311,13 +1314,12 @@ func (s *PostStore) SavePost(ctx context.Context, input PostInput) (int64, error
 		}
 	}()
 
-	now := time.Now()
 	postID := input.ID
 	if input.ID == 0 {
 		result, execErr := tx.ExecContext(ctx, `
 INSERT INTO posts (slug, title, excerpt, content_html, cover_image, category_id, status, published_at)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, now,
+			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, input.PublishedAt,
 		)
 		if execErr != nil {
 			err = execErr
@@ -1330,9 +1332,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 	} else {
 		_, err = tx.ExecContext(ctx, `
 UPDATE posts
-SET slug = ?, title = ?, excerpt = ?, content_html = ?, cover_image = ?, category_id = ?, status = ?
+SET slug = ?, title = ?, excerpt = ?, content_html = ?, cover_image = ?, category_id = ?, status = ?, published_at = ?
 WHERE id = ?`,
-			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, input.ID,
+			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, input.PublishedAt, input.ID,
 		)
 		if err != nil {
 			return 0, err
@@ -1448,7 +1450,7 @@ SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
-WHERE p.status = 'published' AND p.published_at ` + comparator + ` ?
+WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND p.published_at ` + comparator + ` ?
 ORDER BY p.published_at ` + direction + `
 LIMIT 1`
 	err := s.db.QueryRowContext(ctx, query, post.PublishedAt).Scan(
@@ -1653,6 +1655,9 @@ func normalizePostInput(input PostInput) PostInput {
 	input.Status = strings.TrimSpace(input.Status)
 	if input.Status != "draft" && input.Status != "private" {
 		input.Status = "published"
+	}
+	if input.PublishedAt.IsZero() {
+		input.PublishedAt = time.Now()
 	}
 	input.CategoryName = strings.TrimSpace(input.CategoryName)
 	if input.CategoryName == "" {

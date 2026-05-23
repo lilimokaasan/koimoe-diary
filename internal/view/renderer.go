@@ -18,6 +18,15 @@ type Renderer struct {
 func NewRenderer(pattern string) (*Renderer, error) {
 	tpl, err := template.New("base").Funcs(template.FuncMap{
 		"year": func(t time.Time) int { return t.Year() },
+		"datetimeLocal": func(t time.Time) string {
+			if t.IsZero() {
+				return ""
+			}
+			return t.Format("2006-01-02T15:04")
+		},
+		"isFuture": func(t time.Time) bool {
+			return !t.IsZero() && t.After(time.Now())
+		},
 		"since": func(t time.Time) string {
 			d := time.Since(t)
 			switch {

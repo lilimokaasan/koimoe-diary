@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-comment-counts">
+	<link rel="stylesheet" href="/static/admin.css?v=20260523-scheduled-posts">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -65,10 +65,23 @@
 					{{range .Posts}}
 					<tr>
 						<td><a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a><span>{{.Slug}}</span></td>
-						<td><span class="status {{.Status}}">{{.Status}}</span></td>
+						<td>
+							{{if and (eq .Status "published") (isFuture .PublishedAt)}}
+							<span class="status scheduled">scheduled</span>
+							{{else}}
+							<span class="status {{.Status}}">{{.Status}}</span>
+							{{end}}
+							<span>{{.PublishedAt.Format "2006-01-02 15:04"}}</span>
+						</td>
 						<td>{{.Category.Name}}</td>
 						<td>{{since .UpdatedAt}}</td>
-						<td><a href="/post/{{.Slug}}" target="_blank">Open</a></td>
+						<td>
+							{{if and (eq .Status "published") (not (isFuture .PublishedAt))}}
+							<a href="/post/{{.Slug}}" target="_blank">Open</a>
+							{{else}}
+							<a href="/admin/posts/{{.ID}}/preview" target="_blank">Preview</a>
+							{{end}}
+						</td>
 					</tr>
 					{{else}}
 					<tr><td colspan="5">No posts yet.</td></tr>

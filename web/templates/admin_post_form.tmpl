@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-comment-counts">
+	<link rel="stylesheet" href="/static/admin.css?v=20260523-scheduled-posts">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -137,6 +137,10 @@
 							<option value="draft" {{if eq .Post.Status "draft"}}selected{{end}}>Draft</option>
 						</select>
 					</label>
+					<label>Publish At
+						<input type="datetime-local" name="published_at" value="{{datetimeLocal .Post.PublishedAt}}">
+					</label>
+					<p class="editor-side-note">Future published posts stay hidden until this time.</p>
 					<label>Category<input type="text" name="category" value="{{.Post.Category.Name}}" placeholder="Blog"></label>
 					<label>Tags<input type="text" name="tags" value="{{.PostTags}}" placeholder="Go, Sakurairo"></label>
 					<div class="publish-checklist" data-publish-checklist>

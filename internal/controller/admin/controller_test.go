@@ -3,6 +3,7 @@ package admin
 import (
 	"strconv"
 	"testing"
+	"time"
 
 	"sakurairo-go/internal/config"
 )
@@ -52,6 +53,25 @@ func TestParseSocialLinks(t *testing.T) {
 	}
 	if links[1].Icon != "fa-envelope-o" {
 		t.Fatalf("second social icon = %q, want fa-envelope-o", links[1].Icon)
+	}
+}
+
+func TestParsePostPublishedAt(t *testing.T) {
+	got, err := parsePostPublishedAt("2026-05-23T21:30")
+	if err != nil {
+		t.Fatalf("parsePostPublishedAt returned error: %v", err)
+	}
+	want := time.Date(2026, 5, 23, 21, 30, 0, 0, time.Local)
+	if !got.Equal(want) {
+		t.Fatalf("parsePostPublishedAt = %s, want %s", got, want)
+	}
+
+	if got, err := parsePostPublishedAt(""); err != nil || !got.IsZero() {
+		t.Fatalf("empty parse = %s, %v; want zero nil", got, err)
+	}
+
+	if _, err := parsePostPublishedAt("2026-05-23 21:30"); err == nil {
+		t.Fatal("invalid datetime should return an error")
 	}
 }
 

@@ -1,6 +1,9 @@
 package store
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestNormalizeCommentStatus(t *testing.T) {
 	tests := []struct {
@@ -30,6 +33,29 @@ func TestCommentStatusFilter(t *testing.T) {
 	}
 	if got := commentStatusFilter("pending"); got != "" {
 		t.Fatalf("commentStatusFilter(pending) = %q, want empty", got)
+	}
+}
+
+func TestNormalizePostInputPublishedAt(t *testing.T) {
+	future := time.Now().Add(2 * time.Hour).Truncate(time.Second)
+	input := normalizePostInput(PostInput{
+		Title:       "Scheduled diary",
+		Status:      "published",
+		PublishedAt: future,
+	})
+
+	if input.PublishedAt.IsZero() {
+		t.Fatal("PublishedAt is zero")
+	}
+	if !input.PublishedAt.Equal(future) {
+		t.Fatalf("PublishedAt = %s, want %s", input.PublishedAt, future)
+	}
+}
+
+func TestNormalizePostInputDefaultsPublishedAt(t *testing.T) {
+	input := normalizePostInput(PostInput{Title: "Now"})
+	if input.PublishedAt.IsZero() {
+		t.Fatal("PublishedAt should default to now")
 	}
 }
 
