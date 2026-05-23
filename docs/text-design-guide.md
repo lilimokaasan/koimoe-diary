@@ -2,6 +2,16 @@
 
 This document is the reference for public-facing text, naming, atmosphere words, and image-search taste for this personal blog. Use it when writing page titles, subtitles, notices, empty states, button copy, admin login text, image prompts, or short descriptions.
 
+## Chinese Copy Workflow
+
+When a task involves Chinese wording, long-form Chinese text, naming, subtitles, empty states, article polishing, or other text-heavy public-facing copy, use DeepSeek as a Chinese wording advisor when practical.
+
+- Read the DeepSeek API key from `D:\codex\.env` as `DEEPSEEK_API_KEY`.
+- Do not print, commit, or paste the key into chat, logs, docs, or examples.
+- Ask DeepSeek for wording options, structure, or critique in Chinese.
+- Treat DeepSeek output as a draft or external opinion, not the final source of truth.
+- Final wording must still follow this guide: KoiMoe should stay soft, intimate, personal, lightly poetic, and non-corporate.
+
 ## Core Name
 
 - Primary site title: `KoiMoe Diary`
