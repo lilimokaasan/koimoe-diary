@@ -6,6 +6,8 @@
 	var liveSearchPanel = search && search.querySelector("[data-live-search-results]");
 	var userEntry = document.querySelector(".user-entry");
 	var userToggle = userEntry && userEntry.querySelector(".js-toggle-user-menu");
+	var mobileNavToggle = document.querySelector("[data-mobile-nav-toggle]");
+	var mobileNav = document.querySelector("[data-mobile-nav]");
 	var progressBar = document.querySelector("#bar, .scrollbar-progress");
 	var progressFrame;
 	var liveSearchIndex = null;
@@ -33,6 +35,45 @@
 			updateReadingProgress();
 		});
 	}
+
+	function closeMobileNav() {
+		if (!mobileNavToggle || !mobileNav) {
+			return;
+		}
+		document.body.classList.remove("mobile-nav-open");
+		mobileNavToggle.classList.remove("hideNav");
+		mobileNavToggle.classList.add("showNav");
+		mobileNavToggle.setAttribute("aria-expanded", "false");
+		mobileNavToggle.setAttribute("aria-label", "Open navigation");
+	}
+
+	function openMobileNav() {
+		if (!mobileNavToggle || !mobileNav) {
+			return;
+		}
+		document.body.classList.add("mobile-nav-open");
+		mobileNavToggle.classList.remove("showNav");
+		mobileNavToggle.classList.add("hideNav");
+		mobileNavToggle.setAttribute("aria-expanded", "true");
+		mobileNavToggle.setAttribute("aria-label", "Close navigation");
+		closeUserEntry();
+	}
+
+	mobileNavToggle && mobileNavToggle.addEventListener("click", function (event) {
+		event.preventDefault();
+		event.stopPropagation();
+		if (document.body.classList.contains("mobile-nav-open")) {
+			closeMobileNav();
+		} else {
+			openMobileNav();
+		}
+	});
+
+	mobileNav && mobileNav.addEventListener("click", function (event) {
+		if (event.target.closest("a")) {
+			closeMobileNav();
+		}
+	});
 
 	updateReadingProgress();
 	window.addEventListener("scroll", requestReadingProgressUpdate, { passive: true });
@@ -64,11 +105,15 @@
 	userToggle && userToggle.addEventListener("click", function (event) {
 		event.preventDefault();
 		event.stopPropagation();
+		closeMobileNav();
 		var isOpen = userEntry.classList.toggle("is-open");
 		userToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
 	});
 
 	document.addEventListener("click", function (event) {
+		if (document.body.classList.contains("mobile-nav-open") && mobileNav && mobileNavToggle && !mobileNav.contains(event.target) && !mobileNavToggle.contains(event.target)) {
+			closeMobileNav();
+		}
 		if (!userEntry || !userEntry.classList.contains("is-open") || userEntry.contains(event.target)) {
 			return;
 		}
@@ -77,6 +122,7 @@
 
 	document.addEventListener("keydown", function (event) {
 		if (event.key === "Escape") {
+			closeMobileNav();
 			closeUserEntry();
 			closeSearch();
 		}
@@ -95,6 +141,7 @@
 			if (!search) {
 				return;
 			}
+			closeMobileNav();
 			closeUserEntry();
 			search.classList.add("is-visible");
 			document.body.classList.add("search-open");

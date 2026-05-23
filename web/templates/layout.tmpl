@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css?v=20260519-stable-link-cursor">
-	<link rel="stylesheet" href="/static/app.css?v=20260523-legacy-shortcodes">
+	<link rel="stylesheet" href="/static/app.css?v=20260523-mobile-nav">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -119,12 +119,12 @@
 					</button>
 				</div>
 				<div class="lower">
-					<div id="show-nav" class="showNav">
+					<button id="show-nav" class="showNav" type="button" data-mobile-nav-toggle aria-label="Open navigation" aria-expanded="false" aria-controls="primary-navigation">
 						<div class="line line1"></div>
 						<div class="line line2"></div>
 						<div class="line line3"></div>
-					</div>
-					<nav>
+					</button>
+					<nav id="primary-navigation" class="navbar site-nav" data-mobile-nav>
 						<ul id="menu-primary" class="menu">
 							{{range .Site.Navigation}}<li><a href="{{.URL}}">{{.Label}}</a></li>{{end}}
 							{{if .ShowAdminNav}}<li class="menu-admin-login"><a href="/admin/login">Admin Login</a></li>{{end}}
@@ -191,7 +191,7 @@
 	}
 </script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260523-toc-scroll"></script>
+<script src="/static/app.js?v=20260523-mobile-nav"></script>
 </body>
 </html>
 {{end}}

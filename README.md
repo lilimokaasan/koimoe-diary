@@ -53,7 +53,7 @@ For this workspace, local development should use the `sakurairo` database. If My
 ## Implemented Features
 
 - Public home, post detail, archives, search, category, tag, links, and moments pages.
-- Sakurairo-style hero, post cards, sidebar, reading page, comments, error pages, scroll/progress effects, and soft admin styling.
+- Sakurairo-style hero, responsive public navigation, post cards, sidebar, reading page, comments, error pages, scroll/progress effects, and soft admin styling.
 - Automatic article/page table of contents for longer content, with generated heading anchors.
 - Legacy Sakurairo shortcode compatibility for `[toc]`, `[begin]`, `[collapse]`, `[download]`, old image syntax, and notice panels such as `[warning]`.
 - Configurable article share links with copy-link support.
@@ -131,4 +131,4 @@ journalctl -u sakurairo-go.service -n 80 --no-pager
 - Extend the compatibility renderer for any remaining imported-content edge cases.
 - Improve post editor ergonomics around richer image insertion, scheduled publishing, and publish-readiness history.
 - Add WordPress import path from XML or database.
-- Build a visual parity punch list against `D:\codex\Sakurairo-1.20.10`, especially floating controls, font/skin tools, and mobile navigation.
+- Build a visual parity punch list against `D:\codex\Sakurairo-1.20.10`, especially floating controls, font/skin tools, and finer mobile details.
