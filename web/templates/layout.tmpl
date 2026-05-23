@@ -118,19 +118,6 @@
 						<i class="fa fa-search" aria-hidden="true"></i>
 					</button>
 				</div>
-				<div class="lower">
-					<button id="show-nav" class="showNav" type="button" data-mobile-nav-toggle aria-label="Open navigation" aria-expanded="false" aria-controls="primary-navigation">
-						<div class="line line1"></div>
-						<div class="line line2"></div>
-						<div class="line line3"></div>
-					</button>
-					<nav id="primary-navigation" class="navbar site-nav" data-mobile-nav>
-						<ul id="menu-primary" class="menu">
-							{{range .Site.Navigation}}<li><a href="{{.URL}}">{{.Label}}</a></li>{{end}}
-							{{if .ShowAdminNav}}<li class="menu-admin-login"><a href="/admin/login">Admin Login</a></li>{{end}}
-						</ul>
-					</nav>
-				</div>
 			</div>
 		</header>
 		<div id="content" class="site-content">
