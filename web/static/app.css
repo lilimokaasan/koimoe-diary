@@ -1290,10 +1290,28 @@ textarea:disabled,
 	display: inline-flex;
 	font: inherit;
 	gap: 7px;
-	padding: 9px 13px;
+	height: 46px;
+	justify-content: center;
+	line-height: 1;
+	padding: 0 16px;
 	text-decoration: none;
 	transition: background-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+	vertical-align: top;
 	white-space: nowrap;
+}
+
+.post-like-button {
+	appearance: none;
+	-webkit-appearance: none;
+}
+
+.single-actions a i,
+.post-like-button i,
+.post-like-button span,
+.post-like-button strong {
+	align-items: center;
+	display: inline-flex;
+	line-height: 1;
 }
 
 .post-like-button strong {
@@ -3421,6 +3439,13 @@ body.search-open {
 	.single-actions {
 		grid-column: 1 / -1;
 		justify-content: flex-start;
+	}
+
+	.single-actions a,
+	.single-actions .post-like-button {
+		align-items: center;
+		display: inline-flex;
+		margin-top: 0;
 	}
 
 	.post-nextprev {
