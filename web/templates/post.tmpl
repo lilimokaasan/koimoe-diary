@@ -10,6 +10,7 @@
 				{{if eq .Post.Status "private"}}<p class="private-post-notice"><i class="fa fa-lock" aria-hidden="true"></i> Private post, visible only while signed in.</p>{{end}}
 				<div class="entry-census">
 					<span><i class="iconfont icon-time"></i>{{since .Post.PublishedAt}}</span>
+					<span><i class="fa fa-hourglass-half" aria-hidden="true"></i>{{.Post.ReadingMinutes}} min read</span>
 					<span><i class="iconfont icon-attention"></i>{{.Post.Views}} Views</span>
 					<span><i class="fa fa-heart-o" aria-hidden="true"></i>{{.Post.Likes}} Likes</span>
 					<span><i class="iconfont icon-mark"></i>{{.Post.CommentCount}} Comments</span>

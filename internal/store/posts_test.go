@@ -32,3 +32,43 @@ func TestCommentStatusFilter(t *testing.T) {
 		t.Fatalf("commentStatusFilter(pending) = %q, want empty", got)
 	}
 }
+
+func TestReadingMinutes(t *testing.T) {
+	tests := []struct {
+		name string
+		html string
+		want int
+	}{
+		{name: "empty", html: "", want: 1},
+		{name: "short html", html: "<p>Hello &amp; welcome to KoiMoe.</p>", want: 1},
+		{name: "long english", html: repeatWords("dream", 441), want: 3},
+		{name: "cjk content", html: "<p>" + repeatRunes('萌', 441) + "</p>", want: 2},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := readingMinutes(tt.html); got != tt.want {
+				t.Fatalf("readingMinutes() = %d, want %d", got, tt.want)
+			}
+		})
+	}
+}
+
+func repeatWords(word string, count int) string {
+	out := ""
+	for i := 0; i < count; i++ {
+		if i > 0 {
+			out += " "
+		}
+		out += word
+	}
+	return out
+}
+
+func repeatRunes(r rune, count int) string {
+	out := make([]rune, count)
+	for i := range out {
+		out[i] = r
+	}
+	return string(out)
+}

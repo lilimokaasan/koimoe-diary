@@ -9,22 +9,23 @@ import (
 )
 
 type Post struct {
-	ID           int64
-	Slug         string
-	Title        string
-	Excerpt      string
-	ContentHTML  template.HTML
-	Outline      []ContentHeading
-	CoverImage   string
-	Status       string
-	Category     Category
-	Tags         []Tag
-	CommentCount int64
-	Views        int64
-	Likes        int64
-	PublishedAt  time.Time
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID             int64
+	Slug           string
+	Title          string
+	Excerpt        string
+	ContentHTML    template.HTML
+	Outline        []ContentHeading
+	CoverImage     string
+	Status         string
+	Category       Category
+	Tags           []Tag
+	CommentCount   int64
+	Views          int64
+	Likes          int64
+	ReadingMinutes int
+	PublishedAt    time.Time
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 type Page struct {

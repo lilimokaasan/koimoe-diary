@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css?v=20260519-stable-link-cursor">
-	<link rel="stylesheet" href="/static/app.css?v=20260523-mobile-actions-3">
+	<link rel="stylesheet" href="/static/app.css?v=20260523-reading-time">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -206,7 +206,10 @@
 			</a>
 		</div>
 		<h1 class="entry-title"><a href="/post/{{.Slug}}">{{.Title}}</a></h1>
-		<div class="p-time"><i class="iconfont icon-time"></i>{{since .PublishedAt}}</div>
+		<div class="p-time">
+			<span><i class="iconfont icon-time"></i>{{since .PublishedAt}}</span>
+			<span><i class="fa fa-hourglass-half" aria-hidden="true"></i>{{.ReadingMinutes}} min read</span>
+		</div>
 		{{if .Category.ID}}
 		<div class="post-taxonomy">
 			<a href="/category/{{.Category.Slug}}"><i class="fa fa-folder-o" aria-hidden="true"></i> {{.Category.Name}}</a>

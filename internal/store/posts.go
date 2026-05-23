@@ -581,6 +581,7 @@ LIMIT 1`, slug).Scan(
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
 	post.ContentHTML = template.HTML(content)
+	post.ReadingMinutes = readingMinutes(content)
 	enhancePostContent(&post)
 	if err == nil {
 		posts := []models.Post{post}
@@ -607,6 +608,7 @@ LIMIT 1`, id).Scan(
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
 	post.ContentHTML = template.HTML(content)
+	post.ReadingMinutes = readingMinutes(content)
 	enhancePostContent(&post)
 	if err == nil {
 		posts := []models.Post{post}
@@ -1411,6 +1413,7 @@ func scanAdminPosts(rows *sql.Rows) ([]models.Post, error) {
 			return nil, err
 		}
 		post.ContentHTML = template.HTML(content)
+		post.ReadingMinutes = readingMinutes(content)
 		posts = append(posts, post)
 	}
 	return posts, rows.Err()
@@ -1429,6 +1432,7 @@ func scanPosts(rows *sql.Rows) ([]models.Post, error) {
 			return nil, err
 		}
 		post.ContentHTML = template.HTML(content)
+		post.ReadingMinutes = readingMinutes(content)
 		posts = append(posts, post)
 	}
 	return posts, rows.Err()
@@ -1453,6 +1457,7 @@ LIMIT 1`
 		&adjacent.Category.ID, &adjacent.Category.Slug, &adjacent.Category.Name, &adjacent.Category.Description,
 	)
 	adjacent.ContentHTML = template.HTML(content)
+	adjacent.ReadingMinutes = readingMinutes(content)
 	if err == nil {
 		posts := []models.Post{adjacent}
 		err = s.hydrateTags(ctx, posts)
@@ -1739,6 +1744,53 @@ func searchText(value string) string {
 	}
 	runes := []rune(value)
 	return string(runes[:600])
+}
+
+func readingMinutes(value string) int {
+	value = htmlTag.ReplaceAllString(value, " ")
+	value = stdhtml.UnescapeString(value)
+	value = searchSpace.Replace(value)
+	value = whitespace.ReplaceAllString(value, " ")
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return 1
+	}
+
+	words := 0
+	cjk := 0
+	inWord := false
+	for _, r := range value {
+		switch {
+		case isCJKRune(r):
+			cjk++
+			inWord = false
+		case isLatinWordRune(r):
+			if !inWord {
+				words++
+				inWord = true
+			}
+		default:
+			inWord = false
+		}
+	}
+
+	weightedWords := words + int(math.Ceil(float64(cjk)/2.0))
+	if weightedWords < 1 {
+		weightedWords = 1
+	}
+	return max(1, int(math.Ceil(float64(weightedWords)/220.0)))
+}
+
+func isLatinWordRune(r rune) bool {
+	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '\'' || r == '-'
+}
+
+func isCJKRune(r rune) bool {
+	return (r >= 0x3400 && r <= 0x4DBF) ||
+		(r >= 0x4E00 && r <= 0x9FFF) ||
+		(r >= 0xF900 && r <= 0xFAFF) ||
+		(r >= 0x3040 && r <= 0x30FF) ||
+		(r >= 0xAC00 && r <= 0xD7AF)
 }
 
 func normalizeSearchQuery(value string) string {

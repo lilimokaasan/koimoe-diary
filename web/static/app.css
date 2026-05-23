@@ -632,8 +632,19 @@ textarea:disabled,
 }
 
 .post-list .p-time {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 	right: 18px;
 	top: 22px;
+}
+
+.post-list .p-time span {
+	align-items: center;
+	display: inline-flex;
+	gap: 5px;
+	white-space: nowrap;
 }
 
 .entry-content {
@@ -3682,7 +3693,10 @@ body.search-open {
 	.post-list .p-time {
 		align-items: center;
 		display: inline-flex;
+		flex-direction: row;
+		flex-wrap: wrap;
 		font-size: 12px;
+		gap: 6px 10px;
 		grid-column: 2;
 		line-height: 1.4;
 		margin-bottom: 4px;
