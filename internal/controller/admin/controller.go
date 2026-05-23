@@ -64,6 +64,7 @@ type PageData struct {
 	Message         string
 	MediaQuery      string
 	CommentStatus   string
+	PostStatus      string
 	Posts           []models.Post
 	Pages           []models.Page
 	Comments        []models.Comment
@@ -86,6 +87,10 @@ type PageData struct {
 	CommentApproved int
 	CommentHidden   int
 	CommentSpam     int
+	PostPublished   int
+	PostScheduled   int
+	PostDraft       int
+	PostPrivate     int
 	Settings        config.Site
 	Mail            config.Mail
 	MailReady       bool
@@ -746,17 +751,29 @@ func (c *Controller) Dashboard(r *ghttp.Request) {
 	if !c.requireLogin(r) {
 		return
 	}
-	posts, err := c.posts.ListAll(r.Context(), 100)
+	status := normalizePostStatusFilter(r.GetQuery("status").String())
+	posts, err := c.posts.ListAllByStatus(r.Context(), status, 100)
+	if err != nil {
+		c.error(r, err)
+		return
+	}
+	postCounts, err := c.posts.CountPostsByStatus(r.Context())
 	if err != nil {
 		c.error(r, err)
 		return
 	}
 	c.render(r, "admin_posts.tmpl", PageData{
-		Site:    c.cfg.GetSite(),
-		Title:   "Posts - " + c.cfg.GetSite().Name,
-		Message: r.GetQuery("saved").String(),
-		Posts:   posts,
-		Now:     time.Now(),
+		Site:          c.cfg.GetSite(),
+		Title:         "Posts - " + c.cfg.GetSite().Name,
+		Message:       r.GetQuery("saved").String(),
+		PostStatus:    status,
+		PostTotal:     postCounts.All,
+		PostPublished: postCounts.Published,
+		PostScheduled: postCounts.Scheduled,
+		PostDraft:     postCounts.Draft,
+		PostPrivate:   postCounts.Private,
+		Posts:         posts,
+		Now:           time.Now(),
 	})
 }
 
@@ -1975,6 +1992,15 @@ func normalizeCommentIDs(values []string) []int64 {
 func normalizeCommentStatusFilter(status string) string {
 	switch strings.TrimSpace(strings.ToLower(status)) {
 	case "approved", "hidden", "spam":
+		return strings.TrimSpace(strings.ToLower(status))
+	default:
+		return ""
+	}
+}
+
+func normalizePostStatusFilter(status string) string {
+	switch strings.TrimSpace(strings.ToLower(status)) {
+	case "published", "scheduled", "draft", "private":
 		return strings.TrimSpace(strings.ToLower(status))
 	default:
 		return ""

@@ -1456,14 +1456,16 @@ input[type="file"] {
 	gap: 14px;
 }
 
-.comment-filter-tabs {
+.comment-filter-tabs,
+.post-filter-tabs {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
 	margin-bottom: 12px;
 }
 
-.comment-filter-tabs a {
+.comment-filter-tabs a,
+.post-filter-tabs a {
 	align-items: center;
 	background: rgba(255, 255, 255, 0.58);
 	border: 1px solid rgba(231, 211, 222, 0.72);
@@ -1476,7 +1478,8 @@ input[type="file"] {
 	text-decoration: none;
 }
 
-.comment-filter-tabs strong {
+.comment-filter-tabs strong,
+.post-filter-tabs strong {
 	align-items: center;
 	background: rgba(255, 255, 255, 0.78);
 	border-radius: 999px;
@@ -1489,7 +1492,9 @@ input[type="file"] {
 }
 
 .comment-filter-tabs a:hover,
-.comment-filter-tabs a.is-active {
+.comment-filter-tabs a.is-active,
+.post-filter-tabs a:hover,
+.post-filter-tabs a.is-active {
 	background: rgba(251, 152, 192, 0.16);
 	border-color: rgba(251, 152, 192, 0.45);
 	color: var(--sakura-deep);

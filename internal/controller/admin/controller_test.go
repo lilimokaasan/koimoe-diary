@@ -75,6 +75,25 @@ func TestParsePostPublishedAt(t *testing.T) {
 	}
 }
 
+func TestNormalizePostStatusFilter(t *testing.T) {
+	tests := []struct {
+		status string
+		want   string
+	}{
+		{status: "published", want: "published"},
+		{status: "scheduled", want: "scheduled"},
+		{status: " Draft ", want: "draft"},
+		{status: "private", want: "private"},
+		{status: "spam", want: ""},
+	}
+
+	for _, tt := range tests {
+		if got := normalizePostStatusFilter(tt.status); got != tt.want {
+			t.Fatalf("normalizePostStatusFilter(%q) = %q, want %q", tt.status, got, tt.want)
+		}
+	}
+}
+
 func TestNormalizeSiteSettingsKeepsConfigurableLicense(t *testing.T) {
 	fallback := config.Site{
 		Name:             "KoiMoe Diary",

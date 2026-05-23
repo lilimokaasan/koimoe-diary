@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-scheduled-posts">
+	<link rel="stylesheet" href="/static/admin.css?v=20260523-post-filters">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -59,6 +59,13 @@
 				<a class="button primary" href="/admin/posts/new">New Post</a>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
+			<nav class="post-filter-tabs" aria-label="Post filters">
+				<a href="/admin" class="{{if eq .PostStatus ""}}is-active{{end}}"><span>All</span><strong>{{.PostTotal}}</strong></a>
+				<a href="/admin?status=published" class="{{if eq .PostStatus "published"}}is-active{{end}}"><span>Published</span><strong>{{.PostPublished}}</strong></a>
+				<a href="/admin?status=scheduled" class="{{if eq .PostStatus "scheduled"}}is-active{{end}}"><span>Scheduled</span><strong>{{.PostScheduled}}</strong></a>
+				<a href="/admin?status=draft" class="{{if eq .PostStatus "draft"}}is-active{{end}}"><span>Draft</span><strong>{{.PostDraft}}</strong></a>
+				<a href="/admin?status=private" class="{{if eq .PostStatus "private"}}is-active{{end}}"><span>Private</span><strong>{{.PostPrivate}}</strong></a>
+			</nav>
 			<table class="admin-table">
 				<thead><tr><th>Title</th><th>Status</th><th>Category</th><th>Updated</th><th></th></tr></thead>
 				<tbody>

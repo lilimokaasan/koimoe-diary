@@ -42,6 +42,14 @@ type CommentStatusCounts struct {
 	Spam     int
 }
 
+type PostStatusCounts struct {
+	All       int
+	Published int
+	Scheduled int
+	Draft     int
+	Private   int
+}
+
 type PageInput struct {
 	ID          int64
 	Slug        string
@@ -263,6 +271,23 @@ LIMIT ?`, limit)
 }
 
 func (s *PostStore) ListAll(ctx context.Context, limit int) ([]models.Post, error) {
+	return s.ListAllByStatus(ctx, "", limit)
+}
+
+func (s *PostStore) ListAllByStatus(ctx context.Context, status string, limit int) ([]models.Post, error) {
+	status = postStatusFilter(status)
+	where := ""
+	args := []any{}
+	switch status {
+	case "published":
+		where = "WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP"
+	case "scheduled":
+		where = "WHERE p.status = 'published' AND p.published_at > CURRENT_TIMESTAMP"
+	case "draft", "private":
+		where = "WHERE p.status = ?"
+		args = append(args, status)
+	}
+	args = append(args, limit)
 	rows, err := s.db.QueryContext(ctx, `
 SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
@@ -270,8 +295,9 @@ SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
 FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
+`+where+`
 ORDER BY p.updated_at DESC
-LIMIT ?`, limit)
+LIMIT ?`, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -458,6 +484,19 @@ LIMIT ? OFFSET ?`, slug, pageSize, (page-1)*pageSize)
 
 func (s *PostStore) CountPublished(ctx context.Context) (int, error) {
 	return s.count(ctx, `SELECT COUNT(*) FROM posts WHERE status = 'published' AND published_at <= CURRENT_TIMESTAMP`)
+}
+
+func (s *PostStore) CountPostsByStatus(ctx context.Context) (PostStatusCounts, error) {
+	var counts PostStatusCounts
+	err := s.db.QueryRowContext(ctx, `
+SELECT
+	COUNT(*),
+	SUM(CASE WHEN status = 'published' AND published_at <= CURRENT_TIMESTAMP THEN 1 ELSE 0 END),
+	SUM(CASE WHEN status = 'published' AND published_at > CURRENT_TIMESTAMP THEN 1 ELSE 0 END),
+	SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END),
+	SUM(CASE WHEN status = 'private' THEN 1 ELSE 0 END)
+FROM posts`).Scan(&counts.All, &counts.Published, &counts.Scheduled, &counts.Draft, &counts.Private)
+	return counts, err
 }
 
 func (s *PostStore) CountSearch(ctx context.Context, query string) (int, error) {
@@ -1203,6 +1242,15 @@ func (s *PostStore) UpdateCommentsStatus(ctx context.Context, ids []int64, statu
 		status = "hidden"
 	}
 	return s.execCommentBulk(ctx, `UPDATE comments SET status = ? WHERE id IN (%s)`, append([]any{status}, int64Args(ids)...), ids)
+}
+
+func postStatusFilter(status string) string {
+	switch strings.TrimSpace(strings.ToLower(status)) {
+	case "published", "scheduled", "draft", "private":
+		return strings.TrimSpace(strings.ToLower(status))
+	default:
+		return ""
+	}
 }
 
 func normalizeCommentStatus(status string) string {

@@ -36,6 +36,25 @@ func TestCommentStatusFilter(t *testing.T) {
 	}
 }
 
+func TestPostStatusFilter(t *testing.T) {
+	tests := []struct {
+		status string
+		want   string
+	}{
+		{status: "published", want: "published"},
+		{status: "Scheduled", want: "scheduled"},
+		{status: " draft ", want: "draft"},
+		{status: "private", want: "private"},
+		{status: "hidden", want: ""},
+	}
+
+	for _, tt := range tests {
+		if got := postStatusFilter(tt.status); got != tt.want {
+			t.Fatalf("postStatusFilter(%q) = %q, want %q", tt.status, got, tt.want)
+		}
+	}
+}
+
 func TestNormalizePostInputPublishedAt(t *testing.T) {
 	future := time.Now().Add(2 * time.Hour).Truncate(time.Second)
 	input := normalizePostInput(PostInput{
