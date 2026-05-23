@@ -59,7 +59,7 @@ For this workspace, local development should use the `sakurairo` database. If My
 - Configurable article share links with copy-link support.
 - Optional source/license notice when visitors copy longer article text.
 - Optional article reward panel with configurable support text and payment images.
-- Public comments with honeypot, lightweight spam quarantine, Markdown rendering with sanitized HTML, nested replies, private comment option, optional reply notification opt-in, and admin moderation with filters and bulk actions.
+- Public comments with honeypot, lightweight spam quarantine, Markdown rendering with sanitized HTML, nested replies, private comment option, optional reply notification opt-in, and admin moderation with status counts, filters, and bulk actions.
 - Admin login, sidebar navigation, post list, post editor, preview, excerpt helper, publish checklist, cover upload, media library with search and bulk delete, and post editor media picker.
 - Site settings for title, description, profile name/avatar, notice, navigation, social links, hero image, overlay opacity, default cover, article license copy, footer copy, Focus Cards, and sakura effects.
 - Category/tag management, category covers, friend links, and moments management.

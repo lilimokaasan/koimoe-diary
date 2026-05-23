@@ -1452,13 +1452,28 @@ input[type="file"] {
 }
 
 .comment-filter-tabs a {
+	align-items: center;
 	background: rgba(255, 255, 255, 0.58);
 	border: 1px solid rgba(231, 211, 222, 0.72);
 	border-radius: 999px;
 	color: var(--muted);
+	display: inline-flex;
 	font-size: 13px;
+	gap: 8px;
 	padding: 8px 13px;
 	text-decoration: none;
+}
+
+.comment-filter-tabs strong {
+	align-items: center;
+	background: rgba(255, 255, 255, 0.78);
+	border-radius: 999px;
+	color: var(--sakura-deep);
+	display: inline-flex;
+	font-size: 12px;
+	justify-content: center;
+	min-width: 22px;
+	padding: 3px 7px;
 }
 
 .comment-filter-tabs a:hover,

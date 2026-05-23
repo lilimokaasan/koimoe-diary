@@ -34,6 +34,13 @@ type PostInput struct {
 	Tags         []string
 }
 
+type CommentStatusCounts struct {
+	All      int
+	Approved int
+	Hidden   int
+	Spam     int
+}
+
 type PageInput struct {
 	ID          int64
 	Slug        string
@@ -1019,6 +1026,33 @@ func (s *PostStore) SearchIndex(ctx context.Context) (models.SearchIndex, error)
 
 func (s *PostStore) CountComments(ctx context.Context) (int, error) {
 	return s.count(ctx, `SELECT COUNT(*) FROM comments WHERE status = 'approved'`)
+}
+
+func (s *PostStore) CountCommentsByStatus(ctx context.Context) (CommentStatusCounts, error) {
+	rows, err := s.db.QueryContext(ctx, `SELECT status, COUNT(*) FROM comments GROUP BY status`)
+	if err != nil {
+		return CommentStatusCounts{}, err
+	}
+	defer rows.Close()
+
+	var counts CommentStatusCounts
+	for rows.Next() {
+		var status string
+		var count int
+		if err := rows.Scan(&status, &count); err != nil {
+			return CommentStatusCounts{}, err
+		}
+		counts.All += count
+		switch normalizeCommentStatus(status) {
+		case "approved":
+			counts.Approved += count
+		case "hidden":
+			counts.Hidden += count
+		case "spam":
+			counts.Spam += count
+		}
+	}
+	return counts, rows.Err()
 }
 
 func (s *PostStore) IncrementViews(ctx context.Context, id int64) error {

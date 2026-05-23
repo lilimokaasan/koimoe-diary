@@ -83,6 +83,9 @@ type PageData struct {
 	RecentPosts     []models.Post
 	PostTotal       int
 	CommentTotal    int
+	CommentApproved int
+	CommentHidden   int
+	CommentSpam     int
 	Settings        config.Site
 	Mail            config.Mail
 	MailReady       bool
@@ -785,13 +788,22 @@ func (c *Controller) Comments(r *ghttp.Request) {
 		c.error(r, err)
 		return
 	}
+	commentCounts, err := c.posts.CountCommentsByStatus(r.Context())
+	if err != nil {
+		c.error(r, err)
+		return
+	}
 	c.render(r, "admin_comments.tmpl", PageData{
-		Site:          c.cfg.GetSite(),
-		Title:         "Comments - " + c.cfg.GetSite().Name,
-		Message:       r.GetQuery("saved").String(),
-		CommentStatus: status,
-		Comments:      comments,
-		Now:           time.Now(),
+		Site:            c.cfg.GetSite(),
+		Title:           "Comments - " + c.cfg.GetSite().Name,
+		Message:         r.GetQuery("saved").String(),
+		CommentStatus:   status,
+		CommentTotal:    commentCounts.All,
+		CommentApproved: commentCounts.Approved,
+		CommentHidden:   commentCounts.Hidden,
+		CommentSpam:     commentCounts.Spam,
+		Comments:        comments,
+		Now:             time.Now(),
 	})
 }
 
