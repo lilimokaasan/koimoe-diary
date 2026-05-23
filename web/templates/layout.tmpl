@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css?v=20260519-stable-link-cursor">
-	<link rel="stylesheet" href="/static/app.css?v=20260523-mobile-discovery">
+	<link rel="stylesheet" href="/static/app.css?v=20260523-comment-images">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -191,7 +191,7 @@
 	}
 </script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260523-mobile-discovery"></script>
+<script src="/static/app.js?v=20260523-comment-images"></script>
 </body>
 </html>
 {{end}}
@@ -299,6 +299,10 @@
 		<div class="comment-textarea">
 			<textarea class="commentbody" name="content" placeholder="You are a surprise that I will only meet once in my life ..." maxlength="2000" required></textarea>
 			<span class="input-label">Leave a comment</span>
+		</div>
+		<div class="comment-tools" aria-label="Comment tools">
+			<button type="button" data-insert-comment-image><i class="fa fa-picture-o" aria-hidden="true"></i> Image</button>
+			<span>Use an image URL softly tucked into the comment.</span>
 		</div>
 		<div class="comment-form-footer">
 			<label class="comment-private-option">

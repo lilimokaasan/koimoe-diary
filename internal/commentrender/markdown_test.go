@@ -24,3 +24,26 @@ func TestHTMLAddsSafeLinkAttributes(t *testing.T) {
 		t.Fatalf("external link missing blank target: %s", got)
 	}
 }
+
+func TestHTMLRendersImageBBCode(t *testing.T) {
+	got := string(HTML("look [img]https://example.com/koi.png[/img]"))
+	if !strings.Contains(got, `src="https://example.com/koi.png"`) {
+		t.Fatalf("image bbcode missing src: %s", got)
+	}
+	if !strings.Contains(got, `alt="Comment image"`) {
+		t.Fatalf("image bbcode missing alt text: %s", got)
+	}
+	if strings.Contains(got, "[img]") {
+		t.Fatalf("image bbcode literal survived: %s", got)
+	}
+}
+
+func TestHTMLKeepsUnsafeImageBBCodeLiteral(t *testing.T) {
+	got := string(HTML("[img]javascript:alert(1)[/img]"))
+	if !strings.Contains(got, "[img]javascript:alert(1)[/img]") {
+		t.Fatalf("unsafe image bbcode should remain literal, got %s", got)
+	}
+	if strings.Contains(got, "<img") {
+		t.Fatalf("unsafe image bbcode rendered img: %s", got)
+	}
+}

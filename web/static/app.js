@@ -537,6 +537,17 @@
 		var replyName = replyContext && replyContext.querySelector("strong");
 		var cancelReply = commentForm.querySelector(".comment-cancel-reply");
 		var commentTextarea = commentForm.querySelector("textarea");
+		var imageTool = commentForm.querySelector("[data-insert-comment-image]");
+		imageTool && imageTool.addEventListener("click", function () {
+			if (!commentTextarea) {
+				return;
+			}
+			var url = window.prompt("Image URL");
+			if (!url) {
+				return;
+			}
+			insertAtTextarea(commentTextarea, "[img]" + url.trim() + "[/img]");
+		});
 		document.querySelectorAll(".comment-reply-button").forEach(function (button) {
 			button.addEventListener("click", function () {
 				var commentID = button.getAttribute("data-comment-id") || "";
@@ -569,5 +580,19 @@
 			}
 			commentForm.classList.remove("is-replying");
 		});
+	}
+
+	function insertAtTextarea(textarea, snippet) {
+		var start = typeof textarea.selectionStart === "number" ? textarea.selectionStart : textarea.value.length;
+		var end = typeof textarea.selectionEnd === "number" ? textarea.selectionEnd : start;
+		var before = textarea.value.slice(0, start);
+		var after = textarea.value.slice(end);
+		var prefix = before && !/\s$/.test(before) ? "\n" : "";
+		var suffix = after && !/^\s/.test(after) ? "\n" : "";
+		textarea.value = before + prefix + snippet + suffix + after;
+		var cursor = (before + prefix + snippet).length;
+		textarea.focus();
+		textarea.setSelectionRange(cursor, cursor);
+		textarea.dispatchEvent(new Event("input", { bubbles: true }));
 	}
 })();
