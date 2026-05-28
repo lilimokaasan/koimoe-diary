@@ -718,6 +718,58 @@ func (s *PostStore) AdjacentPublished(ctx context.Context, post models.Post) (mo
 	return previous, next, nil
 }
 
+func (s *PostStore) RelatedPublished(ctx context.Context, post models.Post, limit int) ([]models.Post, error) {
+	if limit <= 0 {
+		limit = 3
+	}
+	rows, err := s.db.QueryContext(ctx, `
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
+       (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
+       p.views, p.likes, p.published_at, p.created_at, p.updated_at,
+       COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, ''),
+       (CASE WHEN p.category_id = ? AND ? <> 0 THEN 2 ELSE 0 END + COUNT(DISTINCT shared.tag_id)) AS related_score
+FROM posts p
+LEFT JOIN categories c ON c.id = p.category_id
+LEFT JOIN post_tags shared ON shared.post_id = p.id AND shared.tag_id IN (
+	SELECT tag_id FROM post_tags WHERE post_id = ?
+)
+WHERE p.status = 'published'
+  AND p.published_at <= CURRENT_TIMESTAMP
+  AND p.id <> ?
+GROUP BY p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
+         p.views, p.likes, p.published_at, p.created_at, p.updated_at,
+         c.id, c.slug, c.name, c.description, p.category_id
+ORDER BY related_score DESC, p.is_pinned DESC, p.published_at DESC
+LIMIT ?`, post.Category.ID, post.Category.ID, post.ID, post.ID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+	for rows.Next() {
+		var related models.Post
+		var content string
+		var score int
+		if err := rows.Scan(
+			&related.ID, &related.Slug, &related.Title, &related.Excerpt, &content, &related.CoverImage,
+			&related.IsPinned,
+			&related.CommentCount, &related.Views, &related.Likes, &related.PublishedAt, &related.CreatedAt, &related.UpdatedAt,
+			&related.Category.ID, &related.Category.Slug, &related.Category.Name, &related.Category.Description,
+			&score,
+		); err != nil {
+			return nil, err
+		}
+		related.ContentHTML = template.HTML(content)
+		related.ReadingMinutes = readingMinutes(content)
+		posts = append(posts, related)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, s.hydrateTags(ctx, posts)
+}
+
 func (s *PostStore) CategoryBySlug(ctx context.Context, slug string) (models.Category, error) {
 	var category models.Category
 	err := s.db.QueryRowContext(ctx, `

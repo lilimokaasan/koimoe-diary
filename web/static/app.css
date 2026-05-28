@@ -1410,6 +1410,86 @@ textarea:disabled,
 	color: var(--sakura-rose);
 }
 
+.related-posts {
+	background: rgba(255, 255, 255, 0.74);
+	border: 1px solid rgba(255, 255, 255, 0.84);
+	border-radius: 8px;
+	box-shadow: 0 16px 40px rgba(117, 79, 99, 0.1);
+	margin: 26px 0;
+	padding: 22px;
+}
+
+.related-posts .section-title {
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.related-posts .section-title p {
+	color: var(--sakura-rose);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0;
+	margin: 0 0 6px;
+	text-transform: uppercase;
+}
+
+.related-posts .section-title h2 {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 26px;
+	font-weight: 400;
+	margin: 0;
+}
+
+.related-post-grid {
+	display: grid;
+	gap: 14px;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.related-post-card {
+	background: rgba(255, 250, 253, 0.78);
+	border: 1px solid rgba(251, 152, 192, 0.14);
+	border-radius: 8px;
+	color: inherit;
+	display: grid;
+	gap: 10px;
+	overflow: hidden;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.related-post-card:hover {
+	box-shadow: 0 14px 28px rgba(251, 152, 192, 0.14);
+	transform: translateY(-2px);
+}
+
+.related-post-cover {
+	background-position: center;
+	background-size: cover;
+	display: block;
+	height: 112px;
+}
+
+.related-post-body {
+	display: grid;
+	gap: 7px;
+	padding: 0 13px 14px;
+}
+
+.related-post-body strong {
+	color: var(--sakura-ink);
+	font-family: "Noto Serif SC", Georgia, serif;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.45;
+}
+
+.related-post-body small {
+	color: #9b929b;
+	font-size: 12px;
+}
+
 .sakurairo-archives-layout {
 	margin-top: 32px;
 }
@@ -3495,6 +3575,28 @@ body.search-open {
 		margin-top: 14px;
 		min-height: 0;
 		padding: 16px;
+	}
+
+	.related-posts {
+		padding: 18px;
+	}
+
+	.related-post-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.related-post-card {
+		grid-template-columns: 82px minmax(0, 1fr);
+	}
+
+	.related-post-cover {
+		height: 100%;
+		min-height: 86px;
+	}
+
+	.related-post-body {
+		align-content: center;
+		padding: 12px 12px 12px 0;
 	}
 
 	.comments-area {

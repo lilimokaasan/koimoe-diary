@@ -100,6 +100,25 @@
 			{{else}}<span></span>{{end}}
 		</nav>
 		{{end}}
+		{{if .RelatedPosts}}
+		<section class="related-posts" aria-label="Related posts">
+			<div class="section-title">
+				<p><i class="fa fa-compass" aria-hidden="true"></i> Keep reading</p>
+				<h2>Related Posts</h2>
+			</div>
+			<div class="related-post-grid">
+				{{range .RelatedPosts}}
+				<a class="related-post-card" href="/post/{{.Slug}}">
+					<span class="related-post-cover" style="background-image:url('{{.CoverImage}}')"></span>
+					<span class="related-post-body">
+						<strong>{{.Title}}</strong>
+						<small>{{.ReadingMinutes}} min read · {{.Views}} views</small>
+					</span>
+				</a>
+				{{end}}
+			</div>
+		</section>
+		{{end}}
 		{{template "comments" .}}
 	</main>
 	{{template "sidebar" .}}

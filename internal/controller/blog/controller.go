@@ -54,6 +54,7 @@ type PageData struct {
 	PageContent      models.Page
 	PreviousPost     models.Post
 	NextPost         models.Post
+	RelatedPosts     []models.Post
 	ArchiveGroups    []models.ArchiveGroup
 	LinkCategories   []models.FriendLinkCategory
 	Moments          []models.Moment
@@ -175,10 +176,15 @@ func (c *Controller) Post(r *ghttp.Request) {
 		return
 	}
 	var previousPost, nextPost models.Post
+	var relatedPosts []models.Post
 	if post.Status == "published" {
 		previousPost, nextPost, err = c.posts.AdjacentPublished(r.Context(), post)
 		if err != nil {
 			log.Printf("load adjacent posts: %v", err)
+		}
+		relatedPosts, err = c.posts.RelatedPublished(r.Context(), post, 3)
+		if err != nil {
+			log.Printf("load related posts: %v", err)
 		}
 	}
 
@@ -189,6 +195,7 @@ func (c *Controller) Post(r *ghttp.Request) {
 		Post:          post,
 		PreviousPost:  previousPost,
 		NextPost:      nextPost,
+		RelatedPosts:  relatedPosts,
 		Comments:      comments,
 		CommentOK:     r.GetQuery("comment").String() == "ok",
 		CommentReview: r.GetQuery("comment").String() == "review",
