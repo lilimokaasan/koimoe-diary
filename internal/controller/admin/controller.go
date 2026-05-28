@@ -1354,6 +1354,7 @@ func (c *Controller) SavePost(r *ghttp.Request) {
 		ContentHTML:  r.GetForm("content_html").String(),
 		CoverImage:   r.GetForm("cover_image").String(),
 		Status:       r.GetForm("status").String(),
+		IsPinned:     r.GetForm("is_pinned").String() == "1",
 		CategoryName: r.GetForm("category").String(),
 		Tags:         splitTags(r.GetForm("tags").String()),
 	}
@@ -1870,6 +1871,7 @@ func postFromInput(input store.PostInput) models.Post {
 		Excerpt:     input.Excerpt,
 		CoverImage:  input.CoverImage,
 		Status:      input.Status,
+		IsPinned:    input.IsPinned,
 		Category:    models.Category{Name: input.CategoryName},
 		Tags:        tags,
 		ContentHTML: template.HTML(input.ContentHTML),

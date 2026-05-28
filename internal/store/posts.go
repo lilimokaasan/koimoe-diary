@@ -30,6 +30,7 @@ type PostInput struct {
 	ContentHTML  string
 	CoverImage   string
 	Status       string
+	IsPinned     bool
 	CategoryName string
 	Tags         []string
 	PublishedAt  time.Time
@@ -88,6 +89,7 @@ CREATE TABLE IF NOT EXISTS posts (
 	content_html MEDIUMTEXT NOT NULL,
 	cover_image VARCHAR(500) NOT NULL,
 	status VARCHAR(20) NOT NULL DEFAULT 'published',
+	is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
 	views BIGINT NOT NULL DEFAULT 0,
 	likes BIGINT NOT NULL DEFAULT 0,
 	published_at DATETIME NOT NULL,
@@ -289,7 +291,7 @@ func (s *PostStore) ListAllByStatus(ctx context.Context, status string, limit in
 	}
 	args = append(args, limit)
 	rows, err := s.db.QueryContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -339,7 +341,7 @@ LIMIT ?`, limit)
 func (s *PostStore) ListPublishedPaged(ctx context.Context, page int, pageSize int) ([]models.Post, error) {
 	page, pageSize = normalizePage(page, pageSize)
 	rows, err := s.db.QueryContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -347,7 +349,7 @@ FROM posts p
 LEFT JOIN categories c ON c.id = p.category_id
 WHERE p.status = 'published'
   AND p.published_at <= CURRENT_TIMESTAMP
-ORDER BY p.published_at DESC
+ORDER BY p.is_pinned DESC, p.published_at DESC
 LIMIT ? OFFSET ?`, pageSize, (page-1)*pageSize)
 	if err != nil {
 		return nil, err
@@ -372,7 +374,7 @@ func (s *PostStore) SearchPaged(ctx context.Context, query string, page int, pag
 	page, pageSize = normalizePage(page, pageSize)
 	like := likePattern(query)
 	rows, err := s.db.QueryContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -390,7 +392,7 @@ WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND (
 		WHERE pt.post_id = p.id AND t.name LIKE ? ESCAPE '\\'
 	)
 )
-ORDER BY p.published_at DESC
+ORDER BY p.is_pinned DESC, p.published_at DESC
 LIMIT ? OFFSET ?`, like, like, like, like, like, pageSize, (page-1)*pageSize)
 	if err != nil {
 		return nil, err
@@ -433,14 +435,14 @@ func (s *PostStore) ByCategory(ctx context.Context, slug string, page int, pageS
 		return nil, models.Category{}, err
 	}
 	rows, err := s.db.QueryContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        c.id, c.slug, c.name, c.description
 FROM posts p
 JOIN categories c ON c.id = p.category_id
 WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND c.slug = ?
-ORDER BY p.published_at DESC
+ORDER BY p.is_pinned DESC, p.published_at DESC
 LIMIT ? OFFSET ?`, slug, pageSize, (page-1)*pageSize)
 	if err != nil {
 		return nil, models.Category{}, err
@@ -460,7 +462,7 @@ func (s *PostStore) ByTag(ctx context.Context, slug string, page int, pageSize i
 		return nil, models.Tag{}, err
 	}
 	rows, err := s.db.QueryContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -469,7 +471,7 @@ JOIN post_tags pt ON pt.post_id = p.id
 JOIN tags t ON t.id = pt.tag_id
 LEFT JOIN categories c ON c.id = p.category_id
 WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND t.slug = ?
-ORDER BY p.published_at DESC
+ORDER BY p.is_pinned DESC, p.published_at DESC
 LIMIT ? OFFSET ?`, slug, pageSize, (page-1)*pageSize)
 	if err != nil {
 		return nil, models.Tag{}, err
@@ -558,7 +560,7 @@ WHERE p.status = 'published' AND p.published_at <= CURRENT_TIMESTAMP AND t.slug 
 
 func (s *PostStore) ArchiveGroups(ctx context.Context) ([]models.ArchiveGroup, error) {
 	rows, err := s.db.QueryContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -610,7 +612,7 @@ func (s *PostStore) bySlug(ctx context.Context, slug string, includePrivate bool
 		statusClause = "AND p.status IN ('published', 'private')"
 	}
 	err := s.db.QueryRowContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -619,6 +621,7 @@ LEFT JOIN categories c ON c.id = p.category_id
 WHERE p.slug = ? `+statusClause+`
 LIMIT 1`, slug).Scan(
 		&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage, &post.Status,
+		&post.IsPinned,
 		&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
@@ -637,7 +640,7 @@ func (s *PostStore) ByID(ctx context.Context, id int64) (models.Post, error) {
 	var post models.Post
 	var content string
 	err := s.db.QueryRowContext(ctx, `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.status, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -646,6 +649,7 @@ LEFT JOIN categories c ON c.id = p.category_id
 WHERE p.id = ?
 LIMIT 1`, id).Scan(
 		&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage, &post.Status,
+		&post.IsPinned,
 		&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 		&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 	)
@@ -1365,9 +1369,9 @@ func (s *PostStore) SavePost(ctx context.Context, input PostInput) (int64, error
 	postID := input.ID
 	if input.ID == 0 {
 		result, execErr := tx.ExecContext(ctx, `
-INSERT INTO posts (slug, title, excerpt, content_html, cover_image, category_id, status, published_at)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, input.PublishedAt,
+INSERT INTO posts (slug, title, excerpt, content_html, cover_image, category_id, status, is_pinned, published_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, input.IsPinned, input.PublishedAt,
 		)
 		if execErr != nil {
 			err = execErr
@@ -1380,9 +1384,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 	} else {
 		_, err = tx.ExecContext(ctx, `
 UPDATE posts
-SET slug = ?, title = ?, excerpt = ?, content_html = ?, cover_image = ?, category_id = ?, status = ?, published_at = ?
+SET slug = ?, title = ?, excerpt = ?, content_html = ?, cover_image = ?, category_id = ?, status = ?, is_pinned = ?, published_at = ?
 WHERE id = ?`,
-			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, input.PublishedAt, input.ID,
+			input.Slug, input.Title, input.Excerpt, input.ContentHTML, input.CoverImage, categoryID, input.Status, input.IsPinned, input.PublishedAt, input.ID,
 		)
 		if err != nil {
 			return 0, err
@@ -1457,6 +1461,7 @@ func scanAdminPosts(rows *sql.Rows) ([]models.Post, error) {
 		var content string
 		if err := rows.Scan(
 			&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage, &post.Status,
+			&post.IsPinned,
 			&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 			&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 		); err != nil {
@@ -1476,6 +1481,7 @@ func scanPosts(rows *sql.Rows) ([]models.Post, error) {
 		var content string
 		if err := rows.Scan(
 			&post.ID, &post.Slug, &post.Title, &post.Excerpt, &content, &post.CoverImage,
+			&post.IsPinned,
 			&post.CommentCount, &post.Views, &post.Likes, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt,
 			&post.Category.ID, &post.Category.Slug, &post.Category.Name, &post.Category.Description,
 		); err != nil {
@@ -1492,7 +1498,7 @@ func (s *PostStore) adjacentPublished(ctx context.Context, post models.Post, com
 	var adjacent models.Post
 	var content string
 	query := `
-SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image,
+SELECT p.id, p.slug, p.title, p.excerpt, p.content_html, p.cover_image, p.is_pinned,
        (SELECT COUNT(*) FROM comments cm WHERE cm.post_id = p.id AND cm.status = 'approved') AS comment_count,
        p.views, p.likes, p.published_at, p.created_at, p.updated_at,
        COALESCE(c.id, 0), COALESCE(c.slug, ''), COALESCE(c.name, ''), COALESCE(c.description, '')
@@ -1503,6 +1509,7 @@ ORDER BY p.published_at ` + direction + `
 LIMIT 1`
 	err := s.db.QueryRowContext(ctx, query, post.PublishedAt).Scan(
 		&adjacent.ID, &adjacent.Slug, &adjacent.Title, &adjacent.Excerpt, &content, &adjacent.CoverImage,
+		&adjacent.IsPinned,
 		&adjacent.CommentCount, &adjacent.Views, &adjacent.Likes, &adjacent.PublishedAt, &adjacent.CreatedAt, &adjacent.UpdatedAt,
 		&adjacent.Category.ID, &adjacent.Category.Slug, &adjacent.Category.Name, &adjacent.Category.Description,
 	)
@@ -1552,7 +1559,10 @@ func (s *PostStore) ensurePostColumns() error {
 	if err := s.ensureColumn("posts", "category_id", `ALTER TABLE posts ADD COLUMN category_id BIGINT NULL AFTER cover_image`); err != nil {
 		return err
 	}
-	return s.ensureColumn("posts", "likes", `ALTER TABLE posts ADD COLUMN likes BIGINT NOT NULL DEFAULT 0 AFTER views`)
+	if err := s.ensureColumn("posts", "likes", `ALTER TABLE posts ADD COLUMN likes BIGINT NOT NULL DEFAULT 0 AFTER views`); err != nil {
+		return err
+	}
+	return s.ensureColumn("posts", "is_pinned", `ALTER TABLE posts ADD COLUMN is_pinned BOOLEAN NOT NULL DEFAULT FALSE AFTER status`)
 }
 
 func (s *PostStore) ensureCategoryColumns() error {

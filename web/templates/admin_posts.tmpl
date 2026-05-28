@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-post-filters">
+	<link rel="stylesheet" href="/static/admin.css?v=20260528-pinned-posts">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -71,7 +71,11 @@
 				<tbody>
 					{{range .Posts}}
 					<tr>
-						<td><a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a><span>{{.Slug}}</span></td>
+						<td>
+							<a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a>
+							{{if .IsPinned}}<span class="admin-table-badge">Pinned</span>{{end}}
+							<span>{{.Slug}}</span>
+						</td>
 						<td>
 							{{if and (eq .Status "published") (isFuture .PublishedAt)}}
 							<span class="status scheduled">scheduled</span>

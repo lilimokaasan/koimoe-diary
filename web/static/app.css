@@ -647,6 +647,21 @@ textarea:disabled,
 	white-space: nowrap;
 }
 
+.post-pin-badge {
+	align-items: center;
+	background: rgba(251, 152, 192, 0.12);
+	border: 1px solid rgba(251, 152, 192, 0.22);
+	border-radius: 999px;
+	color: var(--sakura-rose);
+	display: inline-flex;
+	font-size: 12px;
+	font-weight: 700;
+	gap: 5px;
+	margin: 0 0 10px 90px;
+	padding: 5px 10px;
+	text-transform: uppercase;
+}
+
 .entry-content {
 	font-size: 17px;
 	line-height: 1.95;
@@ -3673,6 +3688,7 @@ body.search-open {
 	.post-list p,
 	.post-list .entry-footer,
 	.post-list .post-taxonomy,
+	.post-list .post-pin-badge,
 	.post-list .p-time {
 		margin-left: 0;
 	}
@@ -3704,6 +3720,12 @@ body.search-open {
 		position: static;
 		right: auto;
 		top: auto;
+	}
+
+	.post-list .post-pin-badge {
+		grid-column: 2;
+		margin-bottom: 4px;
+		padding: 4px 8px;
 	}
 
 	.post-list .post-taxonomy {

@@ -17,6 +17,7 @@ type Post struct {
 	Outline        []ContentHeading
 	CoverImage     string
 	Status         string
+	IsPinned       bool
 	Category       Category
 	Tags           []Tag
 	CommentCount   int64
