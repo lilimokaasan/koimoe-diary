@@ -1575,7 +1575,7 @@ func (c *Controller) formData(post models.Post, title string, errText string) Pa
 		Post:        post,
 		ContentHTML: string(post.ContentHTML),
 		PostTags:    strings.Join(tags, ", "),
-		MediaAssets: c.mustListMediaAssets(),
+		MediaAssets: c.mustListCoverPickerAssets(),
 		Now:         time.Now(),
 	}
 }
@@ -1588,7 +1588,7 @@ func (c *Controller) pageFormData(page models.Page, title string, errText string
 		Message:     "",
 		PageContent: page,
 		ContentHTML: string(page.ContentHTML),
-		MediaAssets: c.mustListMediaAssets(),
+		MediaAssets: c.mustListCoverPickerAssets(),
 		IsNew:       isNew,
 		Now:         time.Now(),
 	}
@@ -1673,6 +1673,75 @@ func (c *Controller) mustListMediaAssets() []models.MediaAsset {
 		return nil
 	}
 	return assets
+}
+
+func (c *Controller) mustListCoverPickerAssets() []models.MediaAsset {
+	assets, err := c.listCoverPickerAssets(context.Background(), 240)
+	if err != nil {
+		log.Printf("list cover picker assets: %v", err)
+		return c.mustListMediaAssets()
+	}
+	return assets
+}
+
+func (c *Controller) listCoverPickerAssets(ctx context.Context, limit int) ([]models.MediaAsset, error) {
+	var merged []models.MediaAsset
+	seen := map[string]struct{}{}
+	add := func(asset models.MediaAsset) {
+		url := strings.TrimSpace(asset.URL)
+		if url == "" {
+			return
+		}
+		if _, ok := seen[url]; ok {
+			return
+		}
+		asset.URL = url
+		if asset.Filename == "" {
+			asset.Filename = filepath.Base(strings.TrimPrefix(url, "/"))
+		}
+		if asset.OriginalName == "" {
+			asset.OriginalName = asset.Filename
+		}
+		if asset.MimeType == "" && strings.HasPrefix(url, "/static/") {
+			asset.MimeType = mediaTypeForPath(filepath.FromSlash(url))
+		}
+		seen[url] = struct{}{}
+		merged = append(merged, asset)
+	}
+
+	uploaded, err := c.listMediaAssets(ctx, "", 120)
+	if err != nil {
+		return nil, err
+	}
+	for _, asset := range uploaded {
+		add(asset)
+	}
+
+	usedCovers, err := c.posts.DistinctCoverImages(ctx, 120)
+	if err != nil {
+		return nil, err
+	}
+	for _, url := range usedCovers {
+		add(c.mediaAssetFromURL(url, "Used Cover"))
+	}
+
+	for _, dir := range []string{
+		"theme/content-image",
+		"curated-sakura-images/originals",
+	} {
+		assets, err := c.scanStaticImageDirectory(dir)
+		if err != nil {
+			return nil, err
+		}
+		for _, asset := range assets {
+			add(asset)
+		}
+	}
+
+	if len(merged) > limit {
+		merged = merged[:limit]
+	}
+	return merged, nil
 }
 
 func (c *Controller) listMediaAssets(ctx context.Context, query string, limit int) ([]models.MediaAsset, error) {
@@ -1780,6 +1849,91 @@ func (c *Controller) scanLocalMediaAssets() ([]models.MediaAsset, error) {
 	return assets, nil
 }
 
+func (c *Controller) scanStaticImageDirectory(relativeDir string) ([]models.MediaAsset, error) {
+	root := filepath.Join(c.cfg.StaticDir, filepath.FromSlash(relativeDir))
+	if _, err := os.Stat(root); errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	var assets []models.MediaAsset
+	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if entry.IsDir() || !isImageFile(entry.Name()) {
+			return nil
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(c.cfg.StaticDir, path)
+		if err != nil {
+			return err
+		}
+		url := "/static/" + filepath.ToSlash(rel)
+		width, height := imageDimensions(path)
+		assets = append(assets, models.MediaAsset{
+			Filename:     entry.Name(),
+			OriginalName: humanMediaName(entry.Name()),
+			Title:        humanMediaName(entry.Name()),
+			AltText:      humanMediaName(entry.Name()),
+			MimeType:     mediaTypeForPath(path),
+			SizeBytes:    info.Size(),
+			Width:        width,
+			Height:       height,
+			URL:          url,
+			Storage:      "bundled",
+			CreatedAt:    info.ModTime(),
+			UpdatedAt:    info.ModTime(),
+		})
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	sort.SliceStable(assets, func(i, j int) bool {
+		if assets[i].URL == assets[j].URL {
+			return false
+		}
+		return assets[i].URL < assets[j].URL
+	})
+	return assets, nil
+}
+
+func (c *Controller) mediaAssetFromURL(url string, titlePrefix string) models.MediaAsset {
+	url = strings.TrimSpace(url)
+	name := filepath.Base(strings.TrimPrefix(url, "/"))
+	title := humanMediaName(name)
+	if titlePrefix != "" && title != "" {
+		title = titlePrefix + ": " + title
+	}
+	asset := models.MediaAsset{
+		Filename:     name,
+		OriginalName: name,
+		Title:        title,
+		AltText:      title,
+		URL:          url,
+		Storage:      "cover",
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+	}
+	if strings.HasPrefix(url, "/static/") {
+		rel := strings.TrimPrefix(url, "/static/")
+		path := filepath.Join(c.cfg.StaticDir, filepath.FromSlash(rel))
+		if info, err := os.Stat(path); err == nil {
+			asset.MimeType = mediaTypeForPath(path)
+			asset.SizeBytes = info.Size()
+			asset.Width, asset.Height = imageDimensions(path)
+			asset.CreatedAt = info.ModTime()
+			asset.UpdatedAt = info.ModTime()
+		}
+	}
+	return asset
+}
+
 func (c *Controller) indexLocalMediaURL(ctx context.Context, url string, originalName string) error {
 	if c.media == nil || !strings.HasPrefix(url, "/static/") {
 		return nil
@@ -1857,6 +2011,17 @@ func isImageFile(name string) bool {
 	default:
 		return false
 	}
+}
+
+func humanMediaName(filename string) string {
+	name := strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename))
+	name = strings.ReplaceAll(name, "_", " ")
+	name = strings.ReplaceAll(name, "-", " ")
+	name = strings.Join(strings.Fields(name), " ")
+	if name == "" {
+		return filename
+	}
+	return name
 }
 
 func postFromInput(input store.PostInput) models.Post {
