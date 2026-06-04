@@ -919,13 +919,8 @@ func (c *Controller) coverImagePool() []string {
 		site.HeroImage,
 		site.Avatar,
 		"/static/theme/screenshot.jpg",
-		"/static/theme/content-image/d-1.jpg",
-		"/static/theme/content-image/d-2.jpg",
-		"/static/theme/content-image/d-3.jpg",
-		"/static/theme/content-image/d-4.jpg",
 	}
 	images = append(images, c.curatedImages("originals")...)
-	images = append(images, c.curatedImages("square")...)
 	return compactImageURLs(images)
 }
 
@@ -935,7 +930,7 @@ func (c *Controller) featureImagePool(ctx context.Context) []string {
 		log.Printf("load feature images: %v", err)
 	}
 	images = append(images, c.cfg.GetSite().DefaultPostCover)
-	images = append(images, c.curatedImages("square")...)
+	images = append(images, c.curatedImages("originals")...)
 	if len(images) == 0 {
 		images = c.coverImagePool()
 	}
@@ -984,9 +979,9 @@ func (c *Controller) randomFeatureImages(ctx context.Context, count int) []strin
 	}
 	if len(images) == 0 {
 		images = []string{
-			"/static/theme/content-image/d-1.jpg",
-			"/static/theme/content-image/d-2.jpg",
-			"/static/theme/content-image/d-3.jpg",
+			"/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg",
+			"/static/curated-sakura-images/originals/sakura-branch-pastel.jpg",
+			"/static/curated-sakura-images/originals/white-castle-sakura.jpg",
 		}
 	}
 	result := make([]string, 0, count)

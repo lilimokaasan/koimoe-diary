@@ -1288,10 +1288,10 @@ func (c *Controller) NewPost(r *ghttp.Request) {
 	c.render(r, "admin_post_form.tmpl", PageData{
 		Site:        c.cfg.GetSite(),
 		Title:       "New Post - " + c.cfg.GetSite().Name,
-		MediaAssets: c.mustListMediaAssets(),
+		MediaAssets: c.mustListCoverPickerAssets(),
 		Post: models.Post{
 			Status:      "published",
-			CoverImage:  "/static/theme/content-image/d-1.jpg",
+			CoverImage:  c.cfg.GetSite().DefaultPostCover,
 			Category:    models.Category{Name: "Blog"},
 			PublishedAt: time.Now(),
 		},
@@ -1692,6 +1692,9 @@ func (c *Controller) listCoverPickerAssets(ctx context.Context, limit int) ([]mo
 		if url == "" {
 			return
 		}
+		if isLowResolutionCoverURL(url) {
+			return
+		}
 		if _, ok := seen[url]; ok {
 			return
 		}
@@ -1726,7 +1729,6 @@ func (c *Controller) listCoverPickerAssets(ctx context.Context, limit int) ([]mo
 	}
 
 	for _, dir := range []string{
-		"theme/content-image",
 		"curated-sakura-images/originals",
 	} {
 		assets, err := c.scanStaticImageDirectory(dir)
@@ -2011,6 +2013,12 @@ func isImageFile(name string) bool {
 	default:
 		return false
 	}
+}
+
+func isLowResolutionCoverURL(url string) bool {
+	url = strings.TrimSpace(url)
+	return strings.HasPrefix(url, "/static/theme/content-image/") ||
+		strings.HasPrefix(url, "/static/curated-sakura-images/square/")
 }
 
 func humanMediaName(filename string) string {

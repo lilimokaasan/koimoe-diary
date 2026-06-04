@@ -1033,7 +1033,7 @@ button.primary,
 	aspect-ratio: 16 / 10;
 	background:
 		linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 238, 247, 0.72)),
-		url("/static/theme/content-image/d-1.jpg") center / cover no-repeat;
+		url("/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg") center / cover no-repeat;
 	border: 1px solid rgba(251, 152, 192, 0.22);
 	border-radius: 8px;
 	color: rgba(121, 101, 116, 0.78);

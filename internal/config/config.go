@@ -137,8 +137,8 @@ func FromEnv() Config {
 			ThemeColor:         env("THEME_COLOR", "#fb98c0"),
 			HeroImage:          env("HERO_IMAGE", "/static/theme/screenshot.jpg"),
 			HeroOverlayOpacity: env("HERO_OVERLAY_OPACITY", "1"),
-			Avatar:             env("SITE_AVATAR", "/static/theme/content-image/d-1.jpg"),
-			DefaultPostCover:   env("DEFAULT_POST_COVER", "/static/theme/content-image/d-1.jpg"),
+			Avatar:             env("SITE_AVATAR", "/static/curated-sakura-images/originals/sakura-branch-pastel.jpg"),
+			DefaultPostCover:   env("DEFAULT_POST_COVER", "/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"),
 			PostLicenseText:    env("POST_LICENSE_TEXT", "Attribution-NonCommercial-ShareAlike 4.0 International"),
 			PostLicenseURL:     env("POST_LICENSE_URL", "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"),
 			PostShare:          env("POST_SHARE", "1"),
@@ -159,9 +159,9 @@ func FromEnv() Config {
 				{Label: "Admin Login", URL: "/admin/login"},
 			},
 			FocusCards: []FocusCard{
-				{Title: "Archive", URL: "/archives", Image: "/static/theme/content-image/d-1.jpg"},
-				{Title: "Search", URL: "/search", Image: "/static/theme/content-image/d-2.jpg"},
-				{Title: "KoiMoe Diary", URL: "/", Image: "/static/theme/content-image/d-3.jpg"},
+				{Title: "Archive", URL: "/archives", Image: "/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"},
+				{Title: "Search", URL: "/search", Image: "/static/curated-sakura-images/originals/sakura-branch-pastel.jpg"},
+				{Title: "KoiMoe Diary", URL: "/", Image: "/static/curated-sakura-images/originals/white-castle-sakura.jpg"},
 			},
 			SocialLinks: []SocialLink{
 				{Label: "Feed", URL: "/feed", Icon: "fa-rss"},

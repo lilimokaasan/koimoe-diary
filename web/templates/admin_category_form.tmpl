@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-comment-counts">
+	<link rel="stylesheet" href="/static/admin.css?v=20260604-hires-covers">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -66,7 +66,7 @@
 			<label>Name<input type="text" name="name" value="{{.Category.Name}}" required></label>
 			<label>Slug<input type="text" name="slug" value="{{.Category.Slug}}" placeholder="auto-generated from name"></label>
 			<label>Description<textarea name="description" rows="5">{{.Category.Description}}</textarea></label>
-			<label>Cover Image<input type="text" name="cover_image" value="{{.Category.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+			<label>Cover Image<input type="text" name="cover_image" value="{{.Category.CoverImage}}" placeholder="/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"></label>
 			{{if .Category.CoverImage}}
 			<div class="cover-box taxonomy-cover-preview">
 				<img src="{{.Category.CoverImage}}" alt="{{.Category.Name}}">

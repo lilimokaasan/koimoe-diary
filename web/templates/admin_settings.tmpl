@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260523-comment-counts">
+	<link rel="stylesheet" href="/static/admin.css?v=20260604-hires-covers">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -78,9 +78,9 @@
 					<label>Theme Color<input type="text" name="theme_color" value="{{.Settings.ThemeColor}}" placeholder="#fe9600"></label>
 					<label>Hero Image<input type="text" name="hero_image" value="{{.Settings.HeroImage}}" placeholder="/static/theme/screenshot.jpg"></label>
 					<label>Hero Overlay Opacity<input type="number" name="hero_overlay_opacity" value="{{.Settings.HeroOverlayOpacity}}" min="0" max="1" step="0.05"></label>
-					<label>Profile Avatar URL<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<label>Profile Avatar URL<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"></label>
 					<label>Upload Profile Avatar<input type="file" name="avatar_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
-					<label>Default Post Cover<input type="text" name="default_post_cover" value="{{.Settings.DefaultPostCover}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+					<label>Default Post Cover<input type="text" name="default_post_cover" value="{{.Settings.DefaultPostCover}}" placeholder="/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"></label>
 					<label>Article License Text<input type="text" name="post_license_text" value="{{.Settings.PostLicenseText}}" placeholder="Attribution-NonCommercial-ShareAlike 4.0 International"></label>
 					<label>Article License URL<input type="url" name="post_license_url" value="{{.Settings.PostLicenseURL}}" placeholder="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"></label>
 					<label class="toggle-field">
@@ -102,7 +102,7 @@
 						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
 						<span>Enable subtle sakura petals</span>
 					</label>
-					<label>Focus Cards<textarea class="navigation-input" name="focus_cards" rows="5" placeholder="Archive | /archives | /static/theme/content-image/d-1.jpg">{{.FocusCards}}</textarea></label>
+					<label>Focus Cards<textarea class="navigation-input" name="focus_cards" rows="5" placeholder="Archive | /archives | /static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg">{{.FocusCards}}</textarea></label>
 					<div class="settings-preview">
 						<div class="preview-hero" style="background-image:url('{{.Settings.HeroImage}}')"></div>
 						<img src="{{.Settings.Avatar}}" alt="{{.Settings.Author}}">

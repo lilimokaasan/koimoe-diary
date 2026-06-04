@@ -1641,7 +1641,7 @@ textarea:disabled,
 	backdrop-filter: blur(14px);
 	background:
 		linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 248, 252, 0.72)),
-		url("/static/theme/content-image/d-1.jpg") center / cover no-repeat;
+		url("/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg") center / cover no-repeat;
 	border: 1px solid rgba(255, 255, 255, 0.84);
 	border-radius: 8px;
 	box-shadow: 0 18px 44px rgba(117, 79, 99, 0.12);
@@ -1968,7 +1968,7 @@ textarea:disabled,
 	backdrop-filter: blur(14px);
 	background:
 		linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 252, 0.72)),
-		url("/static/theme/content-image/d-2.jpg") center / cover no-repeat;
+		url("/static/curated-sakura-images/originals/white-castle-sakura.jpg") center / cover no-repeat;
 	border: 1px solid rgba(255, 255, 255, 0.84);
 	border-radius: 8px;
 	box-shadow: 0 18px 44px rgba(117, 79, 99, 0.12);

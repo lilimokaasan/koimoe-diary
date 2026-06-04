@@ -204,7 +204,7 @@ func (s *PostStore) SeedDemo() error {
 			Slug:       "hello-sakurairo-go",
 			Title:      "Hello, Sakurairo Go",
 			Excerpt:    "The first demo post for the Go rewrite of the WordPress theme.",
-			CoverImage: "/static/theme/content-image/d-1.jpg",
+			CoverImage: "/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg",
 			Category:   models.Category{ID: blogID},
 			ContentHTML: template.HTML(`<p>This first version keeps the core Sakurairo feeling: hero image, notice, feature cards, post list, archive, and search.</p>
 <p>Next we can add comments, an admin editor, tags, categories, media management, and theme settings.</p>`),
@@ -214,7 +214,7 @@ func (s *PostStore) SeedDemo() error {
 			Slug:       "why-go",
 			Title:      "Why rewrite it in Go",
 			Excerpt:    "Go has a simple deployment model and works well as a single binary service.",
-			CoverImage: "/static/theme/content-image/d-2.jpg",
+			CoverImage: "/static/curated-sakura-images/originals/white-castle-sakura.jpg",
 			Category:   models.Category{ID: devID},
 			ContentHTML: template.HTML(`<p>Compared with WordPress plus PHP-FPM, the Go app can run directly as a long-lived process managed by systemd.</p>
 <p>Nginx handles HTTPS, static files, and reverse proxying. MySQL stores the content.</p>`),
@@ -1760,7 +1760,7 @@ func normalizePostInput(input PostInput) PostInput {
 	input.ContentHTML = strings.TrimSpace(input.ContentHTML)
 	input.CoverImage = strings.TrimSpace(input.CoverImage)
 	if input.CoverImage == "" {
-		input.CoverImage = "/static/theme/content-image/d-1.jpg"
+		input.CoverImage = "/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"
 	}
 	input.Status = strings.TrimSpace(input.Status)
 	if input.Status != "draft" && input.Status != "private" {
