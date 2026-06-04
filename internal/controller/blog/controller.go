@@ -777,6 +777,7 @@ func logRequestError(scope string, r *ghttp.Request, err error) {
 func (c *Controller) render(r *ghttp.Request, name string, data PageData) {
 	c.withMeta(r, &data)
 	c.withUserEntry(r, &data)
+	c.withPostDisplayOptions(&data)
 	c.withSidebar(r.Context(), &data)
 	c.renderer.HTML(r, name, data)
 }
@@ -784,8 +785,16 @@ func (c *Controller) render(r *ghttp.Request, name string, data PageData) {
 func (c *Controller) renderStatus(r *ghttp.Request, status int, name string, data PageData) {
 	c.withMeta(r, &data)
 	c.withUserEntry(r, &data)
+	c.withPostDisplayOptions(&data)
 	c.withSidebar(r.Context(), &data)
 	c.renderer.HTMLStatus(r, status, name, data)
+}
+
+func (c *Controller) withPostDisplayOptions(data *PageData) {
+	showTaxonomy := c.cfg.GetSite().PostListTaxonomy == "1"
+	for i := range data.Posts {
+		data.Posts[i].ShowTaxonomy = showTaxonomy
+	}
 }
 
 func (c *Controller) notifyNewComment(comment models.Comment, post models.Post, postURL string) {

@@ -20,6 +20,7 @@ type Post struct {
 	IsPinned       bool
 	Category       Category
 	Tags           []Tag
+	ShowTaxonomy   bool `json:"-"`
 	CommentCount   int64
 	Views          int64
 	Likes          int64

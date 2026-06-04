@@ -198,7 +198,7 @@
 			<span><i class="iconfont icon-time"></i>{{since .PublishedAt}}</span>
 			<span><i class="fa fa-hourglass-half" aria-hidden="true"></i>{{.ReadingMinutes}} min read</span>
 		</div>
-		{{if and (eq .Site.PostListTaxonomy "1") .Category.ID}}
+		{{if and .ShowTaxonomy .Category.ID}}
 		<div class="post-taxonomy">
 			<a href="/category/{{.Category.Slug}}"><i class="fa fa-folder-o" aria-hidden="true"></i> {{.Category.Name}}</a>
 			{{range .Tags}}<a href="/tag/{{.Slug}}"><i class="iconfont icon-tags"></i> {{.Name}}</a>{{end}}
