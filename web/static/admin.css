@@ -346,7 +346,7 @@ body.admin-is-leaving .admin-globalbar::after {
 	min-height: 38px;
 	padding: 10px 12px;
 	position: relative;
-	transition: color 0.18s ease, transform 0.18s ease;
+	transition: color 0.34s ease, transform 0.34s cubic-bezier(0.2, 0.8, 0.24, 1);
 	white-space: nowrap;
 	width: 100%;
 	z-index: 1;
@@ -403,7 +403,7 @@ body.admin-is-leaving .admin-globalbar::after {
 	position: absolute;
 	top: 0;
 	transform: translate3d(var(--nav-x, 0), var(--nav-y, 0), 0);
-	transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), width 0.32s cubic-bezier(0.22, 1, 0.36, 1), height 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.18s ease;
+	transition: transform 0.58s cubic-bezier(0.2, 0.8, 0.24, 1), width 0.58s cubic-bezier(0.2, 0.8, 0.24, 1), height 0.58s cubic-bezier(0.2, 0.8, 0.24, 1), opacity 0.3s ease;
 	z-index: 0;
 }
 
