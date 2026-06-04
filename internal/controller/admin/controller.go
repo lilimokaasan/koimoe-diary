@@ -213,6 +213,7 @@ func (c *Controller) SaveSettings(r *ghttp.Request) {
 		PostRewardText:     strings.TrimSpace(r.GetForm("post_reward_text").String()),
 		PostRewardAlipay:   strings.TrimSpace(r.GetForm("post_reward_alipay").String()),
 		PostRewardWechat:   strings.TrimSpace(r.GetForm("post_reward_wechat").String()),
+		PostListTaxonomy:   checkboxValue(r, "post_list_taxonomy"),
 		SakuraEffects:      strings.TrimSpace(r.GetForm("sakura_effects").String()),
 		FooterText:         strings.TrimSpace(r.GetForm("footer_text").String()),
 		FooterCredit:       strings.TrimSpace(r.GetForm("footer_credit").String()),
@@ -2247,6 +2248,9 @@ func normalizeSiteSettings(site config.Site, fallback config.Site) config.Site {
 	}
 	if site.PostRewardText == "" {
 		site.PostRewardText = fallback.PostRewardText
+	}
+	if site.PostListTaxonomy != "1" {
+		site.PostListTaxonomy = "0"
 	}
 	if site.SakuraEffects != "1" {
 		site.SakuraEffects = "0"

@@ -25,6 +25,7 @@ type Site struct {
 	PostRewardText     string
 	PostRewardAlipay   string
 	PostRewardWechat   string
+	PostListTaxonomy   string
 	SakuraEffects      string
 	FooterText         string
 	FooterCredit       string
@@ -147,6 +148,7 @@ func FromEnv() Config {
 			PostRewardText:     env("POST_REWARD_TEXT", "If this tiny fragment warmed your day, a small support is deeply appreciated."),
 			PostRewardAlipay:   env("POST_REWARD_ALIPAY", ""),
 			PostRewardWechat:   env("POST_REWARD_WECHAT", ""),
+			PostListTaxonomy:   env("POST_LIST_TAXONOMY", "0"),
 			SakuraEffects:      env("SAKURA_EFFECTS", "0"),
 			FooterText:         env("SITE_FOOTER_TEXT", "A soft diary for tiny heartbeats, cute things, and everyday fragments."),
 			FooterCredit:       env("SITE_FOOTER_CREDIT", "A KoiMoe diary shaped with Sakurairo."),

@@ -151,6 +151,10 @@
 									<input type="checkbox" name="post_copy_notice" value="1" {{if ne .Settings.PostCopyNotice "0"}}checked{{end}}>
 									<span>Append source when visitors copy article text</span>
 								</label>
+								<label class="toggle-field">
+									<input type="checkbox" name="post_list_taxonomy" value="1" {{if eq .Settings.PostListTaxonomy "1"}}checked{{end}}>
+									<span>Show category and tags on post cards</span>
+								</label>
 							</section>
 							<section>
 								<label class="toggle-field">

@@ -619,9 +619,19 @@ textarea:disabled,
 	border-radius: 8px;
 	box-shadow: 0 14px 38px rgba(117, 79, 99, 0.1);
 	box-sizing: border-box;
+	cursor: pointer;
 	min-height: 126px;
 	padding: 18px 18px 16px 156px;
 	position: relative;
+	transition: border-color 0.28s ease, box-shadow 0.28s ease, transform 0.28s ease;
+}
+
+.post-list .post-entry:hover,
+.post-list .post-entry:focus-visible {
+	border-color: rgba(251, 152, 192, 0.22);
+	box-shadow: 0 18px 46px rgba(117, 79, 99, 0.13);
+	outline: none;
+	transform: translateY(-1px);
 }
 
 .post-list .feature {

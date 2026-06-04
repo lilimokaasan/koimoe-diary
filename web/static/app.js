@@ -59,6 +59,36 @@
 		closeUserEntry();
 	}
 
+	function cardClickTarget(event) {
+		var target = event.target && event.target.closest ? event.target : event.target && event.target.parentElement;
+		return target && target.closest("a, button, input, select, textarea, label, summary, [role='button']");
+	}
+
+	document.querySelectorAll("[data-card-href]").forEach(function (card) {
+		card.addEventListener("click", function (event) {
+			if (cardClickTarget(event)) {
+				return;
+			}
+			var href = card.getAttribute("data-card-href");
+			if (href) {
+				window.location.href = href;
+			}
+		});
+		card.addEventListener("keydown", function (event) {
+			if (event.key !== "Enter" && event.key !== " ") {
+				return;
+			}
+			if (cardClickTarget(event)) {
+				return;
+			}
+			var href = card.getAttribute("data-card-href");
+			if (href) {
+				event.preventDefault();
+				window.location.href = href;
+			}
+		});
+	});
+
 	mobileNavToggle && mobileNavToggle.addEventListener("click", function (event) {
 		event.preventDefault();
 		event.stopPropagation();

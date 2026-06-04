@@ -86,6 +86,9 @@ func (s *SettingsStore) Site(ctx context.Context, fallback config.Site) (config.
 	if values["post_reward_wechat"] != "" {
 		site.PostRewardWechat = values["post_reward_wechat"]
 	}
+	if values["post_list_taxonomy"] != "" {
+		site.PostListTaxonomy = values["post_list_taxonomy"]
+	}
 	if values["sakura_effects"] != "" {
 		site.SakuraEffects = values["sakura_effects"]
 	}
@@ -147,6 +150,7 @@ func (s *SettingsStore) SaveSite(ctx context.Context, site config.Site) error {
 		"post_reward_text":     site.PostRewardText,
 		"post_reward_alipay":   site.PostRewardAlipay,
 		"post_reward_wechat":   site.PostRewardWechat,
+		"post_list_taxonomy":   site.PostListTaxonomy,
 		"sakura_effects":       site.SakuraEffects,
 		"footer_text":          site.FooterText,
 		"footer_credit":        site.FooterCredit,
@@ -283,6 +287,7 @@ func (s *SettingsStore) ensureDefaults(defaults config.Site) error {
 		"post_reward_text":     defaults.PostRewardText,
 		"post_reward_alipay":   defaults.PostRewardAlipay,
 		"post_reward_wechat":   defaults.PostRewardWechat,
+		"post_list_taxonomy":   defaults.PostListTaxonomy,
 		"sakura_effects":       defaults.SakuraEffects,
 		"footer_text":          defaults.FooterText,
 		"footer_credit":        defaults.FooterCredit,

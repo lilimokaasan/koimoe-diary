@@ -31,7 +31,7 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC|Merriweather+Sans|Source+Code+Pro|Ubuntu:400,700" media="all">
 	<link rel="stylesheet" href="/static/theme/cdn/css/lib.css">
 	<link rel="stylesheet" href="/static/theme/style.css?v=20260519-stable-link-cursor">
-	<link rel="stylesheet" href="/static/app.css?v=20260604-post-meta-offset">
+	<link rel="stylesheet" href="/static/app.css?v=20260604-clickable-cards">
 	<script>
 		window.mashiro_global = {};
 		window.mashiro_option = {
@@ -178,14 +178,14 @@
 	}
 </script>
 <script src="/static/theme/js/sakura-app.js"></script>
-<script src="/static/app.js?v=20260523-mobile-actions-2"></script>
+<script src="/static/app.js?v=20260604-clickable-cards"></script>
 </body>
 </html>
 {{end}}
 
 {{define "post_card"}}
 <article class="post post-list" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="post-entry">
+	<div class="post-entry" data-card-href="/post/{{.Slug}}" role="link" tabindex="0" aria-label="Read {{.Title}}">
 		<div class="feature">
 			<a href="/post/{{.Slug}}">
 				<div class="overlay"><i class="iconfont icon-text"></i></div>
@@ -198,7 +198,7 @@
 			<span><i class="iconfont icon-time"></i>{{since .PublishedAt}}</span>
 			<span><i class="fa fa-hourglass-half" aria-hidden="true"></i>{{.ReadingMinutes}} min read</span>
 		</div>
-		{{if .Category.ID}}
+		{{if and (eq .Site.PostListTaxonomy "1") .Category.ID}}
 		<div class="post-taxonomy">
 			<a href="/category/{{.Category.Slug}}"><i class="fa fa-folder-o" aria-hidden="true"></i> {{.Category.Name}}</a>
 			{{range .Tags}}<a href="/tag/{{.Slug}}"><i class="iconfont icon-tags"></i> {{.Name}}</a>{{end}}
