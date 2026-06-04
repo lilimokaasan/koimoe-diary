@@ -60,7 +60,7 @@
 			if (link === active) link.setAttribute("aria-current", "page");
 			else link.removeAttribute("aria-current");
 		});
-		if (nav.classList.contains("is-ready")) {
+		if (indicator) {
 			moveTo(active || links[0], instant);
 		}
 	}
