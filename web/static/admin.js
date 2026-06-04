@@ -104,6 +104,7 @@
 
 	function loadAdminPage(url, options) {
 		options = options || {};
+		document.body.classList.add("admin-is-leaving");
 		document.body.classList.add("admin-is-loading");
 		return fetch(url, {
 			credentials: "same-origin",
@@ -112,22 +113,30 @@
 			if (!response.ok) throw new Error("HTTP " + response.status);
 			return response.text();
 		}).then(function (html) {
-			var doc = new DOMParser().parseFromString(html, "text/html");
-			if (!replaceAdminContent(doc)) {
-				window.location.href = url;
-				return;
-			}
-			if (!options.skipHistory) {
-				window.history.pushState({ adminShell: true }, "", url);
-			}
-			var shell = document.querySelector(".admin-shell");
-			if (shell) {
-				shell.scrollTop = 0;
-			}
-			syncNav(true);
+			return new Promise(function (resolve) {
+				window.setTimeout(function () {
+					var doc = new DOMParser().parseFromString(html, "text/html");
+					if (!replaceAdminContent(doc)) {
+						window.location.href = url;
+						resolve();
+						return;
+					}
+					document.body.classList.remove("admin-is-leaving");
+					if (!options.skipHistory) {
+						window.history.pushState({ adminShell: true }, "", url);
+					}
+					var shell = document.querySelector(".admin-shell");
+					if (shell) {
+						shell.scrollTop = 0;
+					}
+					syncNav(true);
+					resolve();
+				}, 140);
+			});
 		}).catch(function () {
 			window.location.href = url;
 		}).finally(function () {
+			document.body.classList.remove("admin-is-leaving");
 			document.body.classList.remove("admin-is-loading");
 		});
 	}

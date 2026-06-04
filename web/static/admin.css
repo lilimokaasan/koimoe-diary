@@ -68,10 +68,63 @@ body.admin-page::after {
 	z-index: 0;
 }
 
+body.admin-page .admin-hero,
+body.admin-page .admin-shell {
+	animation: admin-page-enter 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+	transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
+}
+
+body.admin-page .admin-shell {
+	animation-delay: 0.04s;
+}
+
 body.admin-is-loading .admin-hero,
-body.admin-is-loading .admin-shell {
-	opacity: 0.58;
-	transition: opacity 0.16s ease;
+body.admin-is-loading .admin-shell,
+body.admin-is-leaving .admin-hero,
+body.admin-is-leaving .admin-shell {
+	filter: saturate(0.96);
+	opacity: 0.38;
+	transform: translateY(8px);
+}
+
+body.admin-is-loading::before {
+	transform: scale(1.018);
+	transition: transform 0.24s ease;
+}
+
+body.admin-page .admin-globalbar::after {
+	background: linear-gradient(90deg, rgba(251, 152, 192, 0), rgba(251, 152, 192, 0.82), rgba(255, 177, 214, 0));
+	border-radius: 999px;
+	box-shadow: 0 0 16px rgba(251, 152, 192, 0.3);
+	content: "";
+	height: 2px;
+	left: 16px;
+	opacity: 0;
+	position: absolute;
+	right: 16px;
+	top: 0;
+	transform: scaleX(0.18);
+	transform-origin: left center;
+	transition: opacity 0.18s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.admin-is-loading .admin-globalbar::after,
+body.admin-is-leaving .admin-globalbar::after {
+	opacity: 1;
+	transform: scaleX(1);
+}
+
+@keyframes admin-page-enter {
+	from {
+		filter: saturate(0.96);
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		filter: saturate(1);
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .auth-bg {
