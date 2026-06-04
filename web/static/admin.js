@@ -2,7 +2,7 @@
 	var nav = document.querySelector(".admin-topbar nav");
 	var indicator = null;
 	var links = [];
-	var pageLeaveDelay = 160;
+	var pageLeaveDelay = 420;
 
 	function normalizedPath(link) {
 		try {
@@ -120,6 +120,7 @@
 				document.body.classList.add("admin-is-leaving");
 				window.setTimeout(function () {
 					var doc = new DOMParser().parseFromString(html, "text/html");
+					document.body.classList.add("admin-is-entering");
 					if (!replaceAdminContent(doc)) {
 						window.location.href = url;
 						resolve();
@@ -134,6 +135,11 @@
 						shell.scrollTop = 0;
 					}
 					syncNav(true);
+					window.requestAnimationFrame(function () {
+						window.requestAnimationFrame(function () {
+							document.body.classList.remove("admin-is-entering");
+						});
+					});
 					resolve();
 				}, pageLeaveDelay);
 			});

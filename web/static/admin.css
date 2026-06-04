@@ -78,7 +78,7 @@ body.admin-page::after {
 body.admin-page .admin-hero,
 body.admin-page .admin-shell {
 	animation: admin-page-enter 0.62s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-	transition: opacity 0.46s ease, transform 0.46s cubic-bezier(0.2, 0.8, 0.24, 1), filter 0.46s ease;
+	transition: opacity 0.58s ease, transform 0.58s cubic-bezier(0.22, 1, 0.36, 1), filter 0.58s ease;
 }
 
 body.admin-page .admin-shell {
@@ -88,7 +88,16 @@ body.admin-page .admin-shell {
 body.admin-is-leaving .admin-hero,
 body.admin-is-leaving .admin-shell {
 	filter: blur(1.5px) saturate(0.96);
-	opacity: 0.34;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(8px);
+}
+
+body.admin-is-entering .admin-hero,
+body.admin-is-entering .admin-shell {
+	filter: blur(1.5px) saturate(0.96);
+	opacity: 0;
+	pointer-events: none;
 	transform: translateY(8px);
 }
 
