@@ -259,9 +259,9 @@ body.admin-is-leaving .admin-globalbar::after {
 	border: 4px solid rgba(255, 255, 255, 0.9);
 	border-radius: 50%;
 	box-shadow: 0 8px 22px rgba(124, 78, 102, 0.2);
-	height: 88px;
+	height: 108px;
 	object-fit: cover;
-	width: 88px;
+	width: 108px;
 }
 
 .auth-panel h1 {
