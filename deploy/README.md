@@ -18,6 +18,7 @@ The script:
 - stamps the built binary with the deployed commit and UTC build time for `/api/health`;
 - backs up `/opt/sakurairo-go/sakurairo` and `/opt/sakurairo-go/web`;
 - replaces the active binary and `web` directory;
+- removes old deployment backups after a successful replacement, keeping the newest 5 `sakurairo.bak.*` files and newest 5 `web.bak.*.tar.gz` archives by default;
 - restarts `sakurairo-go.service`;
 - verifies `/api/health` and the public blog response.
 
@@ -28,6 +29,13 @@ Current production defaults:
 - Bare repo: `/opt/git/sakurairo-go.git`
 - Server build checkout: `/opt/sakurairo-go-src`
 - Remote Go: `/usr/local/go/bin/go`
+- Deployment backup retention: `5` old binary backups and `5` old web archives in `/opt/sakurairo-go`
+
+Backup cleanup policy:
+
+- Treat `/opt/sakurairo-go/sakurairo.bak.*` and `/opt/sakurairo-go/web.bak.*.tar.gz` as short-lived rollback files, not long-term archives.
+- Keep only the most recent few deployment backups on the server. The deploy script enforces this automatically with `-BackupRetention 5`.
+- If a longer rollback window is needed for a risky deploy, pass a larger value, for example `-BackupRetention 10`, then return to the default afterward.
 
 Useful validation commands:
 

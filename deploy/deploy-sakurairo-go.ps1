@@ -12,6 +12,7 @@ param(
 	[string]$GoExe = "C:\Program Files\Go\bin\go.exe",
 	[string]$RemoteGoExe = "/usr/local/go/bin/go",
 	[string]$LockPath = (Join-Path $env:TEMP "sakurairo-go-deploy.lock"),
+	[int]$BackupRetention = 5,
 	[switch]$AllowDirty,
 	[switch]$SkipLock,
 	[switch]$SkipLocalTests,
@@ -74,6 +75,9 @@ if (-not (Test-Path -LiteralPath $SshKey)) {
 if (-not (Test-Path -LiteralPath $GoExe)) {
 	throw "Go executable does not exist: $GoExe"
 }
+if ($BackupRetention -lt 1) {
+	throw "BackupRetention must be at least 1."
+}
 
 Invoke-Step "Check git worktree" {
 	$status = git -C $RepoPath status --porcelain
@@ -133,6 +137,18 @@ install -o koimoe -g koimoe -m 755 /tmp/sakurairo-built '$AppDir/sakurairo'
 rm -rf '$AppDir/web'
 cp -a '$ServerCheckout/web' '$AppDir/web'
 chown -R koimoe:koimoe '$AppDir/web'
+cleanup_backups() {
+  local pattern="`$1"
+  local keep="`$2"
+  local backups=()
+  local i
+  mapfile -t backups < <(find . -maxdepth 1 -type f -name "`$pattern" -printf '%T@ %p\n' | sort -rn | cut -d' ' -f2-)
+  for ((i=keep; i<`${#backups[@]}; i++)); do
+    rm -f -- "`${backups[`$i]}"
+  done
+}
+cleanup_backups 'sakurairo.bak.*' '$BackupRetention'
+cleanup_backups 'web.bak.*.tar.gz' '$BackupRetention'
 systemctl restart '$ServiceName'
 sleep 1
 systemctl is-active '$ServiceName'
