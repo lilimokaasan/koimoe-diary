@@ -101,6 +101,11 @@
 			</table>
 		</section>
 	</main>
+	<script>
+		if (!window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
+		}
+	</script>
 	<script src="/static/admin.js?v=20260604-admin-slow-transitions"></script>
 </body>
 </html>
