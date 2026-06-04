@@ -72,6 +72,9 @@
 
 	function runInlineScripts(root) {
 		Array.prototype.slice.call(root.querySelectorAll("script:not([src])")).forEach(function (script) {
+			if ((script.textContent || "").indexOf("document.write") !== -1) {
+				return;
+			}
 			try {
 				(new Function(script.textContent || ""))();
 			} catch (err) {
