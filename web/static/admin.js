@@ -97,6 +97,7 @@
 		initDangerConfirmations();
 		initCommentBulkActions();
 		initMediaBulkActions();
+		bindContentShellLinks(document);
 		return true;
 	}
 
@@ -152,12 +153,19 @@
 	}
 
 	function bindShellClick(link) {
+		if (!link || link.dataset.adminShellBound === "1") return;
+		link.dataset.adminShellBound = "1";
 		link.addEventListener("click", function (event) {
 			if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
 			if (!isShellLink(link)) return;
 			event.preventDefault();
 			loadAdminPage(link.href);
 		});
+	}
+
+	function bindContentShellLinks(root) {
+		root = root || document;
+		Array.prototype.slice.call(root.querySelectorAll(".post-filter-tabs a[href^='/admin'], .comment-filter-tabs a[href^='/admin']")).forEach(bindShellClick);
 	}
 
 	function initNav() {
@@ -184,6 +192,7 @@
 		});
 
 		Array.prototype.slice.call(document.querySelectorAll(".admin-global-actions a[href^='/admin']")).forEach(bindShellClick);
+		bindContentShellLinks(document);
 
 		nav.addEventListener("mouseleave", clearIndicator);
 		window.addEventListener("resize", function () { syncNav(true); });
