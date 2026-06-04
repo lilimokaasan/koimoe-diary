@@ -98,6 +98,7 @@
 		initCommentBulkActions();
 		initMediaBulkActions();
 		bindContentShellLinks(document);
+		initSettingsAnchors();
 		return true;
 	}
 
@@ -166,6 +167,46 @@
 	function bindContentShellLinks(root) {
 		root = root || document;
 		Array.prototype.slice.call(root.querySelectorAll(".post-filter-tabs a[href^='/admin'], .comment-filter-tabs a[href^='/admin']")).forEach(bindShellClick);
+	}
+
+	function scrollAdminShellTo(target, instant) {
+		var shell = document.querySelector(".admin-shell");
+		if (!shell || !target) return;
+		var top = target.getBoundingClientRect().top - shell.getBoundingClientRect().top + shell.scrollTop - 12;
+		var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		shell.scrollTo({
+			top: Math.max(0, top),
+			behavior: instant || reduceMotion ? "auto" : "smooth"
+		});
+	}
+
+	function initSettingsAnchors() {
+		var links = Array.prototype.slice.call(document.querySelectorAll(".settings-index a[href^='#settings-']"));
+		if (!links.length) return;
+		links.forEach(function (link) {
+			if (link.dataset.settingsAnchorBound === "1") return;
+			link.dataset.settingsAnchorBound = "1";
+			link.addEventListener("click", function (event) {
+				var hash = link.getAttribute("href");
+				var target = hash ? document.querySelector(hash) : null;
+				if (!target) return;
+				event.preventDefault();
+				event.stopPropagation();
+				links.forEach(function (item) { item.classList.toggle("is-active", item === link); });
+				scrollAdminShellTo(target);
+				window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search + hash);
+			}, true);
+		});
+		if (window.location.hash && window.location.hash.indexOf("#settings-") === 0) {
+			var active = links.find(function (link) { return link.getAttribute("href") === window.location.hash; });
+			var target = document.querySelector(window.location.hash);
+			if (active) active.classList.add("is-active");
+			if (target) {
+				window.requestAnimationFrame(function () {
+					scrollAdminShellTo(target, true);
+				});
+			}
+		}
 	}
 
 	function initNav() {
@@ -358,4 +399,5 @@
 	initDangerConfirmations();
 	initCommentBulkActions();
 	initMediaBulkActions();
+	initSettingsAnchors();
 })();

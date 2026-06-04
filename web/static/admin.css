@@ -1915,7 +1915,8 @@ button.danger {
 }
 
 .settings-index a:hover,
-.settings-index a:focus {
+.settings-index a:focus,
+.settings-index a.is-active {
 	background: rgba(255, 255, 255, 0.62);
 	border-color: rgba(251, 152, 192, 0.24);
 	color: var(--sakura-deep);
