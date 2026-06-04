@@ -107,16 +107,6 @@ body.admin-is-loading::before {
 	transition: opacity 0.42s ease, transform 0.42s ease;
 }
 
-body.admin-is-loading::after {
-	background:
-		radial-gradient(circle at 78% 28%, rgba(255, 210, 230, 0.26), transparent 34%),
-		radial-gradient(circle at 18% 76%, rgba(251, 152, 192, 0.18), transparent 30%),
-		linear-gradient(145deg, rgba(255, 247, 251, 0.58), rgba(255, 238, 246, 0.34)),
-		rgba(255, 248, 251, 0.28);
-	box-shadow: 0 34px 90px rgba(126, 64, 98, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.56);
-	transition: background 0.42s ease, box-shadow 0.42s ease;
-}
-
 body.admin-page .admin-globalbar::after {
 	background: linear-gradient(90deg, rgba(251, 152, 192, 0), rgba(251, 152, 192, 0.82), rgba(255, 177, 214, 0));
 	border-radius: 999px;
