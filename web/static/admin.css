@@ -78,7 +78,7 @@ body.admin-page::after {
 body.admin-page .admin-hero,
 body.admin-page .admin-shell {
 	animation: admin-page-enter 0.62s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-	transition: opacity 0.58s ease, transform 0.58s cubic-bezier(0.22, 1, 0.36, 1), filter 0.58s ease;
+	transition: opacity 0.58s ease, transform 0.58s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.admin-page .admin-shell {
@@ -87,7 +87,6 @@ body.admin-page .admin-shell {
 
 body.admin-is-leaving .admin-hero,
 body.admin-is-leaving .admin-shell {
-	filter: blur(1.5px) saturate(0.96);
 	opacity: 0;
 	pointer-events: none;
 	transform: translateY(8px);
@@ -95,7 +94,6 @@ body.admin-is-leaving .admin-shell {
 
 body.admin-is-entering .admin-hero,
 body.admin-is-entering .admin-shell {
-	filter: blur(1.5px) saturate(0.96);
 	opacity: 0;
 	pointer-events: none;
 	transform: translateY(8px);
@@ -131,12 +129,10 @@ body.admin-is-leaving .admin-globalbar::after {
 
 @keyframes admin-page-enter {
 	from {
-		filter: saturate(0.96);
 		opacity: 0;
 		transform: translateY(16px);
 	}
 	to {
-		filter: saturate(1);
 		opacity: 1;
 		transform: translateY(0);
 	}

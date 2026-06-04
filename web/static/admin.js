@@ -160,13 +160,17 @@
 			if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
 			if (!isShellLink(link)) return;
 			event.preventDefault();
+			event.stopPropagation();
 			loadAdminPage(link.href);
-		});
+		}, true);
 	}
 
 	function bindContentShellLinks(root) {
 		root = root || document;
-		Array.prototype.slice.call(root.querySelectorAll(".post-filter-tabs a[href^='/admin'], .comment-filter-tabs a[href^='/admin']")).forEach(bindShellClick);
+		Array.prototype.slice.call(root.querySelectorAll([
+			".post-filter-tabs a[href^='/admin']",
+			".comment-filter-tabs a[href^='/admin']"
+		].join(", "))).forEach(bindShellClick);
 	}
 
 	function scrollAdminShellTo(target, instant) {
