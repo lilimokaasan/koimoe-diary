@@ -70,21 +70,19 @@ body.admin-page::after {
 
 body.admin-page .admin-hero,
 body.admin-page .admin-shell {
-	animation: admin-page-enter 0.52s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-	transition: opacity 0.34s ease, transform 0.34s ease, filter 0.34s ease;
+	animation: admin-page-enter 0.62s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+	transition: opacity 0.46s ease, transform 0.46s cubic-bezier(0.2, 0.8, 0.24, 1), filter 0.46s ease;
 }
 
 body.admin-page .admin-shell {
 	animation-delay: 0.08s;
 }
 
-body.admin-is-loading .admin-hero,
-body.admin-is-loading .admin-shell,
 body.admin-is-leaving .admin-hero,
 body.admin-is-leaving .admin-shell {
-	filter: saturate(0.96);
-	opacity: 0.32;
-	transform: translateY(10px);
+	filter: saturate(0.94);
+	opacity: 0;
+	transform: translateY(14px);
 }
 
 body.admin-is-loading::before {

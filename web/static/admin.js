@@ -2,6 +2,7 @@
 	var nav = document.querySelector(".admin-topbar nav");
 	var indicator = null;
 	var links = [];
+	var pageLeaveDelay = 460;
 
 	function normalizedPath(link) {
 		try {
@@ -131,7 +132,7 @@
 					}
 					syncNav(true);
 					resolve();
-				}, 260);
+				}, pageLeaveDelay);
 			});
 		}).catch(function () {
 			window.location.href = url;
