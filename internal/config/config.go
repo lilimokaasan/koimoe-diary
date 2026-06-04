@@ -137,7 +137,7 @@ func FromEnv() Config {
 			ThemeColor:         env("THEME_COLOR", "#fb98c0"),
 			HeroImage:          env("HERO_IMAGE", "/static/theme/screenshot.jpg"),
 			HeroOverlayOpacity: env("HERO_OVERLAY_OPACITY", "1"),
-			Avatar:             env("SITE_AVATAR", "/static/curated-sakura-images/originals/sakura-branch-pastel.jpg"),
+			Avatar:             env("SITE_AVATAR", "/static/profile/lilim-avatar.jpg"),
 			DefaultPostCover:   env("DEFAULT_POST_COVER", "/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"),
 			PostLicenseText:    env("POST_LICENSE_TEXT", "Attribution-NonCommercial-ShareAlike 4.0 International"),
 			PostLicenseURL:     env("POST_LICENSE_URL", "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"),
