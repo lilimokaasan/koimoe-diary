@@ -70,12 +70,12 @@ body.admin-page::after {
 
 body.admin-page .admin-hero,
 body.admin-page .admin-shell {
-	animation: admin-page-enter 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
-	transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
+	animation: admin-page-enter 0.52s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+	transition: opacity 0.34s ease, transform 0.34s ease, filter 0.34s ease;
 }
 
 body.admin-page .admin-shell {
-	animation-delay: 0.04s;
+	animation-delay: 0.08s;
 }
 
 body.admin-is-loading .admin-hero,
@@ -83,13 +83,13 @@ body.admin-is-loading .admin-shell,
 body.admin-is-leaving .admin-hero,
 body.admin-is-leaving .admin-shell {
 	filter: saturate(0.96);
-	opacity: 0.38;
-	transform: translateY(8px);
+	opacity: 0.32;
+	transform: translateY(10px);
 }
 
 body.admin-is-loading::before {
 	transform: scale(1.018);
-	transition: transform 0.24s ease;
+	transition: transform 0.42s ease;
 }
 
 body.admin-page .admin-globalbar::after {
@@ -105,7 +105,7 @@ body.admin-page .admin-globalbar::after {
 	top: 0;
 	transform: scaleX(0.18);
 	transform-origin: left center;
-	transition: opacity 0.18s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+	transition: opacity 0.28s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.admin-is-loading .admin-globalbar::after,
@@ -118,12 +118,63 @@ body.admin-is-leaving .admin-globalbar::after {
 	from {
 		filter: saturate(0.96);
 		opacity: 0;
-		transform: translateY(12px);
+		transform: translateY(16px);
 	}
 	to {
 		filter: saturate(1);
 		opacity: 1;
 		transform: translateY(0);
+	}
+}
+
+@keyframes admin-sidebar-enter {
+	from {
+		filter: saturate(0.96);
+		opacity: 0;
+		transform: translateX(-18px);
+	}
+	to {
+		filter: saturate(1);
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes admin-nav-item-enter {
+	from {
+		opacity: 0;
+		transform: translateX(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes admin-top-tools-enter {
+	from {
+		filter: saturate(0.96);
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		filter: saturate(1);
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.admin-page .admin-hero,
+	body.admin-page .admin-shell,
+	.admin-topbar,
+	.brand,
+	.admin-topbar nav > a:not(.button),
+	.admin-sidebar-site,
+	.admin-global-search,
+	.admin-global-actions > * {
+		animation: none !important;
+		transition: none !important;
 	}
 }
 
@@ -224,6 +275,7 @@ body.admin-is-leaving .admin-globalbar::after {
 
 .admin-topbar {
 	align-items: stretch;
+	animation: admin-sidebar-enter 0.58s cubic-bezier(0.22, 1, 0.36, 1) 0.04s backwards;
 	backdrop-filter: blur(22px) saturate(1.12);
 	background:
 		linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 247, 251, 0.72)),
@@ -254,6 +306,7 @@ body.admin-is-leaving .admin-globalbar::after {
 
 .brand {
 	align-items: center;
+	animation: admin-nav-item-enter 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.13s backwards;
 	color: var(--ink) !important;
 	display: block;
 	padding: 2px 8px 0;
@@ -282,6 +335,7 @@ body.admin-is-leaving .admin-globalbar::after {
 
 .admin-topbar nav > a:not(.button) {
 	align-items: center;
+	animation: admin-nav-item-enter 0.46s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 	border: 1px solid transparent;
 	border-radius: 8px;
 	box-sizing: border-box;
@@ -296,6 +350,38 @@ body.admin-is-leaving .admin-globalbar::after {
 	white-space: nowrap;
 	width: 100%;
 	z-index: 1;
+}
+
+.admin-topbar nav > a:nth-of-type(1) {
+	animation-delay: 0.18s;
+}
+
+.admin-topbar nav > a:nth-of-type(2) {
+	animation-delay: 0.22s;
+}
+
+.admin-topbar nav > a:nth-of-type(3) {
+	animation-delay: 0.26s;
+}
+
+.admin-topbar nav > a:nth-of-type(4) {
+	animation-delay: 0.3s;
+}
+
+.admin-topbar nav > a:nth-of-type(5) {
+	animation-delay: 0.34s;
+}
+
+.admin-topbar nav > a:nth-of-type(6) {
+	animation-delay: 0.38s;
+}
+
+.admin-topbar nav > a:nth-of-type(7) {
+	animation-delay: 0.42s;
+}
+
+.admin-topbar nav > a:nth-of-type(8) {
+	animation-delay: 0.46s;
 }
 
 .admin-topbar nav > a:not(.button):hover,
@@ -337,6 +423,7 @@ body.admin-is-leaving .admin-globalbar::after {
 }
 
 .admin-sidebar-site {
+	animation: admin-nav-item-enter 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
 	background:
 		linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 246, 251, 0.58)),
 		rgba(255, 255, 255, 0.44);
@@ -400,6 +487,27 @@ body.admin-is-leaving .admin-globalbar::after {
 	padding: 16px 48px 4px;
 	position: relative;
 	z-index: 2;
+}
+
+.admin-global-search,
+.admin-global-actions > * {
+	animation: admin-top-tools-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.admin-global-search {
+	animation-delay: 0.16s;
+}
+
+.admin-global-actions > *:nth-child(1) {
+	animation-delay: 0.24s;
+}
+
+.admin-global-actions > *:nth-child(2) {
+	animation-delay: 0.29s;
+}
+
+.admin-global-actions > *:nth-child(3) {
+	animation-delay: 0.34s;
 }
 
 .admin-global-search {

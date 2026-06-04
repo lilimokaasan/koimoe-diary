@@ -131,7 +131,7 @@
 					}
 					syncNav(true);
 					resolve();
-				}, 140);
+				}, 260);
 			});
 		}).catch(function () {
 			window.location.href = url;
