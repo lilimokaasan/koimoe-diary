@@ -87,9 +87,9 @@ body.admin-page .admin-shell {
 
 body.admin-is-leaving .admin-hero,
 body.admin-is-leaving .admin-shell {
-	filter: blur(3px) saturate(0.94);
-	opacity: 0.08;
-	transform: translateY(14px);
+	filter: blur(1.5px) saturate(0.96);
+	opacity: 0.34;
+	transform: translateY(8px);
 }
 
 body.admin-is-loading::before {

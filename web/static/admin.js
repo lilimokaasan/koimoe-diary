@@ -2,7 +2,7 @@
 	var nav = document.querySelector(".admin-topbar nav");
 	var indicator = null;
 	var links = [];
-	var pageLeaveDelay = 460;
+	var pageLeaveDelay = 160;
 
 	function normalizedPath(link) {
 		try {
@@ -105,7 +105,6 @@
 
 	function loadAdminPage(url, options) {
 		options = options || {};
-		document.body.classList.add("admin-is-leaving");
 		document.body.classList.add("admin-is-loading");
 		return fetch(url, {
 			credentials: "same-origin",
@@ -115,6 +114,7 @@
 			return response.text();
 		}).then(function (html) {
 			return new Promise(function (resolve) {
+				document.body.classList.add("admin-is-leaving");
 				window.setTimeout(function () {
 					var doc = new DOMParser().parseFromString(html, "text/html");
 					if (!replaceAdminContent(doc)) {
