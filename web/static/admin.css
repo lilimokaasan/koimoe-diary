@@ -2144,13 +2144,19 @@ button:disabled {
 
 .admin-page .admin-topbar nav > a:not(.button)::before {
 	background:
-		linear-gradient(135deg, rgba(251, 152, 192, 0.88), rgba(255, 177, 168, 0.78));
+		radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.96) 0 1.5px, transparent 1.8px),
+		radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.86) 0 2px, transparent 2.2px),
+		radial-gradient(circle at 72% 50%, rgba(255, 255, 255, 0.86) 0 2px, transparent 2.2px),
+		radial-gradient(circle at 50% 72%, rgba(255, 255, 255, 0.86) 0 2px, transparent 2.2px),
+		radial-gradient(circle at 28% 50%, rgba(255, 255, 255, 0.86) 0 2px, transparent 2.2px),
+		linear-gradient(135deg, rgba(251, 152, 192, 0.78), rgba(255, 188, 211, 0.76));
 	border-radius: 6px;
-	box-shadow: 0 8px 18px rgba(251, 152, 192, 0.2);
+	box-shadow: 0 6px 14px rgba(251, 152, 192, 0.16);
 	content: "";
 	flex: 0 0 auto;
 	height: 12px;
 	opacity: 0.72;
+	transform: translate(-0.5px, -0.5px);
 	width: 12px;
 }
 
