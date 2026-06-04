@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260528-pinned-posts">
+	<link rel="stylesheet" href="/static/admin.css?v=20260604-cover-picker">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -155,10 +155,17 @@
 						<ul data-publish-check-items></ul>
 					</div>
 					<div class="cover-box">
-						{{if .Post.CoverImage}}<img src="{{.Post.CoverImage}}" alt="Cover preview">{{end}}
-						<label>Cover Image<input type="text" name="cover_image" value="{{.Post.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
+						<div class="cover-preview {{if .Post.CoverImage}}has-image{{end}}" data-cover-preview>
+							<img src="{{.Post.CoverImage}}" alt="Cover preview">
+							<span>No cover selected</span>
+						</div>
+						<div class="cover-actions">
+							<button class="button" type="button" data-open-media-picker>Choose Cover</button>
+							<button class="soft-tool" type="button" data-clear-cover>Clear</button>
+						</div>
+						<label>Cover Image URL<input type="text" name="cover_image" value="{{.Post.CoverImage}}" placeholder="/static/theme/content-image/d-1.jpg"></label>
 						<label>Upload Cover<input type="file" name="cover_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
-						<p>Uploading a file will replace the cover path when saved.</p>
+						<p>Choose an uploaded image, paste a URL, or upload a new file. Uploading a file will replace the cover path when saved.</p>
 					</div>
 				</aside>
 			</div>
@@ -182,6 +189,8 @@
 			var autosave = document.querySelector("[data-editor-autosave]");
 			var checkSummary = document.querySelector("[data-publish-check-summary]");
 			var checkItems = document.querySelector("[data-publish-check-items]");
+			var coverPreview = document.querySelector("[data-cover-preview]");
+			var clearCover = document.querySelector("[data-clear-cover]");
 			var autosaveTimer;
 			var initialSnapshot = "";
 			if (!content) return;
@@ -256,6 +265,13 @@
 					checkItems.appendChild(item);
 				}
 			}
+			function updateCoverPreview() {
+				if (!coverPreview || !cover) return;
+				var image = coverPreview.querySelector("img");
+				var url = (cover.value || "").trim();
+				coverPreview.classList.toggle("has-image", !!url);
+				if (image) image.src = url;
+			}
 
 			function scheduleAutosave() {
 				window.clearTimeout(autosaveTimer);
@@ -313,6 +329,7 @@
 			}
 			initialSnapshot = snapshot();
 			updateCount();
+			updateCoverPreview();
 			updatePublishChecklist();
 			title && title.addEventListener("input", function () {
 				if (slug && !slug.value.trim()) slug.value = slugify(title.value);
@@ -330,6 +347,8 @@
 				field && field.addEventListener("input", updatePublishChecklist);
 				field && field.addEventListener("change", updatePublishChecklist);
 			});
+			cover && cover.addEventListener("input", updateCoverPreview);
+			cover && cover.addEventListener("change", updateCoverPreview);
 			document.querySelectorAll("[data-editor-snippet]").forEach(function (button) {
 				button.addEventListener("click", function () {
 					insertAtCursor(snippetMap[button.getAttribute("data-editor-snippet")] || "");
@@ -381,8 +400,15 @@
 					if (!cover) return;
 					cover.value = button.getAttribute("data-use-cover") || "";
 					cover.focus();
+					updateCoverPreview();
 					updatePublishChecklist();
 				});
+			});
+			if (clearCover && cover) clearCover.addEventListener("click", function () {
+				cover.value = "";
+				updateCoverPreview();
+				updatePublishChecklist();
+				scheduleAutosave();
 			});
 			document.querySelectorAll("[data-insert-media]").forEach(function (button) {
 				button.addEventListener("click", function () {
@@ -391,6 +417,6 @@
 			});
 		})();
 	</script>
-	<script src="/static/admin.js?v=20260523-comment-counts"></script>
+	<script src="/static/admin.js?v=20260604-cover-picker"></script>
 </body>
 </html>
