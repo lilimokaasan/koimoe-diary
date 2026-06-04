@@ -687,19 +687,35 @@ textarea:disabled,
 }
 
 .post-list .info-meta {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 	left: 0;
-	min-width: 118px;
+	min-width: 150px;
 	text-align: right;
-	transform: translate3d(-292px, 0, 0);
+	transform: translate3d(-316px, 0, 0);
+	width: 150px;
 }
 
 .post-list:hover .info-meta {
-	transform: translate3d(-276px, 0, 0);
+	transform: translate3d(-300px, 0, 0);
+}
+
+.post-list .info-meta .comnum,
+.post-list .info-meta .views {
+	display: block;
+	float: none;
+	margin: 0;
+	width: 100%;
 }
 
 .post-list .info-meta span {
-	display: block;
+	align-items: center;
+	display: inline-flex;
 	font-size: 13px;
+	gap: 4px;
+	justify-content: flex-end;
 	line-height: 1.8;
 	white-space: nowrap;
 }
