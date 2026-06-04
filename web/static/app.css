@@ -349,15 +349,15 @@ textarea:disabled,
 
 .user-entry__toggle {
 	cursor: pointer;
-	padding: 4px;
+	padding: 2px;
 }
 
 .user-entry__toggle img {
 	border-radius: 50%;
 	display: block;
-	height: 34px;
+	height: 38px;
 	object-fit: cover;
-	width: 34px;
+	width: 38px;
 }
 
 .user-entry__menu {
