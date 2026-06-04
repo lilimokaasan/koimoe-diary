@@ -869,11 +869,23 @@ button:hover,
 button.primary,
 .button.primary,
 .auth-panel button[type="submit"] {
-	background: linear-gradient(135deg, #fb98c0, #ffb1a8);
-	border-color: transparent;
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0)),
+		linear-gradient(135deg, #fb98c0, #f27bad 58%, #f7a8cd);
+	border-color: rgba(251, 152, 192, 0.18);
+	box-shadow: 0 12px 28px rgba(251, 152, 192, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.38);
 	color: #fff;
 	font-weight: 700;
 	width: auto;
+}
+
+button.primary:hover,
+.button.primary:hover,
+.auth-panel button[type="submit"]:hover {
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)),
+		linear-gradient(135deg, #f88fbb, #eb6fa4 58%, #f59fc8);
+	box-shadow: 0 16px 34px rgba(251, 152, 192, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.44);
 }
 
 .auth-panel button[type="submit"] {
