@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260604-admin-slow-transitions">
+	<link rel="stylesheet" href="/static/admin.css?v=20260604-settings-organized">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -63,96 +63,150 @@
 			</div>
 			{{if .Message}}<div class="admin-alert success">{{if eq .Message "1"}}Saved.{{else}}{{.Message}}{{end}}</div>{{end}}
 			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
-			<div class="settings-grid">
-				<section>
-					<label>Site Name<input type="text" name="site_name" value="{{.Settings.Name}}" required></label>
-					<label>Description<textarea name="site_description" rows="3" required>{{.Settings.Description}}</textarea></label>
-					<label>Profile Name<input type="text" name="site_author" value="{{.Settings.Author}}" required></label>
-					<label>Notice<textarea name="site_notice" rows="3">{{.Settings.Notice}}</textarea></label>
-					<label>Footer Text<textarea name="footer_text" rows="3">{{.Settings.FooterText}}</textarea></label>
-					<label>Footer Credit<input type="text" name="footer_credit" value="{{.Settings.FooterCredit}}" placeholder="A KoiMoe diary shaped with Sakurairo."></label>
-					<label>Navigation<textarea class="navigation-input" name="navigation" rows="7" placeholder="Home | /">{{.Navigation}}</textarea></label>
-					<label>Social Links<textarea class="navigation-input" name="social_links" rows="5" placeholder="GitHub | https://github.com/you | fa-github">{{.SocialLinks}}</textarea></label>
-				</section>
-				<section>
-					<label>Theme Color<input type="text" name="theme_color" value="{{.Settings.ThemeColor}}" placeholder="#fe9600"></label>
-					<label>Hero Image<input type="text" name="hero_image" value="{{.Settings.HeroImage}}" placeholder="/static/theme/screenshot.jpg"></label>
-					<label>Hero Overlay Opacity<input type="number" name="hero_overlay_opacity" value="{{.Settings.HeroOverlayOpacity}}" min="0" max="1" step="0.05"></label>
-					<label>Profile Avatar URL<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"></label>
-					<label>Upload Profile Avatar<input type="file" name="avatar_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
-					<label>Default Post Cover<input type="text" name="default_post_cover" value="{{.Settings.DefaultPostCover}}" placeholder="/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"></label>
-					<label>Article License Text<input type="text" name="post_license_text" value="{{.Settings.PostLicenseText}}" placeholder="Attribution-NonCommercial-ShareAlike 4.0 International"></label>
-					<label>Article License URL<input type="url" name="post_license_url" value="{{.Settings.PostLicenseURL}}" placeholder="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"></label>
-					<label class="toggle-field">
-						<input type="checkbox" name="post_share" value="1" {{if ne .Settings.PostShare "0"}}checked{{end}}>
-						<span>Show article share links</span>
-					</label>
-					<label class="toggle-field">
-						<input type="checkbox" name="post_copy_notice" value="1" {{if ne .Settings.PostCopyNotice "0"}}checked{{end}}>
-						<span>Append source when visitors copy article text</span>
-					</label>
-					<label class="toggle-field">
-						<input type="checkbox" name="post_reward" value="1" {{if eq .Settings.PostReward "1"}}checked{{end}}>
-						<span>Show article reward panel</span>
-					</label>
-					<label>Reward Text<input type="text" name="post_reward_text" value="{{.Settings.PostRewardText}}" placeholder="If this tiny fragment warmed your day..."></label>
-					<label>Alipay Reward Image URL<input type="text" name="post_reward_alipay" value="{{.Settings.PostRewardAlipay}}" placeholder="/static/uploads/alipay.jpg"></label>
-					<label>WeChat Reward Image URL<input type="text" name="post_reward_wechat" value="{{.Settings.PostRewardWechat}}" placeholder="/static/uploads/wechat.jpg"></label>
-					<label class="toggle-field">
-						<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
-						<span>Enable subtle sakura petals</span>
-					</label>
-					<label>Focus Cards<textarea class="navigation-input" name="focus_cards" rows="5" placeholder="Archive | /archives | /static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg">{{.FocusCards}}</textarea></label>
-					<div class="settings-preview">
-						<div class="preview-hero" style="background-image:url('{{.Settings.HeroImage}}')"></div>
-						<img src="{{.Settings.Avatar}}" alt="{{.Settings.Author}}">
-						<strong>{{.Settings.Name}}</strong>
-						<span>{{.Settings.Description}}</span>
-					</div>
-					<div class="mail-status-panel">
-						<div>
-							<p>Mail System</p>
-							<strong>{{if .MailReady}}Enabled{{else}}Not configured{{end}}</strong>
-							<span>Host: {{if .Mail.Host}}{{.Mail.Host}}:{{.Mail.Port}}{{else}}Configure SMTP below{{end}}</span>
-							<span>Admin: {{if .Mail.AdminEmail}}{{.Mail.AdminEmail}}{{else}}Set an admin mailbox{{end}}</span>
+			<div class="settings-layout">
+				<aside class="settings-index" aria-label="Settings sections">
+					<a href="#settings-profile"><strong>Profile</strong><span>Name, description, avatar</span></a>
+					<a href="#settings-visual"><strong>Visual</strong><span>Hero, covers, sakura</span></a>
+					<a href="#settings-navigation"><strong>Navigation</strong><span>Menus, social, focus cards</span></a>
+					<a href="#settings-article"><strong>Article</strong><span>License, share, reward</span></a>
+					<a href="#settings-mail"><strong>Mail</strong><span>SMTP and test mail</span></a>
+					<a href="#settings-password"><strong>Password</strong><span>Verification and update</span></a>
+				</aside>
+				<div class="settings-stack">
+					<section class="settings-card" id="settings-profile">
+						<div class="settings-card-head">
+							<p>Profile</p>
+							<h2>Basic diary identity</h2>
 						</div>
-						<button type="submit" form="mail-test-form" {{if not .MailReady}}disabled{{end}}>Send test mail</button>
-					</div>
-				</section>
+						<div class="settings-grid balanced">
+							<section>
+								<label>Site Name<input type="text" name="site_name" value="{{.Settings.Name}}" required></label>
+								<label>Description<textarea name="site_description" rows="3" required>{{.Settings.Description}}</textarea></label>
+								<label>Profile Name<input type="text" name="site_author" value="{{.Settings.Author}}" required></label>
+								<label>Notice<textarea name="site_notice" rows="3">{{.Settings.Notice}}</textarea></label>
+							</section>
+							<section>
+								<label>Profile Avatar URL<input type="text" name="site_avatar" value="{{.Settings.Avatar}}" placeholder="/static/profile/lilim-avatar.jpg"></label>
+								<label>Upload Profile Avatar<input type="file" name="avatar_upload" accept="image/jpeg,image/png,image/gif,image/webp"></label>
+								<div class="settings-preview compact">
+									<div class="preview-hero" style="background-image:url('{{.Settings.HeroImage}}')"></div>
+									<img src="{{.Settings.Avatar}}" alt="{{.Settings.Author}}">
+									<strong>{{.Settings.Name}}</strong>
+									<span>{{.Settings.Description}}</span>
+								</div>
+							</section>
+						</div>
+					</section>
+					<section class="settings-card" id="settings-visual">
+						<div class="settings-card-head">
+							<p>Visual</p>
+							<h2>Cover and sakura atmosphere</h2>
+						</div>
+						<div class="settings-grid balanced">
+							<section>
+								<label>Theme Color<input type="text" name="theme_color" value="{{.Settings.ThemeColor}}" placeholder="#fb98c0"></label>
+								<label>Hero Image<input type="text" name="hero_image" value="{{.Settings.HeroImage}}" placeholder="/static/theme/screenshot.jpg"></label>
+								<label>Hero Overlay Opacity<input type="number" name="hero_overlay_opacity" value="{{.Settings.HeroOverlayOpacity}}" min="0" max="1" step="0.05"></label>
+							</section>
+							<section>
+								<label>Default Post Cover<input type="text" name="default_post_cover" value="{{.Settings.DefaultPostCover}}" placeholder="/static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg"></label>
+								<label class="toggle-field">
+									<input type="checkbox" name="sakura_effects" value="1" {{if eq .Settings.SakuraEffects "1"}}checked{{end}}>
+									<span>Enable subtle sakura petals</span>
+								</label>
+								<label>Footer Text<textarea name="footer_text" rows="3">{{.Settings.FooterText}}</textarea></label>
+								<label>Footer Credit<input type="text" name="footer_credit" value="{{.Settings.FooterCredit}}" placeholder="A KoiMoe diary shaped with Sakurairo."></label>
+							</section>
+						</div>
+					</section>
+					<section class="settings-card" id="settings-navigation">
+						<div class="settings-card-head">
+							<p>Navigation</p>
+							<h2>Public paths and homepage focus</h2>
+						</div>
+						<div class="settings-grid balanced">
+							<section>
+								<label>Navigation<textarea class="navigation-input" name="navigation" rows="8" placeholder="Home | /">{{.Navigation}}</textarea></label>
+								<label>Social Links<textarea class="navigation-input" name="social_links" rows="5" placeholder="GitHub | https://github.com/you | fa-github">{{.SocialLinks}}</textarea></label>
+							</section>
+							<section>
+								<label>Focus Cards<textarea class="navigation-input" name="focus_cards" rows="8" placeholder="Archive | /archives | /static/curated-sakura-images/originals/fuji-pagoda-sakura-01.jpg">{{.FocusCards}}</textarea></label>
+							</section>
+						</div>
+					</section>
+					<section class="settings-card" id="settings-article">
+						<div class="settings-card-head">
+							<p>Article</p>
+							<h2>Reading page extras</h2>
+						</div>
+						<div class="settings-grid balanced">
+							<section>
+								<label>Article License Text<input type="text" name="post_license_text" value="{{.Settings.PostLicenseText}}" placeholder="Attribution-NonCommercial-ShareAlike 4.0 International"></label>
+								<label>Article License URL<input type="url" name="post_license_url" value="{{.Settings.PostLicenseURL}}" placeholder="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"></label>
+								<label class="toggle-field">
+									<input type="checkbox" name="post_share" value="1" {{if ne .Settings.PostShare "0"}}checked{{end}}>
+									<span>Show article share links</span>
+								</label>
+								<label class="toggle-field">
+									<input type="checkbox" name="post_copy_notice" value="1" {{if ne .Settings.PostCopyNotice "0"}}checked{{end}}>
+									<span>Append source when visitors copy article text</span>
+								</label>
+							</section>
+							<section>
+								<label class="toggle-field">
+									<input type="checkbox" name="post_reward" value="1" {{if eq .Settings.PostReward "1"}}checked{{end}}>
+									<span>Show article reward panel</span>
+								</label>
+								<label>Reward Text<input type="text" name="post_reward_text" value="{{.Settings.PostRewardText}}" placeholder="If this tiny fragment warmed your day..."></label>
+								<label>Alipay Reward Image URL<input type="text" name="post_reward_alipay" value="{{.Settings.PostRewardAlipay}}" placeholder="/static/uploads/alipay.jpg"></label>
+								<label>WeChat Reward Image URL<input type="text" name="post_reward_wechat" value="{{.Settings.PostRewardWechat}}" placeholder="/static/uploads/wechat.jpg"></label>
+							</section>
+						</div>
+					</section>
+					<section class="settings-card" id="settings-mail">
+						<div class="settings-card-head">
+							<p>Mail</p>
+							<h2>SMTP delivery</h2>
+						</div>
+						<div class="mail-status-panel">
+							<div>
+								<p>Mail System</p>
+								<strong>{{if .MailReady}}Enabled{{else}}Not configured{{end}}</strong>
+								<span>Host: {{if .Mail.Host}}{{.Mail.Host}}:{{.Mail.Port}}{{else}}Configure SMTP below{{end}}</span>
+								<span>Admin: {{if .Mail.AdminEmail}}{{.Mail.AdminEmail}}{{else}}Set an admin mailbox{{end}}</span>
+							</div>
+							<button type="submit" form="mail-test-form" {{if not .MailReady}}disabled{{end}}>Send test mail</button>
+						</div>
+						<div class="settings-grid balanced">
+							<section>
+								<label class="toggle-field">
+									<input type="checkbox" name="mail_enabled" value="1" {{if .Mail.Enabled}}checked{{end}}>
+									<span>Enable mail delivery</span>
+								</label>
+								<label>SMTP Host<input type="text" name="smtp_host" value="{{.Mail.Host}}" placeholder="smtpdm.aliyun.com"></label>
+								<label>SMTP Port<input type="number" name="smtp_port" value="{{.Mail.Port}}" min="1" max="65535" placeholder="465"></label>
+								<label>TLS Mode
+									<select name="smtp_tls_mode">
+										<option value="implicit" {{if eq .Mail.TLSMode "implicit"}}selected{{end}}>implicit SSL/TLS</option>
+										<option value="starttls" {{if eq .Mail.TLSMode "starttls"}}selected{{end}}>STARTTLS</option>
+										<option value="none" {{if eq .Mail.TLSMode "none"}}selected{{end}}>none</option>
+									</select>
+								</label>
+							</section>
+							<section>
+								<label>SMTP Username<input type="text" name="smtp_username" value="{{.Mail.Username}}" placeholder="noreply@koimoe.com"></label>
+								<label>SMTP Password<input type="password" name="smtp_password" autocomplete="new-password" placeholder="{{if .MailPasswordSet}}Saved. Leave blank to keep it.{{else}}Aliyun SMTP password{{end}}"></label>
+								<label>Sender Address<input type="email" name="smtp_from" value="{{.Mail.From}}" placeholder="noreply@koimoe.com"></label>
+								<label>Sender Name<input type="text" name="smtp_from_name" value="{{.Mail.FromName}}" placeholder="KoiMoe Diary"></label>
+								<label>Admin Mailbox<input type="email" name="mail_admin_email" value="{{.Mail.AdminEmail}}" placeholder="your mailbox for tests and codes"></label>
+							</section>
+						</div>
+					</section>
+				</div>
 			</div>
-			<section class="settings-section">
-				<div class="panel-title slim">
-					<h1>Mail System</h1>
-					<p>Configure SMTP for comments, test mail, and password verification codes.</p>
-				</div>
-				<div class="settings-grid">
-					<section>
-						<label class="toggle-field">
-							<input type="checkbox" name="mail_enabled" value="1" {{if .Mail.Enabled}}checked{{end}}>
-							<span>Enable mail delivery</span>
-						</label>
-						<label>SMTP Host<input type="text" name="smtp_host" value="{{.Mail.Host}}" placeholder="smtpdm.aliyun.com"></label>
-						<label>SMTP Port<input type="number" name="smtp_port" value="{{.Mail.Port}}" min="1" max="65535" placeholder="465"></label>
-						<label>TLS Mode
-							<select name="smtp_tls_mode">
-								<option value="implicit" {{if eq .Mail.TLSMode "implicit"}}selected{{end}}>implicit SSL/TLS</option>
-								<option value="starttls" {{if eq .Mail.TLSMode "starttls"}}selected{{end}}>STARTTLS</option>
-								<option value="none" {{if eq .Mail.TLSMode "none"}}selected{{end}}>none</option>
-							</select>
-						</label>
-					</section>
-					<section>
-						<label>SMTP Username<input type="text" name="smtp_username" value="{{.Mail.Username}}" placeholder="noreply@koimoe.com"></label>
-						<label>SMTP Password<input type="password" name="smtp_password" autocomplete="new-password" placeholder="{{if .MailPasswordSet}}Saved. Leave blank to keep it.{{else}}Aliyun SMTP password{{end}}"></label>
-						<label>Sender Address<input type="email" name="smtp_from" value="{{.Mail.From}}" placeholder="noreply@koimoe.com"></label>
-						<label>Sender Name<input type="text" name="smtp_from_name" value="{{.Mail.FromName}}" placeholder="KoiMoe Diary"></label>
-						<label>Admin Mailbox<input type="email" name="mail_admin_email" value="{{.Mail.AdminEmail}}" placeholder="your mailbox for tests and codes"></label>
-					</section>
-				</div>
-			</section>
 		</form>
 		<form id="mail-test-form" method="post" action="/admin/mail/test"></form>
-		<section class="admin-panel password-panel">
+		<section class="admin-panel password-panel" id="settings-password">
 			<div class="panel-title">
 				<h1>Password</h1>
 				<p>Change the admin password after confirming a code sent to the configured admin mailbox.</p>
