@@ -1730,6 +1730,11 @@ button.primary:hover,
 	color: #147a42;
 }
 
+.status.approved {
+	background: rgba(236, 253, 243, 0.88);
+	color: #18824b;
+}
+
 .status.scheduled {
 	background: rgba(239, 246, 255, 0.96);
 	color: #2563eb;
@@ -2508,50 +2513,92 @@ input[type="file"]:focus::file-selector-button {
 
 .comment-admin-card {
 	align-items: start;
-	background: rgba(255, 255, 255, 0.62);
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(255, 250, 253, 0.58)),
+		rgba(255, 255, 255, 0.62);
 	border: 1px solid rgba(231, 211, 222, 0.72);
 	border-radius: 8px;
 	display: grid;
-	gap: 16px;
-	grid-template-columns: auto minmax(0, 1fr) auto;
-	padding: 16px;
+	gap: 18px;
+	grid-template-columns: 26px minmax(0, 1fr) minmax(220px, auto);
+	padding: 18px 20px;
 }
 
 .comment-admin-check {
-	padding-top: 3px;
+	justify-content: center;
+	padding-top: 2px;
 }
 
-.comment-admin-meta {
+.comment-admin-head {
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px 12px;
+	gap: 8px 18px;
+	justify-content: space-between;
+	min-width: 0;
 }
 
-.comment-admin-meta strong {
+.comment-admin-author,
+.comment-admin-state {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 10px;
+	min-width: 0;
+}
+
+.comment-admin-author strong {
 	color: var(--ink);
+	font-size: 15px;
+	font-weight: 700;
 }
 
-.comment-admin-meta span {
+.comment-admin-author span,
+.comment-admin-state span {
 	color: var(--muted);
 	font-size: 12px;
 }
 
-.comment-admin-main p {
-	line-height: 1.7;
-	margin: 10px 0;
+.comment-admin-author span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
-.comment-admin-main a {
+.comment-admin-main p {
+	color: #4f4851;
+	font-size: 15px;
+	line-height: 1.7;
+	margin: 12px 0 10px;
+}
+
+.comment-admin-post-link {
+	align-items: center;
 	color: var(--sakura-deep);
+	display: inline-flex;
 	font-size: 13px;
+	font-weight: 560;
+	line-height: 1.45;
+	max-width: 100%;
 	text-decoration: none;
+}
+
+.comment-admin-post-link:hover,
+.comment-admin-post-link:focus {
+	color: #e96b9c;
+	outline: none;
+	text-decoration: underline;
+	text-decoration-color: rgba(251, 152, 192, 0.36);
+	text-underline-offset: 4px;
 }
 
 .comment-admin-actions {
 	align-content: start;
-	display: flex;
+	display: grid;
 	gap: 8px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	justify-self: end;
+	min-width: 220px;
 }
 
 .comment-admin-actions form {
@@ -2567,9 +2614,11 @@ input[type="file"]:focus::file-selector-button {
 	color: #6f6670;
 	font-size: 13px;
 	font-weight: 520;
+	justify-content: center;
 	letter-spacing: 0;
 	min-height: 34px;
 	padding: 9px 13px;
+	width: 100%;
 }
 
 .comment-admin-actions button:hover,
@@ -3544,15 +3593,26 @@ button:disabled {
 	}
 
 	.comment-admin-card {
-		display: block;
+		display: grid;
+		gap: 14px;
+		grid-template-columns: 24px minmax(0, 1fr);
 	}
 
 	.comment-admin-check {
-		margin-bottom: 12px;
+		margin-bottom: 0;
+		padding-top: 4px;
+	}
+
+	.comment-admin-main,
+	.comment-admin-actions {
+		grid-column: 2;
 	}
 
 	.comment-admin-actions {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		justify-self: stretch;
 		margin-top: 14px;
+		min-width: 0;
 	}
 
 	.table-actions {

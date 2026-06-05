@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-bulk-select-width">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-comment-card-balance">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -82,16 +82,20 @@
 				<article class="comment-admin-card">
 					<label class="comment-admin-check"><input form="comment-bulk-form" type="checkbox" name="comment_ids" value="{{.ID}}" data-comment-select-item aria-label="Select comment from {{.Author}}"></label>
 					<div class="comment-admin-main">
-						<div class="comment-admin-meta">
-							<strong>{{.Author}}</strong>
-							<span>{{.Email}}</span>
-							<span>{{since .CreatedAt}}</span>
-							<span class="status {{.Status}}">{{.Status}}</span>
-							{{if .ParentAuthor}}<span class="status reply">reply to {{.ParentAuthor}}</span>{{end}}
-							{{if .IsPrivate}}<span class="status private">private</span>{{end}}
+						<div class="comment-admin-head">
+							<div class="comment-admin-author">
+								<strong>{{.Author}}</strong>
+								<span>{{.Email}}</span>
+							</div>
+							<div class="comment-admin-state">
+								<span>{{since .CreatedAt}}</span>
+								<span class="status {{.Status}}">{{.Status}}</span>
+								{{if .ParentAuthor}}<span class="status reply">reply to {{.ParentAuthor}}</span>{{end}}
+								{{if .IsPrivate}}<span class="status private">private</span>{{end}}
+							</div>
 						</div>
 						<p>{{.Content}}</p>
-						<a href="/post/{{.PostSlug}}" target="_blank">{{.PostTitle}}</a>
+						<a class="comment-admin-post-link" href="/post/{{.PostSlug}}" target="_blank">{{.PostTitle}}</a>
 					</div>
 					<div class="comment-admin-actions">
 						{{if ne .Status "approved"}}
@@ -139,6 +143,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260606-bulk-select-width"></script>
+	<script src="/static/admin.js?v=20260606-comment-card-balance"></script>
 </body>
 </html>
