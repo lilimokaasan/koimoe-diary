@@ -1075,6 +1075,12 @@ textarea:focus {
 	z-index: 4;
 }
 
+.comment-bulk-bar .admin-soft-select,
+.media-bulk-bar .admin-soft-select {
+	flex: 0 1 220px;
+	width: min(220px, 100%);
+}
+
 .admin-soft-select-trigger {
 	align-items: center;
 	background:
