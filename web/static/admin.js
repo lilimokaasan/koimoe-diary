@@ -2,6 +2,8 @@
 	var nav = document.querySelector(".admin-topbar nav");
 	var indicator = null;
 	var links = [];
+	var hoveredNavLink = null;
+	var focusedNavLink = null;
 	var pageLeaveDelay = 420;
 
 	function normalizedPath(link) {
@@ -53,6 +55,12 @@
 		}
 	}
 
+	function preferredIndicatorLink(active) {
+		if (hoveredNavLink && links.indexOf(hoveredNavLink) !== -1) return hoveredNavLink;
+		if (focusedNavLink && links.indexOf(focusedNavLink) !== -1) return focusedNavLink;
+		return active || links[0];
+	}
+
 	function syncNav(instant) {
 		if (!nav) return;
 		var active = currentLink();
@@ -61,12 +69,13 @@
 			else link.removeAttribute("aria-current");
 		});
 		if (indicator) {
-			moveTo(active || links[0], instant);
+			moveTo(preferredIndicatorLink(active), instant);
 		}
 	}
 
 	function clearIndicator() {
 		if (!nav) return;
+		hoveredNavLink = null;
 		nav.classList.remove("is-ready");
 	}
 
@@ -299,8 +308,17 @@
 
 		links.forEach(function (link) {
 			bindShellClick(link);
-			link.addEventListener("mouseenter", function () { moveTo(link); });
-			link.addEventListener("focus", function () { moveTo(link); });
+			link.addEventListener("mouseenter", function () {
+				hoveredNavLink = link;
+				moveTo(link);
+			});
+			link.addEventListener("focus", function () {
+				focusedNavLink = link;
+				moveTo(link);
+			});
+			link.addEventListener("blur", function () {
+				if (focusedNavLink === link) focusedNavLink = null;
+			});
 		});
 
 		Array.prototype.slice.call(document.querySelectorAll(".admin-global-actions a[href^='/admin']")).forEach(bindShellClick);
