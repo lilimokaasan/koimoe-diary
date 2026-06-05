@@ -1770,6 +1770,25 @@ button.primary:hover,
 	white-space: nowrap;
 }
 
+.admin-table td.table-actions {
+	display: table-cell;
+	text-align: right;
+	vertical-align: top;
+	width: 1%;
+}
+
+.admin-table td.table-actions > a,
+.admin-table td.table-actions > form {
+	display: inline-flex;
+	margin-left: 8px;
+	vertical-align: top;
+}
+
+.admin-table td.table-actions > a:first-child,
+.admin-table td.table-actions > form:first-child {
+	margin-left: 0;
+}
+
 .table-actions form {
 	margin: 0;
 }
@@ -3458,7 +3477,9 @@ button:disabled {
 	background: rgba(255, 255, 255, 0.5);
 	border-bottom: 0;
 	border-top: 1px solid rgba(255, 255, 255, 0.62);
+	line-height: 1.45;
 	padding: 14px;
+	vertical-align: top;
 }
 
 .admin-page .admin-table td:first-child {
