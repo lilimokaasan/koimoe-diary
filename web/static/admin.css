@@ -2179,9 +2179,11 @@ button.primary:hover,
 	align-items: center;
 	color: var(--muted);
 	display: inline-flex;
+	flex: 0 0 auto;
 	font-size: 13px;
 	gap: 8px;
 	margin-right: auto;
+	white-space: nowrap;
 }
 
 .media-bulk-bar select {
@@ -2486,6 +2488,11 @@ input[type="file"]:focus::file-selector-button {
 	display: inline-flex;
 	font-size: 13px;
 	gap: 8px;
+}
+
+.comment-select-all {
+	flex: 0 0 auto;
+	white-space: nowrap;
 }
 
 .comment-select-all input,
