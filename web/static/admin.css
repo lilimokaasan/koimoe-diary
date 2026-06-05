@@ -2716,6 +2716,9 @@ button.danger {
 }
 
 .settings-grid > section {
+	align-content: start;
+	display: grid;
+	gap: 14px;
 	min-width: 0;
 }
 
@@ -2792,6 +2795,10 @@ button.danger {
 	scroll-margin-top: 18px;
 }
 
+.settings-card label {
+	margin-bottom: 0;
+}
+
 .settings-card-head {
 	border-bottom: 1px dashed rgba(251, 152, 192, 0.28);
 	margin-bottom: 16px;
@@ -2820,9 +2827,15 @@ button.danger {
 	background: rgba(255, 255, 255, 0.58);
 	border: 1px solid rgba(231, 211, 222, 0.72);
 	border-radius: 8px;
+	box-sizing: border-box;
 	display: flex;
 	gap: 10px;
+	min-height: 56px;
 	padding: 12px 14px;
+}
+
+.settings-card .toggle-field {
+	min-height: 62px;
 }
 
 .toggle-field input {
@@ -2917,7 +2930,7 @@ button.danger {
 	display: grid;
 	gap: 12px;
 	grid-template-columns: minmax(0, 1fr) auto;
-	margin-top: 16px;
+	margin-bottom: 18px;
 	padding: 16px;
 }
 
