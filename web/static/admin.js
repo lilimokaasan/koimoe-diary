@@ -311,7 +311,7 @@
 
 	function initSoftSelects(root) {
 		root = root || document;
-		Array.prototype.slice.call(root.querySelectorAll(".comment-bulk-bar select[name='bulk_action'], .media-bulk-bar select[name='bulk_action']")).forEach(function (select) {
+		Array.prototype.slice.call(root.querySelectorAll("select")).forEach(function (select) {
 			if (select.dataset.softSelectBound === "1") return;
 			select.dataset.softSelectBound = "1";
 			select.classList.add("admin-native-select");

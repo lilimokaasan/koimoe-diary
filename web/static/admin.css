@@ -1075,9 +1075,19 @@ textarea:focus {
 	z-index: 4;
 }
 
+label > .admin-soft-select,
+.editor-main .admin-soft-select,
+.editor-side .admin-soft-select,
+.settings-card .admin-soft-select {
+	flex: 0 1 auto;
+	margin-top: 7px;
+	width: 100%;
+}
+
 .comment-bulk-bar .admin-soft-select,
 .media-bulk-bar .admin-soft-select {
 	flex: 0 1 220px;
+	margin-top: 0;
 	width: min(220px, 100%);
 }
 
