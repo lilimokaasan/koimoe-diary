@@ -2561,25 +2561,31 @@ input[type="file"]:focus::file-selector-button {
 	flex: 0 0 auto;
 	font-size: 13px;
 	font-weight: 600;
-	gap: 6px;
+	gap: 5px;
 	min-width: 0;
-	padding: 8px 11px;
+	padding: 9px 16px;
 	text-decoration: none;
 	transition: background-color 0.34s ease, border-color 0.34s ease, box-shadow 0.34s ease, color 0.3s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 	width: auto;
 }
 
+.comment-filter-tabs span,
+.post-filter-tabs span {
+	line-height: 1.2;
+}
+
 .comment-filter-tabs strong,
 .post-filter-tabs strong {
 	align-items: center;
-	background: rgba(255, 255, 255, 0.78);
+	background: transparent;
 	border-radius: 999px;
 	color: var(--sakura-deep);
 	display: inline-flex;
 	font-size: 12px;
 	justify-content: center;
-	min-width: 20px;
-	padding: 3px 6px;
+	line-height: 1.1;
+	min-width: 0;
+	padding: 0 1px;
 	transition: background-color 0.34s ease, box-shadow 0.34s ease, color 0.3s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -2600,6 +2606,8 @@ input[type="file"]:focus::file-selector-button {
 .post-filter-tabs a.is-active strong {
 	background: rgba(255, 255, 255, 0.9);
 	box-shadow: 0 6px 14px rgba(251, 152, 192, 0.1);
+	min-width: 24px;
+	padding: 3px 8px;
 	transform: translateY(-1px);
 }
 
