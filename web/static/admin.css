@@ -1145,6 +1145,259 @@ textarea:focus {
 	font-weight: 700;
 }
 
+.admin-native-datetime {
+	display: none;
+}
+
+.admin-datetime-picker {
+	position: relative;
+	width: 100%;
+	z-index: 8;
+}
+
+.admin-datetime-trigger {
+	align-items: center;
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(255, 247, 251, 0.5)),
+		rgba(255, 255, 255, 0.5);
+	border: 1px solid rgba(251, 152, 192, 0.32);
+	border-radius: 8px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+	box-sizing: border-box;
+	color: var(--ink);
+	display: inline-flex;
+	font-size: 13px;
+	font-weight: 520;
+	justify-content: space-between;
+	line-height: 1.2;
+	min-height: 42px;
+	padding: 10px 13px;
+	text-align: left;
+	width: 100%;
+}
+
+.admin-datetime-trigger::after {
+	border: 2px solid rgba(92, 84, 96, 0.78);
+	border-radius: 3px;
+	content: "";
+	flex: 0 0 auto;
+	height: 12px;
+	margin-left: 12px;
+	position: relative;
+	width: 12px;
+}
+
+.admin-datetime-trigger:hover,
+.admin-datetime-trigger:focus,
+.admin-datetime-picker.is-open .admin-datetime-trigger {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 241, 248, 0.62)),
+		rgba(255, 255, 255, 0.58);
+	border-color: rgba(251, 152, 192, 0.48);
+	box-shadow: 0 0 0 4px rgba(251, 152, 192, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+	outline: none;
+	transform: none;
+}
+
+.admin-datetime-popover {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 251, 0.88)),
+		rgba(255, 255, 255, 0.88);
+	border: 1px solid rgba(251, 152, 192, 0.24);
+	border-radius: 8px;
+	box-shadow: 0 24px 56px rgba(126, 64, 98, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.84);
+	box-sizing: border-box;
+	display: grid;
+	gap: 14px;
+	grid-template-columns: minmax(236px, 1fr) 148px;
+	opacity: 0;
+	padding: 14px;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	top: calc(100% + 8px);
+	transform: translateY(-4px) scale(0.99);
+	transform-origin: top right;
+	transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+	width: min(500px, calc(100vw - 32px));
+	z-index: 80;
+}
+
+.admin-datetime-picker.is-open .admin-datetime-popover {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0) scale(1);
+}
+
+.admin-datetime-header {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.admin-datetime-header strong {
+	color: var(--ink);
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.admin-datetime-header div {
+	display: inline-flex;
+	gap: 6px;
+}
+
+.admin-datetime-nav {
+	background: rgba(255, 255, 255, 0.54);
+	border-color: rgba(251, 152, 192, 0.2);
+	border-radius: 50%;
+	box-shadow: none;
+	color: #7d7380;
+	font-size: 14px;
+	min-height: 30px;
+	padding: 0;
+	width: 30px;
+}
+
+.admin-datetime-nav:hover,
+.admin-datetime-nav:focus {
+	color: var(--sakura-deep);
+	transform: none;
+}
+
+.admin-datetime-weekdays,
+.admin-datetime-days {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	text-align: center;
+}
+
+.admin-datetime-weekdays {
+	color: #9c8e99;
+	font-size: 11px;
+	font-weight: 700;
+	margin-bottom: 6px;
+}
+
+.admin-datetime-weekdays span {
+	padding: 4px 0;
+}
+
+.admin-datetime-days {
+	gap: 4px;
+}
+
+.admin-datetime-days button {
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 7px;
+	box-shadow: none;
+	color: #4f4652;
+	font-size: 12px;
+	font-weight: 600;
+	min-height: 30px;
+	padding: 0;
+}
+
+.admin-datetime-days button:hover,
+.admin-datetime-days button:focus {
+	background: rgba(251, 152, 192, 0.12);
+	border-color: rgba(251, 152, 192, 0.16);
+	color: var(--sakura-deep);
+	outline: none;
+	transform: none;
+}
+
+.admin-datetime-days button.is-muted {
+	color: rgba(143, 135, 145, 0.58);
+}
+
+.admin-datetime-days button.is-today {
+	border-color: rgba(251, 152, 192, 0.3);
+}
+
+.admin-datetime-days button.is-selected,
+.admin-datetime-time-list button.is-selected {
+	background: linear-gradient(135deg, rgba(251, 152, 192, 0.88), rgba(255, 168, 207, 0.78));
+	border-color: rgba(251, 152, 192, 0.52);
+	box-shadow: 0 8px 18px rgba(251, 152, 192, 0.16);
+	color: #fff;
+}
+
+.admin-datetime-footer {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 12px;
+}
+
+.admin-datetime-footer button {
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	color: var(--sakura-deep);
+	font-size: 12px;
+	font-weight: 700;
+	min-height: 30px;
+	padding: 4px 8px;
+}
+
+.admin-datetime-footer button:hover,
+.admin-datetime-footer button:focus {
+	background: rgba(251, 152, 192, 0.1);
+	transform: none;
+}
+
+.admin-datetime-time {
+	border-left: 1px solid rgba(251, 152, 192, 0.16);
+	display: grid;
+	gap: 8px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	padding-left: 12px;
+}
+
+.admin-datetime-time-column {
+	min-width: 0;
+}
+
+.admin-datetime-time-column > span {
+	color: #9c8e99;
+	display: block;
+	font-size: 11px;
+	font-weight: 700;
+	margin-bottom: 7px;
+	text-align: center;
+}
+
+.admin-datetime-time-list {
+	display: grid;
+	gap: 5px;
+	max-height: 224px;
+	overflow-y: auto;
+	padding-right: 2px;
+	scrollbar-color: rgba(251, 152, 192, 0.48) transparent;
+	scrollbar-width: thin;
+}
+
+.admin-datetime-time-list button {
+	background: rgba(255, 255, 255, 0.46);
+	border: 1px solid transparent;
+	border-radius: 7px;
+	box-shadow: none;
+	color: #4f4652;
+	font-size: 12px;
+	font-weight: 650;
+	min-height: 30px;
+	padding: 0;
+}
+
+.admin-datetime-time-list button:hover,
+.admin-datetime-time-list button:focus {
+	background: rgba(251, 152, 192, 0.12);
+	color: var(--sakura-deep);
+	outline: none;
+	transform: none;
+}
+
 textarea {
 	line-height: 1.65;
 	resize: vertical;
@@ -3065,6 +3318,25 @@ button:disabled {
 	.media-picker-dialog {
 		max-height: calc(100vh - 24px);
 		padding: 14px;
+	}
+
+	.admin-datetime-popover {
+		gap: 12px;
+		grid-template-columns: 1fr;
+		left: 0;
+		right: auto;
+		width: min(360px, calc(100vw - 28px));
+	}
+
+	.admin-datetime-time {
+		border-left: 0;
+		border-top: 1px solid rgba(251, 152, 192, 0.16);
+		padding-left: 0;
+		padding-top: 10px;
+	}
+
+	.admin-datetime-time-list {
+		max-height: 154px;
 	}
 
 	.mail-status-panel {

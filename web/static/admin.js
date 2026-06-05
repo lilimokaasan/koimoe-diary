@@ -107,6 +107,7 @@
 		initCommentBulkActions();
 		initMediaBulkActions();
 		initSoftSelects(document);
+		initDateTimePickers(document);
 		bindContentShellLinks(document);
 		initSettingsAnchors();
 		return true;
@@ -331,6 +332,246 @@
 			wrapper.appendChild(menu);
 			select.insertAdjacentElement("afterend", wrapper);
 			update();
+		});
+	}
+
+	function initDateTimePickers(root) {
+		root = root || document;
+		Array.prototype.slice.call(root.querySelectorAll("input[type='datetime-local'][name='published_at']")).forEach(function (input) {
+			if (input.dataset.dateTimePickerBound === "1") return;
+			input.dataset.dateTimePickerBound = "1";
+			input.classList.add("admin-native-datetime");
+
+			function pad(number) {
+				return String(number).padStart(2, "0");
+			}
+
+			function parseValue(value) {
+				var match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value || "");
+				if (!match) {
+					var now = new Date();
+					return new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
+				}
+				return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4]), Number(match[5]));
+			}
+
+			function toInputValue(date) {
+				return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate()) + "T" + pad(date.getHours()) + ":" + pad(date.getMinutes());
+			}
+
+			function toDisplayValue(date) {
+				return date.getFullYear() + "/" + pad(date.getMonth() + 1) + "/" + pad(date.getDate()) + " " + pad(date.getHours()) + ":" + pad(date.getMinutes());
+			}
+
+			var selected = parseValue(input.value);
+			var viewYear = selected.getFullYear();
+			var viewMonth = selected.getMonth();
+			var wrapper = document.createElement("div");
+			wrapper.className = "admin-datetime-picker";
+
+			var trigger = document.createElement("button");
+			trigger.type = "button";
+			trigger.className = "admin-datetime-trigger";
+			trigger.setAttribute("aria-haspopup", "dialog");
+			trigger.setAttribute("aria-expanded", "false");
+			var triggerText = document.createElement("span");
+			trigger.appendChild(triggerText);
+
+			var popover = document.createElement("div");
+			popover.className = "admin-datetime-popover";
+			popover.setAttribute("role", "dialog");
+			popover.setAttribute("aria-label", "Choose publish time");
+
+			var calendar = document.createElement("div");
+			calendar.className = "admin-datetime-calendar";
+			var timePanel = document.createElement("div");
+			timePanel.className = "admin-datetime-time";
+			popover.appendChild(calendar);
+			popover.appendChild(timePanel);
+			wrapper.appendChild(trigger);
+			wrapper.appendChild(popover);
+			input.insertAdjacentElement("afterend", wrapper);
+
+			function commit() {
+				input.value = toInputValue(selected);
+				input.dispatchEvent(new Event("input", { bubbles: true }));
+				input.dispatchEvent(new Event("change", { bubbles: true }));
+				triggerText.textContent = toDisplayValue(selected);
+			}
+
+			function setOpen(open) {
+				wrapper.classList.toggle("is-open", open);
+				trigger.setAttribute("aria-expanded", open ? "true" : "false");
+				if (open) render();
+			}
+
+			function renderCalendar() {
+				calendar.innerHTML = "";
+				var header = document.createElement("div");
+				header.className = "admin-datetime-header";
+				var title = document.createElement("strong");
+				title.textContent = viewYear + "/" + pad(viewMonth + 1);
+				var controls = document.createElement("div");
+				var prev = document.createElement("button");
+				var next = document.createElement("button");
+				prev.type = "button";
+				next.type = "button";
+				prev.className = "admin-datetime-nav";
+				next.className = "admin-datetime-nav";
+				prev.setAttribute("aria-label", "Previous month");
+				next.setAttribute("aria-label", "Next month");
+				prev.textContent = "<";
+				next.textContent = ">";
+				prev.addEventListener("click", function () {
+					viewMonth -= 1;
+					if (viewMonth < 0) {
+						viewMonth = 11;
+						viewYear -= 1;
+					}
+					renderCalendar();
+				});
+				next.addEventListener("click", function () {
+					viewMonth += 1;
+					if (viewMonth > 11) {
+						viewMonth = 0;
+						viewYear += 1;
+					}
+					renderCalendar();
+				});
+				controls.appendChild(prev);
+				controls.appendChild(next);
+				header.appendChild(title);
+				header.appendChild(controls);
+				calendar.appendChild(header);
+
+				var weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+				var weekRow = document.createElement("div");
+				weekRow.className = "admin-datetime-weekdays";
+				weekdays.forEach(function (day) {
+					var item = document.createElement("span");
+					item.textContent = day;
+					weekRow.appendChild(item);
+				});
+				calendar.appendChild(weekRow);
+
+				var grid = document.createElement("div");
+				grid.className = "admin-datetime-days";
+				var first = new Date(viewYear, viewMonth, 1);
+				var start = new Date(viewYear, viewMonth, 1 - first.getDay());
+				var today = new Date();
+				for (var index = 0; index < 42; index += 1) {
+					var date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + index);
+					var button = document.createElement("button");
+					button.type = "button";
+					button.textContent = date.getDate();
+					if (date.getMonth() !== viewMonth) button.classList.add("is-muted");
+					if (date.toDateString() === today.toDateString()) button.classList.add("is-today");
+					if (date.toDateString() === selected.toDateString()) button.classList.add("is-selected");
+					button.addEventListener("click", function (picked) {
+						return function () {
+							selected = new Date(picked.getFullYear(), picked.getMonth(), picked.getDate(), selected.getHours(), selected.getMinutes());
+							viewYear = selected.getFullYear();
+							viewMonth = selected.getMonth();
+							commit();
+							render();
+						};
+					}(date));
+					grid.appendChild(button);
+				}
+				calendar.appendChild(grid);
+
+				var footer = document.createElement("div");
+				footer.className = "admin-datetime-footer";
+				var todayButton = document.createElement("button");
+				todayButton.type = "button";
+				todayButton.textContent = "Today";
+				todayButton.addEventListener("click", function () {
+					var now = new Date();
+					selected = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
+					viewYear = selected.getFullYear();
+					viewMonth = selected.getMonth();
+					commit();
+					render();
+				});
+				var doneButton = document.createElement("button");
+				doneButton.type = "button";
+				doneButton.textContent = "Done";
+				doneButton.addEventListener("click", function () {
+					setOpen(false);
+					trigger.focus();
+				});
+				footer.appendChild(todayButton);
+				footer.appendChild(doneButton);
+				calendar.appendChild(footer);
+			}
+
+			function renderTimeColumn(label, max, current, setter) {
+				var column = document.createElement("div");
+				column.className = "admin-datetime-time-column";
+				var heading = document.createElement("span");
+				heading.textContent = label;
+				column.appendChild(heading);
+				var list = document.createElement("div");
+				list.className = "admin-datetime-time-list";
+				for (var value = 0; value <= max; value += 1) {
+					var button = document.createElement("button");
+					button.type = "button";
+					button.textContent = pad(value);
+					if (value === current) button.classList.add("is-selected");
+					button.addEventListener("click", function (picked) {
+						return function () {
+							setter(picked);
+							commit();
+							render();
+						};
+					}(value));
+					list.appendChild(button);
+				}
+				column.appendChild(list);
+				return column;
+			}
+
+			function renderTime() {
+				timePanel.innerHTML = "";
+				timePanel.appendChild(renderTimeColumn("Hour", 23, selected.getHours(), function (value) {
+					selected.setHours(value);
+				}));
+				timePanel.appendChild(renderTimeColumn("Minute", 59, selected.getMinutes(), function (value) {
+					selected.setMinutes(value);
+				}));
+				window.requestAnimationFrame(function () {
+					Array.prototype.slice.call(timePanel.querySelectorAll(".admin-datetime-time-column")).forEach(function (column) {
+						var active = column.querySelector(".is-selected");
+						if (active) column.querySelector(".admin-datetime-time-list").scrollTop = Math.max(0, active.offsetTop - 70);
+					});
+				});
+			}
+
+			function render() {
+				renderCalendar();
+				renderTime();
+			}
+
+			trigger.addEventListener("click", function (event) {
+				event.stopPropagation();
+				setOpen(!wrapper.classList.contains("is-open"));
+			});
+			popover.addEventListener("click", function (event) {
+				event.stopPropagation();
+			});
+			document.addEventListener("click", function () {
+				setOpen(false);
+			});
+			document.addEventListener("keydown", function (event) {
+				if (event.key === "Escape") setOpen(false);
+			});
+			input.addEventListener("change", function () {
+				selected = parseValue(input.value);
+				viewYear = selected.getFullYear();
+				viewMonth = selected.getMonth();
+				commit();
+			});
+			commit();
 		});
 	}
 
