@@ -1543,6 +1543,29 @@ button.primary:hover,
 	color: #df5f9a;
 }
 
+.panel-title .button.primary {
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 249, 253, 0.58)),
+		linear-gradient(135deg, rgba(251, 152, 192, 0.13), rgba(255, 226, 238, 0.22));
+	border-color: rgba(251, 152, 192, 0.22);
+	box-shadow: 0 10px 22px rgba(251, 152, 192, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.76);
+	color: #e889b5;
+	font-size: 13px;
+	font-weight: 620;
+	letter-spacing: 0;
+	padding-inline: 17px;
+}
+
+.panel-title .button.primary:hover,
+.panel-title .button.primary:focus-visible {
+	background:
+		linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(255, 250, 253, 0.66)),
+		linear-gradient(135deg, rgba(251, 152, 192, 0.18), rgba(255, 219, 234, 0.28));
+	border-color: rgba(251, 152, 192, 0.3);
+	box-shadow: 0 13px 28px rgba(251, 152, 192, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+	color: #df78aa;
+}
+
 .auth-panel button[type="submit"] {
 	margin-top: 4px;
 	width: 100%;
