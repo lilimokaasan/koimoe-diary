@@ -1762,6 +1762,11 @@ button.primary:hover,
 	text-transform: uppercase;
 }
 
+.admin-table td .status {
+	margin-top: 0;
+	vertical-align: top;
+}
+
 .table-actions {
 	align-items: center;
 	display: flex;
@@ -1782,6 +1787,10 @@ button.primary:hover,
 	display: inline-flex;
 	margin-left: 8px;
 	vertical-align: top;
+}
+
+.admin-table td.table-actions > .table-action-button:only-child {
+	min-width: 76px;
 }
 
 .admin-table td.table-actions > a:first-child,
@@ -1857,6 +1866,9 @@ button.primary:hover,
 .status {
 	border-radius: 999px;
 	display: inline-block !important;
+	font-size: 12px;
+	font-weight: 650;
+	line-height: 1;
 	padding: 5px 9px;
 }
 

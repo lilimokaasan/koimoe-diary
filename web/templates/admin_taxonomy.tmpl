@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-table-row-align">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-admin-global-polish">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -70,8 +70,8 @@
 						<td>{{if .CoverImage}}<span>set</span>{{else}}<span>none</span>{{end}}</td>
 						<td>{{.Description}}</td>
 						<td class="table-actions">
-							<a href="/category/{{.Slug}}" target="_blank" rel="noopener noreferrer">View</a>
-							<form method="post" action="/admin/categories/{{.ID}}/delete"><button class="danger" type="submit">Delete</button></form>
+							<a class="table-action-button" href="/category/{{.Slug}}" target="_blank" rel="noopener noreferrer">View</a>
+							<form method="post" action="/admin/categories/{{.ID}}/delete"><button class="table-action-button danger" type="submit">Delete</button></form>
 						</td>
 					</tr>
 					{{else}}
@@ -94,8 +94,8 @@
 						<td><span>{{.Slug}}</span></td>
 						<td>{{.PostCount}}</td>
 						<td class="table-actions">
-							<a href="/tag/{{.Slug}}" target="_blank" rel="noopener noreferrer">View</a>
-							<form method="post" action="/admin/tags/{{.ID}}/delete"><button class="danger" type="submit">Delete</button></form>
+							<a class="table-action-button" href="/tag/{{.Slug}}" target="_blank" rel="noopener noreferrer">View</a>
+							<form method="post" action="/admin/tags/{{.ID}}/delete"><button class="table-action-button danger" type="submit">Delete</button></form>
 						</td>
 					</tr>
 					{{else}}
@@ -110,6 +110,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260606-table-row-align"></script>
+	<script src="/static/admin.js?v=20260606-admin-global-polish"></script>
 </body>
 </html>
