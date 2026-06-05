@@ -2166,6 +2166,11 @@ button.primary:hover,
 	margin-bottom: 0;
 }
 
+.media-upload-panel input,
+.media-filter-panel input {
+	min-height: 46px;
+}
+
 .media-upload-panel button,
 .media-filter-panel button,
 .media-filter-panel a.button {
