@@ -1389,6 +1389,17 @@ textarea:disabled,
 	height: 24px;
 	min-width: 24px;
 	padding: 0;
+	transition: background-color 0.46s ease, border-color 0.46s ease, box-shadow 0.52s ease, color 0.42s ease, transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sidebar-social-links a:hover,
+.sidebar-social-links a:focus-visible {
+	background: rgba(255, 238, 247, 0.62);
+	border-color: rgba(251, 152, 192, 0.2);
+	box-shadow: 0 8px 18px rgba(251, 152, 192, 0.08);
+	color: rgba(236, 95, 153, 0.9);
+	outline: none;
+	transform: translateY(-1px);
 }
 
 .footer-social-links {
