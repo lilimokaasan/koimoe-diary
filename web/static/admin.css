@@ -1140,6 +1140,10 @@ label > .admin-soft-select,
 	box-shadow: 0 0 0 4px rgba(251, 152, 192, 0.12), 0 14px 30px rgba(251, 152, 192, 0.12);
 }
 
+.admin-soft-select.is-open {
+	z-index: 40;
+}
+
 .admin-soft-select.is-open .admin-soft-select-trigger::after {
 	border-color: var(--sakura-deep);
 	transform: rotate(225deg) translate(-2px, -1px);
@@ -1147,8 +1151,8 @@ label > .admin-soft-select,
 
 .admin-soft-select-menu {
 	background:
-		linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 251, 0.9)),
-		rgba(255, 255, 255, 0.88);
+		linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 247, 251, 0.96)),
+		rgba(255, 255, 255, 0.96);
 	border: 1px solid rgba(251, 152, 192, 0.28);
 	border-radius: 8px;
 	box-shadow: 0 22px 52px rgba(126, 64, 98, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.84);
