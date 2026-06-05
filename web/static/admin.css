@@ -2402,6 +2402,7 @@ input[type="file"]:focus::file-selector-button {
 	gap: 8px;
 	padding: 8px 13px;
 	text-decoration: none;
+	transition: background-color 0.34s ease, border-color 0.34s ease, box-shadow 0.34s ease, color 0.3s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .comment-filter-tabs strong,
@@ -2415,6 +2416,7 @@ input[type="file"]:focus::file-selector-button {
 	justify-content: center;
 	min-width: 22px;
 	padding: 3px 7px;
+	transition: background-color 0.34s ease, box-shadow 0.34s ease, color 0.3s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .comment-filter-tabs a:hover,
@@ -2424,6 +2426,17 @@ input[type="file"]:focus::file-selector-button {
 	background: rgba(251, 152, 192, 0.16);
 	border-color: rgba(251, 152, 192, 0.45);
 	color: var(--sakura-deep);
+	box-shadow: 0 10px 22px rgba(251, 152, 192, 0.08);
+	transform: translateY(-1px);
+}
+
+.comment-filter-tabs a:hover strong,
+.comment-filter-tabs a.is-active strong,
+.post-filter-tabs a:hover strong,
+.post-filter-tabs a.is-active strong {
+	background: rgba(255, 255, 255, 0.9);
+	box-shadow: 0 6px 14px rgba(251, 152, 192, 0.1);
+	transform: translateY(-1px);
 }
 
 .comment-bulk-bar {
