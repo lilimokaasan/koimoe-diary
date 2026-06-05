@@ -1365,8 +1365,10 @@ textarea:disabled,
 
 .sidebar-social-links {
 	justify-content: flex-end;
-	margin-top: 8px;
 	opacity: 0.62;
+	position: absolute;
+	right: 14px;
+	top: 14px;
 }
 
 .sidebar-social-links a {
@@ -2229,6 +2231,7 @@ textarea:disabled,
 }
 
 .profile-card {
+	position: relative;
 	text-align: center;
 }
 
