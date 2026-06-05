@@ -865,4 +865,5 @@
 	initMediaBulkActions();
 	initSettingsAnchors();
 	initSoftSelects();
+	initDateTimePickers();
 })();
