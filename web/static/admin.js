@@ -649,15 +649,15 @@
 		}
 		var startTop = shell.scrollTop;
 		var distance = targetTop - startTop;
-		var duration = Math.min(1100, Math.max(620, Math.abs(distance) * 1.15));
+		var duration = Math.min(1450, Math.max(760, Math.abs(distance) * 0.58));
 		var startedAt = window.performance ? window.performance.now() : Date.now();
-		function easeOutCubic(t) {
-			return 1 - Math.pow(1 - t, 3);
+		function easeInOutSine(t) {
+			return -(Math.cos(Math.PI * t) - 1) / 2;
 		}
 		function tick(now) {
 			var elapsed = now - startedAt;
 			var progress = Math.min(1, elapsed / duration);
-			shell.scrollTop = startTop + distance * easeOutCubic(progress);
+			shell.scrollTop = startTop + distance * easeInOutSine(progress);
 			if (progress < 1) {
 				settingsScrollFrame = window.requestAnimationFrame(tick);
 			} else {
