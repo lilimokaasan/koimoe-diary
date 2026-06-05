@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-user-menu-ease">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-comment-filter-ajax">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -64,6 +64,7 @@
 				<a href="/admin/comments?status=hidden" class="{{if eq .CommentStatus "hidden"}}is-active{{end}}"><span>Hidden</span><strong>{{.CommentHidden}}</strong></a>
 				<a href="/admin/comments?status=spam" class="{{if eq .CommentStatus "spam"}}is-active{{end}}"><span>Spam</span><strong>{{.CommentSpam}}</strong></a>
 			</nav>
+			<div class="admin-comments-list-region" data-admin-comment-list>
 			<form id="comment-bulk-form" class="comment-bulk-bar" method="post" action="/admin/comments/bulk">
 				<label class="comment-select-all"><input type="checkbox" data-comment-select-all> Select all</label>
 				<select name="bulk_action" aria-label="Bulk action">
@@ -136,6 +137,7 @@
 				<p class="empty-state">No comments yet.</p>
 				{{end}}
 			</div>
+			</div>
 		</section>
 	</main>
 	<script>
@@ -143,6 +145,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260606-user-menu-ease"></script>
+	<script src="/static/admin.js?v=20260606-comment-filter-ajax"></script>
 </body>
 </html>

@@ -1598,12 +1598,14 @@ button.primary:hover,
 }
 
 .admin-posts-list-region,
-.admin-posts-table [data-admin-post-rows] {
+.admin-posts-table [data-admin-post-rows],
+.admin-comments-list-region {
 	transition: opacity 0.28s ease;
 }
 
 .admin-posts-list-region.is-loading,
-.admin-posts-table [data-admin-post-rows].is-loading {
+.admin-posts-table [data-admin-post-rows].is-loading,
+.admin-comments-list-region.is-loading {
 	opacity: 0;
 	pointer-events: none;
 }

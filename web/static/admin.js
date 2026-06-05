@@ -138,9 +138,23 @@
 		return true;
 	}
 
-	function syncPostFilterTabs(doc) {
-		var currentTabs = document.querySelector(".post-filter-tabs");
-		var nextTabs = doc.querySelector(".post-filter-tabs");
+	function replaceCommentListContent(doc) {
+		var current = document.querySelector("[data-admin-comment-list]");
+		var next = doc.querySelector("[data-admin-comment-list]");
+		if (!current || !next) return false;
+		current.replaceWith(next);
+		if (doc.title) document.title = doc.title;
+		syncCommentFilterTabs(doc);
+		initCommentBulkActions();
+		initDangerConfirmations();
+		initSoftSelects(document);
+		bindContentShellLinks(document);
+		return true;
+	}
+
+	function syncFilterTabs(selector, doc) {
+		var currentTabs = document.querySelector(selector);
+		var nextTabs = doc.querySelector(selector);
 		if (!currentTabs || !nextTabs) return;
 		Array.prototype.slice.call(currentTabs.querySelectorAll("a")).forEach(function (link) {
 			link.classList.remove("is-active");
@@ -158,6 +172,14 @@
 				match.setAttribute("aria-current", "page");
 			}
 		});
+	}
+
+	function syncPostFilterTabs(doc) {
+		syncFilterTabs(".post-filter-tabs", doc);
+	}
+
+	function syncCommentFilterTabs(doc) {
+		syncFilterTabs(".comment-filter-tabs", doc);
 	}
 
 	function isShellLink(link) {
@@ -277,6 +299,53 @@
 		});
 	}
 
+	function loadCommentFilter(url, options) {
+		options = options || {};
+		var region = document.querySelector("[data-admin-comment-list]");
+		if (!region) return loadAdminPage(url, options);
+		region.classList.add("is-loading");
+		return fetch(url, {
+			credentials: "same-origin",
+			headers: { "X-Requested-With": "fetch" }
+		}).then(function (response) {
+			if (!response.ok) throw new Error("HTTP " + response.status);
+			return response.text();
+		}).then(function (html) {
+			return new Promise(function (resolve) {
+				window.setTimeout(function () {
+					var doc = new DOMParser().parseFromString(html, "text/html");
+					if (!replaceCommentListContent(doc)) {
+						loadAdminPage(url, options).then(resolve);
+						return;
+					}
+					if (!options.skipHistory) {
+						window.history.pushState({ adminCommentList: true }, "", url);
+					}
+					syncNav(true);
+					var nextRegion = document.querySelector("[data-admin-comment-list]");
+					if (nextRegion) {
+						nextRegion.classList.add("is-loading");
+						window.requestAnimationFrame(function () {
+							window.requestAnimationFrame(function () {
+								nextRegion.classList.remove("is-loading");
+							});
+						});
+					}
+					resolve();
+				}, 180);
+			});
+		}).catch(function () {
+			window.location.href = url;
+		}).finally(function () {
+			var latestRegion = document.querySelector("[data-admin-comment-list]");
+			if (latestRegion) {
+				window.setTimeout(function () {
+					latestRegion.classList.remove("is-loading");
+				}, 20);
+			}
+		});
+	}
+
 	function bindPostFilterClick(link) {
 		if (!link || link.dataset.adminPostFilterBound === "1") return;
 		link.dataset.adminPostFilterBound = "1";
@@ -287,6 +356,19 @@
 			event.stopPropagation();
 			if (sameUrlAsCurrent(link.href)) return;
 			loadPostFilter(link.href);
+		}, true);
+	}
+
+	function bindCommentFilterClick(link) {
+		if (!link || link.dataset.adminCommentFilterBound === "1") return;
+		link.dataset.adminCommentFilterBound = "1";
+		link.addEventListener("click", function (event) {
+			if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+			if (!isShellLink(link)) return;
+			event.preventDefault();
+			event.stopPropagation();
+			if (sameUrlAsCurrent(link.href)) return;
+			loadCommentFilter(link.href);
 		}, true);
 	}
 
@@ -306,7 +388,7 @@
 	function bindContentShellLinks(root) {
 		root = root || document;
 		Array.prototype.slice.call(root.querySelectorAll(".post-filter-tabs a[href^='/admin']")).forEach(bindPostFilterClick);
-		Array.prototype.slice.call(root.querySelectorAll(".comment-filter-tabs a[href^='/admin']")).forEach(bindShellClick);
+		Array.prototype.slice.call(root.querySelectorAll(".comment-filter-tabs a[href^='/admin']")).forEach(bindCommentFilterClick);
 	}
 
 	function initSoftSelects(root) {
@@ -737,6 +819,10 @@
 		window.addEventListener("popstate", function () {
 			if (window.location.pathname.replace(/\/$/, "") === "/admin" && document.querySelector("[data-admin-post-list]")) {
 				loadPostFilter(window.location.href, { skipHistory: true });
+				return;
+			}
+			if (window.location.pathname.replace(/\/$/, "") === "/admin/comments" && document.querySelector("[data-admin-comment-list]")) {
+				loadCommentFilter(window.location.href, { skipHistory: true });
 				return;
 			}
 			loadAdminPage(window.location.href, { skipHistory: true });
