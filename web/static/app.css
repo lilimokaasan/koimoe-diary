@@ -659,11 +659,20 @@ textarea:disabled,
 	line-height: 1.42;
 	margin-bottom: 8px;
 	max-width: calc(100% - 120px);
+	overflow: visible;
+	text-overflow: clip;
+	white-space: normal;
 	width: auto;
 }
 
 .post-list h1.entry-title a {
 	color: var(--sakura-ink);
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
 }
 
 .post-list h1.entry-title a:hover {
