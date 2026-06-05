@@ -165,6 +165,20 @@
 		return url.origin === window.location.origin && url.pathname.indexOf("/admin") === 0 && url.pathname !== "/admin/login";
 	}
 
+	function sameUrlAsCurrent(url) {
+		var target = new URL(url, window.location.origin);
+		return target.origin === window.location.origin &&
+			target.pathname.replace(/\/$/, "") === (window.location.pathname.replace(/\/$/, "") || "/") &&
+			target.search === window.location.search &&
+			target.hash === window.location.hash;
+	}
+
+	function isCurrentShellLink(link) {
+		if (!link) return false;
+		if (links.indexOf(link) !== -1 && currentLink() === link) return true;
+		return sameUrlAsCurrent(link.href);
+	}
+
 	function loadAdminPage(url, options) {
 		options = options || {};
 		document.body.classList.add("admin-is-loading");
@@ -270,6 +284,7 @@
 			if (!isShellLink(link)) return;
 			event.preventDefault();
 			event.stopPropagation();
+			if (sameUrlAsCurrent(link.href)) return;
 			loadPostFilter(link.href);
 		}, true);
 	}
@@ -282,6 +297,7 @@
 			if (!isShellLink(link)) return;
 			event.preventDefault();
 			event.stopPropagation();
+			if (isCurrentShellLink(link)) return;
 			loadAdminPage(link.href);
 		}, true);
 	}
