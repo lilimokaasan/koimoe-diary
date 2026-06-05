@@ -426,10 +426,38 @@
 
 		var trigger = menu.querySelector(".admin-user-chip");
 		if (!trigger) return;
+		var dropdown = menu.querySelector(".admin-user-dropdown");
+		var dropdownIndicator = null;
+		var dropdownItems = dropdown ? Array.prototype.slice.call(dropdown.querySelectorAll("a, button")) : [];
+
+		if (dropdown && !dropdown.querySelector(".admin-user-dropdown-indicator")) {
+			dropdownIndicator = document.createElement("span");
+			dropdownIndicator.className = "admin-user-dropdown-indicator";
+			dropdownIndicator.setAttribute("aria-hidden", "true");
+			dropdown.insertBefore(dropdownIndicator, dropdown.firstChild);
+		} else if (dropdown) {
+			dropdownIndicator = dropdown.querySelector(".admin-user-dropdown-indicator");
+		}
+
+		function moveDropdownIndicator(item, instant) {
+			if (!dropdown || !dropdownIndicator || !item) return;
+			if (instant) dropdown.classList.add("is-positioning");
+			dropdownIndicator.style.width = item.offsetWidth + "px";
+			dropdownIndicator.style.height = item.offsetHeight + "px";
+			dropdownIndicator.style.setProperty("--dropdown-x", item.offsetLeft + "px");
+			dropdownIndicator.style.setProperty("--dropdown-y", item.offsetTop + "px");
+			dropdown.classList.add("is-ready");
+			if (instant) {
+				window.requestAnimationFrame(function () {
+					dropdown.classList.remove("is-positioning");
+				});
+			}
+		}
 
 		function setOpen(open) {
 			menu.classList.toggle("is-open", open);
 			trigger.setAttribute("aria-expanded", open ? "true" : "false");
+			if (!open && dropdown) dropdown.classList.remove("is-ready");
 		}
 
 		trigger.addEventListener("click", function (event) {
@@ -440,6 +468,21 @@
 		menu.addEventListener("click", function (event) {
 			event.stopPropagation();
 		});
+
+		dropdownItems.forEach(function (item) {
+			item.addEventListener("mouseenter", function () {
+				moveDropdownIndicator(item);
+			});
+			item.addEventListener("focus", function () {
+				moveDropdownIndicator(item);
+			});
+		});
+
+		if (dropdown) {
+			dropdown.addEventListener("mouseleave", function () {
+				dropdown.classList.remove("is-ready");
+			});
+		}
 
 		Array.prototype.slice.call(menu.querySelectorAll(".admin-user-dropdown a")).forEach(function (link) {
 			link.addEventListener("click", function () {

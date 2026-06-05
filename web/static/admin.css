@@ -853,6 +853,7 @@ button.admin-user-chip::after {
 	box-sizing: border-box;
 	min-width: 150px;
 	opacity: 0;
+	overflow: hidden;
 	padding: 8px;
 	pointer-events: none;
 	position: absolute;
@@ -861,6 +862,32 @@ button.admin-user-chip::after {
 	transform: translateY(-4px);
 	transition: opacity 0.18s ease, transform 0.18s ease;
 	z-index: 6;
+}
+
+.admin-user-dropdown-indicator {
+	background:
+		linear-gradient(135deg, rgba(251, 152, 192, 0.14), rgba(255, 246, 251, 0.8)),
+		rgba(255, 247, 251, 0.64);
+	border: 1px solid rgba(251, 152, 192, 0.12);
+	border-radius: 8px;
+	box-shadow: 0 10px 22px rgba(251, 152, 192, 0.09);
+	box-sizing: border-box;
+	left: 0;
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+	transform: translate3d(var(--dropdown-x, 0), var(--dropdown-y, 0), 0);
+	transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), width 0.36s cubic-bezier(0.22, 1, 0.36, 1), height 0.36s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease;
+	z-index: 0;
+}
+
+.admin-user-dropdown.is-ready .admin-user-dropdown-indicator {
+	opacity: 1;
+}
+
+.admin-user-dropdown.is-positioning .admin-user-dropdown-indicator {
+	transition: none;
 }
 
 .admin-user-menu.is-open .admin-user-dropdown {
@@ -884,20 +911,23 @@ button.admin-user-chip::after {
 	justify-content: flex-start;
 	min-height: 36px;
 	padding: 9px 10px;
+	position: relative;
 	text-align: left;
 	text-decoration: none;
+	transition: color 0.26s ease, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 	width: 100%;
+	z-index: 1;
 }
 
 .admin-user-dropdown a:hover,
 .admin-user-dropdown a:focus-visible,
 .admin-user-dropdown button:hover,
 .admin-user-dropdown button:focus-visible {
-	background: rgba(251, 152, 192, 0.12);
+	background: transparent;
 	color: var(--sakura-deep);
 	outline: none;
 	text-decoration: none;
-	transform: none;
+	transform: translateX(2px);
 }
 
 .admin-user-dropdown form {
