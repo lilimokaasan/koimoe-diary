@@ -694,12 +694,12 @@ textarea:disabled,
 	left: 0;
 	min-width: 150px;
 	text-align: right;
-	transform: translate3d(-104px, 0, 0);
+	transform: translate3d(-176px, 0, 0);
 	width: 150px;
 }
 
 .post-list:hover .info-meta {
-	transform: translate3d(-88px, 0, 0);
+	transform: translate3d(-160px, 0, 0);
 }
 
 .post-list .info-meta .comnum,
