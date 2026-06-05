@@ -667,25 +667,21 @@ textarea:disabled,
 
 .post-list h1.entry-title a {
 	color: var(--sakura-ink);
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
-	overflow: hidden;
-	padding-right: 1.08em;
-	position: relative;
+	display: inline;
+	overflow: visible;
 	text-overflow: clip;
 	white-space: normal;
 }
 
 .post-list h1.entry-title a::after {
-	bottom: 0.08em;
 	color: var(--sakura-rose);
 	content: "...";
+	display: inline;
 	font-weight: 800;
 	letter-spacing: 0.08em;
 	line-height: 1;
-	position: absolute;
-	right: 0;
+	margin-left: 2px;
+	position: static;
 }
 
 .post-list h1.entry-title a:hover {
