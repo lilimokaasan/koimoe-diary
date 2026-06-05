@@ -5,6 +5,7 @@
 	var hoveredNavLink = null;
 	var focusedNavLink = null;
 	var pageLeaveDelay = 420;
+	var settingsScrollFrame = null;
 
 	function normalizedPath(link) {
 		try {
@@ -637,10 +638,34 @@
 		if (!shell || !target) return;
 		var top = target.getBoundingClientRect().top - shell.getBoundingClientRect().top + shell.scrollTop - 12;
 		var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-		shell.scrollTo({
-			top: Math.max(0, top),
-			behavior: instant || reduceMotion ? "auto" : "smooth"
-		});
+		var targetTop = Math.max(0, top);
+		if (settingsScrollFrame) {
+			window.cancelAnimationFrame(settingsScrollFrame);
+			settingsScrollFrame = null;
+		}
+		if (instant || reduceMotion) {
+			shell.scrollTop = targetTop;
+			return;
+		}
+		var startTop = shell.scrollTop;
+		var distance = targetTop - startTop;
+		var duration = Math.min(1100, Math.max(620, Math.abs(distance) * 1.15));
+		var startedAt = window.performance ? window.performance.now() : Date.now();
+		function easeOutCubic(t) {
+			return 1 - Math.pow(1 - t, 3);
+		}
+		function tick(now) {
+			var elapsed = now - startedAt;
+			var progress = Math.min(1, elapsed / duration);
+			shell.scrollTop = startTop + distance * easeOutCubic(progress);
+			if (progress < 1) {
+				settingsScrollFrame = window.requestAnimationFrame(tick);
+			} else {
+				settingsScrollFrame = null;
+				shell.scrollTop = targetTop;
+			}
+		}
+		settingsScrollFrame = window.requestAnimationFrame(tick);
 	}
 
 	function initSettingsAnchors() {
