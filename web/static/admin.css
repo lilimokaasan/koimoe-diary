@@ -1594,14 +1594,16 @@ button.primary:hover,
 	border: 1px solid rgba(255, 255, 255, 0.8);
 	border-radius: 10px;
 	box-shadow: 0 28px 80px rgba(124, 78, 102, 0.24);
+	box-sizing: border-box;
 	max-height: min(760px, calc(100vh - 56px));
-	max-width: 980px;
+	max-width: min(1280px, calc(100vw - 56px));
 	overflow: hidden;
 	padding: 18px;
-	width: min(980px, 100%);
+	width: min(1280px, 100%);
 }
 
 .media-picker-dialog .editor-media-strip {
+	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 	max-height: min(560px, calc(100vh - 230px));
 }
 
@@ -1641,7 +1643,7 @@ button.primary:hover,
 .editor-media-strip {
 	display: grid;
 	gap: 10px;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
 	max-height: 390px;
 	overflow: auto;
 	padding-right: 4px;
@@ -1651,8 +1653,11 @@ button.primary:hover,
 	background: rgba(255, 255, 255, 0.68);
 	border: 1px solid rgba(231, 211, 222, 0.72);
 	border-radius: 8px;
+	box-sizing: border-box;
 	display: grid;
 	gap: 8px;
+	min-width: 0;
+	overflow: hidden;
 	padding: 8px;
 }
 
@@ -1660,6 +1665,9 @@ button.primary:hover,
 	aspect-ratio: 16 / 10;
 	border-radius: 6px;
 	display: block;
+	height: auto;
+	max-width: 100%;
+	min-width: 0;
 	object-fit: cover;
 	width: 100%;
 }
@@ -1680,17 +1688,25 @@ button.primary:hover,
 	font-family: var(--admin-mono-font);
 	font-size: 11px;
 	margin-top: 3px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .editor-media-actions {
 	display: grid;
 	gap: 7px;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	min-width: 0;
 }
 
 .editor-media-actions button {
+	font-size: 13px;
+	line-height: 1.15;
 	min-height: 32px;
+	min-width: 0;
 	padding: 7px 8px;
+	white-space: normal;
 }
 
 .curated-media-panel {
