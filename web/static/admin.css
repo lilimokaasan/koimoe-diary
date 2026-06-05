@@ -1656,9 +1656,18 @@ button.primary:hover,
 	box-sizing: border-box;
 	display: grid;
 	gap: 8px;
+	grid-template-columns: minmax(0, 1fr);
+	justify-items: stretch;
 	min-width: 0;
 	overflow: hidden;
 	padding: 8px;
+}
+
+.editor-media-item > * {
+	box-sizing: border-box;
+	max-width: 100%;
+	min-width: 0;
+	width: 100%;
 }
 
 .editor-media-item img {
