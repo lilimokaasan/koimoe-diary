@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-soft-datetime-picker-init">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-login-leave">
 </head>
 <body class="admin-login-page">
 	<div class="auth-bg" aria-hidden="true"></div>
@@ -26,6 +26,29 @@
 		if (!window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
+	</script>
+	<script>
+		(function () {
+			var form = document.querySelector(".auth-panel");
+			if (!form) return;
+			var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+			var leaving = false;
+			form.addEventListener("submit", function (event) {
+				if (form.dataset.leaveReady === "1" || reduceMotion) return;
+				event.preventDefault();
+				if (leaving) return;
+				leaving = true;
+				document.body.classList.add("auth-is-leaving");
+				window.setTimeout(function () {
+					form.dataset.leaveReady = "1";
+					if (form.requestSubmit) {
+						form.requestSubmit();
+					} else {
+						form.submit();
+					}
+				}, 420);
+			});
+		})();
 	</script>
 </body>
 </html>

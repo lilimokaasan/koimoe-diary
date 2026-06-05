@@ -208,6 +208,28 @@ body.admin-is-leaving .admin-globalbar::after {
 	}
 }
 
+@keyframes auth-panel-leave {
+	from {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(14px) scale(0.985);
+	}
+}
+
+@keyframes auth-bg-leave {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0.58;
+		transform: scale(1.012);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	body.admin-page .admin-hero,
 	body.admin-page .admin-shell,
@@ -319,6 +341,24 @@ body.admin-is-leaving .admin-globalbar::after {
 
 .auth-panel > *:nth-child(8) {
 	animation-delay: 0.61s;
+}
+
+body.auth-is-leaving .auth-panel {
+	animation: auth-panel-leave 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+	pointer-events: none;
+}
+
+body.auth-is-leaving .auth-bg {
+	animation: auth-bg-leave 0.48s ease forwards;
+}
+
+body.auth-is-leaving .auth-bg::after {
+	opacity: 0.46;
+	transition: opacity 0.42s ease;
+}
+
+body.auth-is-leaving .auth-panel > * {
+	animation: none;
 }
 
 .auth-avatar {
