@@ -3602,7 +3602,17 @@ button:disabled {
 }
 
 .admin-posts-table .post-open-cell {
+	padding-left: 0;
+	text-align: right;
+	vertical-align: middle;
+}
+
+.admin-posts-table .post-open-actions {
+	align-items: center;
+	display: flex;
 	justify-content: flex-end;
+	min-height: 100%;
+	width: 100%;
 }
 
 .admin-posts-table .table-action-button {

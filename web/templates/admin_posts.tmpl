@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-admin-global-polish">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-post-action-cell">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -88,11 +88,13 @@
 							<td class="post-category-cell">{{.Category.Name}}</td>
 							<td class="post-updated-cell">{{since .UpdatedAt}}</td>
 							<td class="table-actions post-open-cell">
+								<div class="post-open-actions">
 								{{if and (eq .Status "published") (not (isFuture .PublishedAt))}}
 								<a class="table-action-button" href="/post/{{.Slug}}" target="_blank">Open</a>
 								{{else}}
 								<a class="table-action-button" href="/admin/posts/{{.ID}}/preview" target="_blank">Preview</a>
 								{{end}}
+								</div>
 							</td>
 						</tr>
 						{{else}}
@@ -108,6 +110,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260606-admin-global-polish"></script>
+	<script src="/static/admin.js?v=20260606-post-action-cell"></script>
 </body>
 </html>
