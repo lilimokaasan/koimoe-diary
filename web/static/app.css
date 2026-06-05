@@ -658,7 +658,7 @@ textarea:disabled,
 .post-list h1.entry-title {
 	line-height: 1.42;
 	margin-bottom: 8px;
-	max-width: calc(100% - 120px);
+	max-width: calc(100% - 106px);
 	overflow: visible;
 	text-overflow: clip;
 	white-space: normal;
@@ -671,8 +671,21 @@ textarea:disabled,
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
-	text-overflow: ellipsis;
+	padding-right: 1.08em;
+	position: relative;
+	text-overflow: clip;
 	white-space: normal;
+}
+
+.post-list h1.entry-title a::after {
+	bottom: 0.08em;
+	color: var(--sakura-rose);
+	content: "...";
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	position: absolute;
+	right: 0;
 }
 
 .post-list h1.entry-title a:hover {
@@ -3949,6 +3962,15 @@ body.search-open {
 		text-overflow: clip;
 		white-space: normal;
 		width: 100%;
+	}
+
+	.post-list h1.entry-title a {
+		display: inline;
+		padding-right: 0;
+	}
+
+	.post-list h1.entry-title a::after {
+		content: none;
 	}
 
 	.post-list .p-time {
