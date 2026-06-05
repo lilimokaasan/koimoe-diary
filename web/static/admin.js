@@ -106,6 +106,7 @@
 		initDangerConfirmations();
 		initCommentBulkActions();
 		initMediaBulkActions();
+		initSoftSelects(document);
 		bindContentShellLinks(document);
 		initSettingsAnchors();
 		return true;
@@ -247,6 +248,90 @@
 		root = root || document;
 		Array.prototype.slice.call(root.querySelectorAll(".post-filter-tabs a[href^='/admin']")).forEach(bindPostFilterClick);
 		Array.prototype.slice.call(root.querySelectorAll(".comment-filter-tabs a[href^='/admin']")).forEach(bindShellClick);
+	}
+
+	function initSoftSelects(root) {
+		root = root || document;
+		Array.prototype.slice.call(root.querySelectorAll(".comment-bulk-bar select[name='bulk_action'], .media-bulk-bar select[name='bulk_action']")).forEach(function (select) {
+			if (select.dataset.softSelectBound === "1") return;
+			select.dataset.softSelectBound = "1";
+			select.classList.add("admin-native-select");
+
+			var wrapper = document.createElement("div");
+			wrapper.className = "admin-soft-select";
+			var trigger = document.createElement("button");
+			trigger.type = "button";
+			trigger.className = "admin-soft-select-trigger";
+			trigger.setAttribute("aria-haspopup", "listbox");
+			trigger.setAttribute("aria-expanded", "false");
+			var triggerLabel = document.createElement("span");
+			trigger.appendChild(triggerLabel);
+			var menu = document.createElement("div");
+			menu.className = "admin-soft-select-menu";
+			menu.setAttribute("role", "listbox");
+
+			function selectedOption() {
+				return select.options[select.selectedIndex] || select.options[0];
+			}
+
+			function setOpen(open) {
+				wrapper.classList.toggle("is-open", open);
+				trigger.setAttribute("aria-expanded", open ? "true" : "false");
+			}
+
+			function update() {
+				var option = selectedOption();
+				triggerLabel.textContent = option ? option.textContent : "";
+				Array.prototype.slice.call(menu.querySelectorAll("[data-soft-select-value]")).forEach(function (item) {
+					item.setAttribute("aria-selected", item.dataset.softSelectValue === select.value ? "true" : "false");
+				});
+			}
+
+			Array.prototype.slice.call(select.options).forEach(function (option) {
+				var item = document.createElement("button");
+				item.type = "button";
+				item.className = "admin-soft-select-option";
+				item.dataset.softSelectValue = option.value;
+				item.setAttribute("role", "option");
+				item.textContent = option.textContent;
+				item.addEventListener("click", function () {
+					select.value = option.value;
+					select.dispatchEvent(new Event("change", { bubbles: true }));
+					update();
+					setOpen(false);
+					trigger.focus();
+				});
+				menu.appendChild(item);
+			});
+
+			trigger.addEventListener("click", function (event) {
+				event.stopPropagation();
+				setOpen(!wrapper.classList.contains("is-open"));
+			});
+
+			wrapper.addEventListener("keydown", function (event) {
+				if (event.key === "Escape") {
+					setOpen(false);
+					trigger.focus();
+				}
+				if (event.key === "ArrowDown") {
+					event.preventDefault();
+					setOpen(true);
+					var active = menu.querySelector("[aria-selected='true']") || menu.querySelector(".admin-soft-select-option");
+					if (active) active.focus();
+				}
+			});
+
+			document.addEventListener("click", function () {
+				setOpen(false);
+			});
+
+			select.addEventListener("change", update);
+			wrapper.appendChild(trigger);
+			wrapper.appendChild(menu);
+			select.insertAdjacentElement("afterend", wrapper);
+			update();
+		});
 	}
 
 	function scrollAdminShellTo(target, instant) {
@@ -495,4 +580,5 @@
 	initCommentBulkActions();
 	initMediaBulkActions();
 	initSettingsAnchors();
+	initSoftSelects();
 })();

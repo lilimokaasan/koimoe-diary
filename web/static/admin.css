@@ -989,6 +989,132 @@ textarea:focus {
 	box-shadow: 0 0 0 4px rgba(251, 152, 192, 0.14);
 }
 
+.admin-native-select {
+	display: none;
+}
+
+.admin-soft-select {
+	flex: 0 1 260px;
+	position: relative;
+	width: min(260px, 100%);
+	z-index: 4;
+}
+
+.admin-soft-select-trigger {
+	align-items: center;
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 247, 251, 0.62)),
+		rgba(255, 255, 255, 0.46);
+	border: 1px solid rgba(251, 152, 192, 0.28);
+	border-radius: 8px;
+	box-shadow: 0 12px 24px rgba(126, 64, 98, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.76);
+	box-sizing: border-box;
+	color: var(--ink);
+	display: inline-flex;
+	font-size: 14px;
+	font-weight: 500;
+	justify-content: space-between;
+	min-height: 42px;
+	padding: 10px 14px 10px 16px;
+	text-align: left;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	width: 100%;
+}
+
+.admin-soft-select-trigger::after {
+	border: solid rgba(111, 102, 112, 0.78);
+	border-width: 0 1.5px 1.5px 0;
+	content: "";
+	flex: 0 0 auto;
+	height: 7px;
+	margin-left: 16px;
+	transform: rotate(45deg) translateY(-2px);
+	transition: transform 0.22s ease, border-color 0.2s ease;
+	width: 7px;
+}
+
+.admin-soft-select-trigger:hover,
+.admin-soft-select-trigger:focus {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 242, 249, 0.72)),
+		rgba(255, 255, 255, 0.54);
+	border-color: rgba(251, 152, 192, 0.48);
+	box-shadow: 0 14px 30px rgba(251, 152, 192, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+	outline: none;
+	transform: none;
+}
+
+.admin-soft-select.is-open .admin-soft-select-trigger {
+	border-color: rgba(251, 152, 192, 0.54);
+	box-shadow: 0 0 0 4px rgba(251, 152, 192, 0.12), 0 14px 30px rgba(251, 152, 192, 0.12);
+}
+
+.admin-soft-select.is-open .admin-soft-select-trigger::after {
+	border-color: var(--sakura-deep);
+	transform: rotate(225deg) translate(-2px, -1px);
+}
+
+.admin-soft-select-menu {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 251, 0.9)),
+		rgba(255, 255, 255, 0.88);
+	border: 1px solid rgba(251, 152, 192, 0.28);
+	border-radius: 8px;
+	box-shadow: 0 22px 52px rgba(126, 64, 98, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.84);
+	box-sizing: border-box;
+	display: grid;
+	gap: 3px;
+	left: 0;
+	margin-top: 7px;
+	max-height: 280px;
+	opacity: 0;
+	overflow-y: auto;
+	padding: 6px;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	top: 100%;
+	transform: translateY(-4px) scale(0.99);
+	transform-origin: top center;
+	transition: opacity 0.18s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+	z-index: 60;
+}
+
+.admin-soft-select.is-open .admin-soft-select-menu {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0) scale(1);
+}
+
+.admin-soft-select-option {
+	background: transparent;
+	border: 0;
+	border-radius: 7px;
+	box-shadow: none;
+	color: #6f6670;
+	font-size: 14px;
+	font-weight: 500;
+	justify-content: flex-start;
+	min-height: 36px;
+	padding: 8px 11px;
+	text-align: left;
+	width: 100%;
+}
+
+.admin-soft-select-option:hover,
+.admin-soft-select-option:focus {
+	background: rgba(251, 152, 192, 0.12);
+	color: var(--sakura-deep);
+	outline: none;
+	transform: none;
+}
+
+.admin-soft-select-option[aria-selected="true"] {
+	background: linear-gradient(135deg, rgba(251, 152, 192, 0.18), rgba(255, 246, 251, 0.74));
+	color: #ec6fa0;
+	font-weight: 700;
+}
+
 textarea {
 	line-height: 1.65;
 	resize: vertical;
