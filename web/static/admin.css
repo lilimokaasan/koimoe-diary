@@ -3238,7 +3238,7 @@ button:disabled {
 	border-top-right-radius: 8px;
 }
 
-.admin-posts-table {
+.admin-page .admin-posts-table {
 	border-spacing: 0 11px;
 	table-layout: fixed;
 }
