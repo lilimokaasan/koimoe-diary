@@ -2161,6 +2161,18 @@ button.primary:hover,
 	padding: 16px;
 }
 
+.media-upload-panel label,
+.media-filter-panel label {
+	margin-bottom: 0;
+}
+
+.media-upload-panel button,
+.media-filter-panel button,
+.media-filter-panel a.button {
+	align-self: end;
+	min-height: 46px;
+}
+
 .media-filter-panel {
 	grid-template-columns: minmax(0, 1fr) auto auto;
 }
