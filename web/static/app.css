@@ -3970,7 +3970,15 @@ body.search-open {
 	}
 
 	.post-list h1.entry-title a::after {
-		content: none;
+		bottom: auto;
+		content: "...";
+		display: inline;
+		margin-left: 2px;
+		position: static;
+	}
+
+	.post-list h1.entry-title a:hover::after {
+		color: var(--sakura-rose);
 	}
 
 	.post-list .p-time {
