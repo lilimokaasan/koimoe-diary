@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-clean-sidebar-logo">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-links-actions">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -59,18 +59,18 @@
 				<a class="button primary" href="/admin/links/new">New Link</a>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
-			<table class="admin-table">
+			<table class="admin-table admin-links-table">
 				<thead><tr><th>Name</th><th>Category</th><th>Status</th><th>Order</th><th></th></tr></thead>
 				<tbody>
 					{{range .FriendLinks}}
 					<tr>
 						<td><a href="/admin/links/{{.ID}}/edit">{{.Name}}</a><span>{{.URL}}</span></td>
-						<td>{{.Category.Name}}</td>
+						<td class="link-category">{{.Category.Name}}</td>
 						<td><span class="status {{if .Visible}}published{{else}}hidden{{end}}">{{if .Visible}}visible{{else}}hidden{{end}}</span></td>
 						<td>{{.SortOrder}}</td>
 						<td class="table-actions">
-							<a href="{{.URL}}" target="_blank" rel="noopener noreferrer">Open</a>
-							<form method="post" action="/admin/links/{{.ID}}/delete"><button class="danger" type="submit">Delete</button></form>
+							<a class="table-action-button" href="{{.URL}}" target="_blank" rel="noopener noreferrer">Open</a>
+							<form method="post" action="/admin/links/{{.ID}}/delete" data-confirm-delete="Delete this link?"><button class="table-action-button danger" type="submit">Delete</button></form>
 						</td>
 					</tr>
 					{{else}}
@@ -85,6 +85,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260606-clean-sidebar-logo"></script>
+	<script src="/static/admin.js?v=20260606-links-actions"></script>
 </body>
 </html>
