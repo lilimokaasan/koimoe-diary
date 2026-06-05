@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260604-no-blur-filter-ajax">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-post-list-partial">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -59,46 +59,48 @@
 				<a class="button primary" href="/admin/posts/new">New Post</a>
 			</div>
 			{{if .Message}}<div class="admin-alert success">Saved.</div>{{end}}
-			<nav class="post-filter-tabs" aria-label="Post filters">
-				<a href="/admin" class="{{if eq .PostStatus ""}}is-active{{end}}"><span>All</span><strong>{{.PostTotal}}</strong></a>
-				<a href="/admin?status=published" class="{{if eq .PostStatus "published"}}is-active{{end}}"><span>Published</span><strong>{{.PostPublished}}</strong></a>
-				<a href="/admin?status=scheduled" class="{{if eq .PostStatus "scheduled"}}is-active{{end}}"><span>Scheduled</span><strong>{{.PostScheduled}}</strong></a>
-				<a href="/admin?status=draft" class="{{if eq .PostStatus "draft"}}is-active{{end}}"><span>Draft</span><strong>{{.PostDraft}}</strong></a>
-				<a href="/admin?status=private" class="{{if eq .PostStatus "private"}}is-active{{end}}"><span>Private</span><strong>{{.PostPrivate}}</strong></a>
-			</nav>
-			<table class="admin-table">
-				<thead><tr><th>Title</th><th>Status</th><th>Category</th><th>Updated</th><th></th></tr></thead>
-				<tbody>
-					{{range .Posts}}
-					<tr>
-						<td>
-							<a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a>
-							{{if .IsPinned}}<span class="admin-table-badge">Pinned</span>{{end}}
-							<span>{{.Slug}}</span>
-						</td>
-						<td>
-							{{if and (eq .Status "published") (isFuture .PublishedAt)}}
-							<span class="status scheduled">scheduled</span>
-							{{else}}
-							<span class="status {{.Status}}">{{.Status}}</span>
-							{{end}}
-							<span>{{.PublishedAt.Format "2006-01-02 15:04"}}</span>
-						</td>
-						<td>{{.Category.Name}}</td>
-						<td>{{since .UpdatedAt}}</td>
-						<td>
-							{{if and (eq .Status "published") (not (isFuture .PublishedAt))}}
-							<a href="/post/{{.Slug}}" target="_blank">Open</a>
-							{{else}}
-							<a href="/admin/posts/{{.ID}}/preview" target="_blank">Preview</a>
-							{{end}}
-						</td>
-					</tr>
-					{{else}}
-					<tr><td colspan="5">No posts yet.</td></tr>
-					{{end}}
-				</tbody>
-			</table>
+			<div class="admin-posts-list-region" data-admin-post-list>
+				<nav class="post-filter-tabs" aria-label="Post filters">
+					<a href="/admin" class="{{if eq .PostStatus ""}}is-active{{end}}"><span>All</span><strong>{{.PostTotal}}</strong></a>
+					<a href="/admin?status=published" class="{{if eq .PostStatus "published"}}is-active{{end}}"><span>Published</span><strong>{{.PostPublished}}</strong></a>
+					<a href="/admin?status=scheduled" class="{{if eq .PostStatus "scheduled"}}is-active{{end}}"><span>Scheduled</span><strong>{{.PostScheduled}}</strong></a>
+					<a href="/admin?status=draft" class="{{if eq .PostStatus "draft"}}is-active{{end}}"><span>Draft</span><strong>{{.PostDraft}}</strong></a>
+					<a href="/admin?status=private" class="{{if eq .PostStatus "private"}}is-active{{end}}"><span>Private</span><strong>{{.PostPrivate}}</strong></a>
+				</nav>
+				<table class="admin-table">
+					<thead><tr><th>Title</th><th>Status</th><th>Category</th><th>Updated</th><th></th></tr></thead>
+					<tbody>
+						{{range .Posts}}
+						<tr>
+							<td>
+								<a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a>
+								{{if .IsPinned}}<span class="admin-table-badge">Pinned</span>{{end}}
+								<span>{{.Slug}}</span>
+							</td>
+							<td>
+								{{if and (eq .Status "published") (isFuture .PublishedAt)}}
+								<span class="status scheduled">scheduled</span>
+								{{else}}
+								<span class="status {{.Status}}">{{.Status}}</span>
+								{{end}}
+								<span>{{.PublishedAt.Format "2006-01-02 15:04"}}</span>
+							</td>
+							<td>{{.Category.Name}}</td>
+							<td>{{since .UpdatedAt}}</td>
+							<td>
+								{{if and (eq .Status "published") (not (isFuture .PublishedAt))}}
+								<a href="/post/{{.Slug}}" target="_blank">Open</a>
+								{{else}}
+								<a href="/admin/posts/{{.ID}}/preview" target="_blank">Preview</a>
+								{{end}}
+							</td>
+						</tr>
+						{{else}}
+						<tr><td colspan="5">No posts yet.</td></tr>
+						{{end}}
+					</tbody>
+				</table>
+			</div>
 		</section>
 	</main>
 	<script>
@@ -106,6 +108,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260604-no-blur-filter-ajax"></script>
+	<script src="/static/admin.js?v=20260606-post-list-partial"></script>
 </body>
 </html>

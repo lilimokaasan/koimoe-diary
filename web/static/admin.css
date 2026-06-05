@@ -1094,6 +1094,16 @@ button.primary:hover,
 	width: 100%;
 }
 
+.admin-posts-list-region {
+	transition: opacity 0.28s ease, transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.admin-posts-list-region.is-loading {
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(6px);
+}
+
 .admin-alert {
 	border-radius: 8px;
 	margin: 0 0 16px;

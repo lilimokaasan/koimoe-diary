@@ -102,6 +102,16 @@
 		return true;
 	}
 
+	function replacePostListContent(doc) {
+		var current = document.querySelector("[data-admin-post-list]");
+		var next = doc.querySelector("[data-admin-post-list]");
+		if (!current || !next) return false;
+		current.replaceWith(next);
+		if (doc.title) document.title = doc.title;
+		bindContentShellLinks(document);
+		return true;
+	}
+
 	function isShellLink(link) {
 		if (!link) return false;
 		var url = new URL(link.href, window.location.origin);
@@ -153,6 +163,65 @@
 		});
 	}
 
+	function loadPostFilter(url, options) {
+		options = options || {};
+		var region = document.querySelector("[data-admin-post-list]");
+		if (!region) return loadAdminPage(url, options);
+		region.classList.add("is-loading");
+		return fetch(url, {
+			credentials: "same-origin",
+			headers: { "X-Requested-With": "fetch" }
+		}).then(function (response) {
+			if (!response.ok) throw new Error("HTTP " + response.status);
+			return response.text();
+		}).then(function (html) {
+			return new Promise(function (resolve) {
+				window.setTimeout(function () {
+					var doc = new DOMParser().parseFromString(html, "text/html");
+					if (!replacePostListContent(doc)) {
+						loadAdminPage(url, options).then(resolve);
+						return;
+					}
+					if (!options.skipHistory) {
+						window.history.pushState({ adminPostList: true }, "", url);
+					}
+					syncNav(true);
+					var nextRegion = document.querySelector("[data-admin-post-list]");
+					if (nextRegion) {
+						nextRegion.classList.add("is-loading");
+						window.requestAnimationFrame(function () {
+							window.requestAnimationFrame(function () {
+								nextRegion.classList.remove("is-loading");
+							});
+						});
+					}
+					resolve();
+				}, 180);
+			});
+		}).catch(function () {
+			window.location.href = url;
+		}).finally(function () {
+			var latestRegion = document.querySelector("[data-admin-post-list]");
+			if (latestRegion) {
+				window.setTimeout(function () {
+					latestRegion.classList.remove("is-loading");
+				}, 20);
+			}
+		});
+	}
+
+	function bindPostFilterClick(link) {
+		if (!link || link.dataset.adminPostFilterBound === "1") return;
+		link.dataset.adminPostFilterBound = "1";
+		link.addEventListener("click", function (event) {
+			if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+			if (!isShellLink(link)) return;
+			event.preventDefault();
+			event.stopPropagation();
+			loadPostFilter(link.href);
+		}, true);
+	}
+
 	function bindShellClick(link) {
 		if (!link || link.dataset.adminShellBound === "1") return;
 		link.dataset.adminShellBound = "1";
@@ -167,10 +236,8 @@
 
 	function bindContentShellLinks(root) {
 		root = root || document;
-		Array.prototype.slice.call(root.querySelectorAll([
-			".post-filter-tabs a[href^='/admin']",
-			".comment-filter-tabs a[href^='/admin']"
-		].join(", "))).forEach(bindShellClick);
+		Array.prototype.slice.call(root.querySelectorAll(".post-filter-tabs a[href^='/admin']")).forEach(bindPostFilterClick);
+		Array.prototype.slice.call(root.querySelectorAll(".comment-filter-tabs a[href^='/admin']")).forEach(bindShellClick);
 	}
 
 	function scrollAdminShellTo(target, instant) {
@@ -241,7 +308,13 @@
 
 		nav.addEventListener("mouseleave", clearIndicator);
 		window.addEventListener("resize", function () { syncNav(true); });
-		window.addEventListener("popstate", function () { loadAdminPage(window.location.href, { skipHistory: true }); });
+		window.addEventListener("popstate", function () {
+			if (window.location.pathname.replace(/\/$/, "") === "/admin" && document.querySelector("[data-admin-post-list]")) {
+				loadPostFilter(window.location.href, { skipHistory: true });
+				return;
+			}
+			loadAdminPage(window.location.href, { skipHistory: true });
+		});
 	}
 
 	function initUserMenu() {
