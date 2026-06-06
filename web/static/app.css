@@ -301,7 +301,7 @@ textarea:disabled,
 	display: inline-flex;
 	height: 44px;
 	justify-content: center;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.2s ease;
+	transition: border-color 0.46s ease, box-shadow 0.5s ease, color 0.42s ease, transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
 	width: 44px;
 }
 
@@ -375,7 +375,7 @@ textarea:disabled,
 	right: 0;
 	top: 48px;
 	transform: translateY(-4px);
-	transition: opacity 0.18s ease, transform 0.18s ease;
+	transition: opacity 0.34s ease, transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .user-entry.is-open .user-entry__menu {
@@ -1056,7 +1056,7 @@ textarea:disabled,
 	min-width: 34px;
 	padding: 0 11px;
 	text-decoration: none;
-	transition: background-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+	transition: background-color 0.42s ease, box-shadow 0.46s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .post-share a:hover,
@@ -1219,7 +1219,7 @@ textarea:disabled,
 	min-width: 34px;
 	padding: 0 10px;
 	text-decoration: none;
-	transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+	transition: background 0.48s ease, border-color 0.48s ease, box-shadow 0.5s ease, color 0.42s ease, transform 0.54s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .koimoe-social-links a:hover {
@@ -1509,7 +1509,7 @@ textarea:disabled,
 	line-height: 1;
 	padding: 0 16px;
 	text-decoration: none;
-	transition: background-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+	transition: background-color 0.42s ease, box-shadow 0.46s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 	vertical-align: top;
 	white-space: nowrap;
 }

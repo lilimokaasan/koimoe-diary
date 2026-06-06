@@ -1202,7 +1202,7 @@ label > .admin-soft-select,
 	min-height: 42px;
 	padding: 10px 14px 10px 16px;
 	text-align: left;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	transition: border-color 0.46s ease, box-shadow 0.46s ease, background 0.46s ease, color 0.4s ease;
 	width: 100%;
 }
 
@@ -1214,7 +1214,7 @@ label > .admin-soft-select,
 	height: 7px;
 	margin-left: 16px;
 	transform: rotate(45deg) translateY(-2px);
-	transition: transform 0.22s ease, border-color 0.2s ease;
+	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.42s ease;
 	width: 7px;
 }
 
@@ -1576,18 +1576,20 @@ textarea {
 .field-with-action {
 	display: grid;
 	gap: 8px;
+	min-width: 0;
 }
 
 .editor-tools {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	margin: 0 0 8px;
+	min-width: 0;
 }
 
 .soft-tool {
-	justify-self: end;
+	justify-self: start;
 	min-height: 34px;
 	padding: 8px 12px;
 }
@@ -1743,7 +1745,7 @@ button.primary:hover,
 }
 
 .admin-table tbody tr {
-	transition: opacity 0.36s ease, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+	transition: opacity 0.4s ease, transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .admin-table th,
@@ -1860,7 +1862,7 @@ button.primary:hover,
 	min-height: 36px;
 	padding: 10px 15px;
 	text-decoration: none;
-	transition: background 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease, color 0.24s ease, transform 0.24s ease;
+	transition: background 0.42s ease, border-color 0.42s ease, box-shadow 0.42s ease, color 0.38s ease, transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .table-action-button:hover,
@@ -1954,11 +1956,12 @@ button.primary:hover,
 .editor-grid {
 	display: grid;
 	gap: 22px;
-	grid-template-columns: minmax(0, 1fr) 290px;
+	grid-template-columns: minmax(0, 1fr) minmax(260px, 290px);
 }
 
 .editor-main,
 .editor-side {
+	box-sizing: border-box;
 	min-width: 0;
 }
 
@@ -2306,7 +2309,7 @@ button.primary:hover,
 .media-tools-panel {
 	display: grid;
 	gap: 14px;
-	grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+	grid-template-columns: minmax(0, 1fr) minmax(320px, 0.78fr);
 }
 
 .media-upload-panel,
@@ -2318,6 +2321,7 @@ button.primary:hover,
 	display: grid;
 	gap: 14px;
 	grid-template-columns: minmax(0, 1fr) auto;
+	min-width: 0;
 	padding: 16px;
 }
 
@@ -2339,7 +2343,7 @@ button.primary:hover,
 }
 
 .media-filter-panel {
-	grid-template-columns: minmax(0, 1fr) auto auto;
+	grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .media-count {
@@ -2433,6 +2437,16 @@ button.primary:hover,
 	overflow: hidden;
 	padding: 10px;
 	position: relative;
+	transition: background 0.48s ease, border-color 0.48s ease, box-shadow 0.52s ease, transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.curated-media-card:hover {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(255, 248, 252, 0.64)),
+		rgba(255, 255, 255, 0.68);
+	border-color: rgba(251, 152, 192, 0.22);
+	box-shadow: 0 16px 32px rgba(251, 152, 192, 0.1);
+	transform: translateY(-1px);
 }
 
 .media-card-check {
@@ -3054,7 +3068,7 @@ button.danger {
 
 .settings-grid.balanced {
 	gap: 18px;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: minmax(0, 1fr) minmax(320px, 0.92fr);
 }
 
 .settings-grid > section {
@@ -3713,6 +3727,7 @@ button:disabled {
 	border-top: 1px solid rgba(255, 255, 255, 0.62);
 	line-height: 1.45;
 	padding: 14px;
+	transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.52s ease, color 0.42s ease;
 	vertical-align: top;
 }
 
@@ -3766,7 +3781,7 @@ button:disabled {
 	border-top: 1px solid rgba(255, 255, 255, 0.7);
 	color: #5a535f;
 	padding: 15px 16px;
-	transition: background-color 0.42s ease, border-color 0.42s ease, box-shadow 0.42s ease, color 0.34s ease;
+	transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.52s ease, color 0.42s ease;
 	vertical-align: middle;
 }
 
@@ -3781,16 +3796,22 @@ button:disabled {
 
 .admin-posts-table tbody tr:hover td {
 	background:
-		linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 244, 250, 0.58)),
-		rgba(255, 255, 255, 0.5);
+		linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(255, 244, 250, 0.64)),
+		rgba(255, 255, 255, 0.58);
 	border-color: rgba(251, 152, 192, 0.18);
+	box-shadow: 0 12px 24px rgba(251, 152, 192, 0.055);
+}
+
+.admin-page .admin-table tbody tr:hover {
+	transform: translateY(-1px);
 }
 
 .admin-page .admin-table tbody tr:hover td {
 	background:
-		linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 246, 251, 0.56)),
-		rgba(255, 255, 255, 0.5);
+		linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(255, 246, 251, 0.62)),
+		rgba(255, 255, 255, 0.58);
 	border-color: rgba(251, 152, 192, 0.16);
+	box-shadow: 0 12px 24px rgba(251, 152, 192, 0.05);
 }
 
 .admin-posts-table .post-title-cell a {
@@ -3858,6 +3879,60 @@ button:disabled {
 	font-weight: 640;
 	min-height: 32px;
 	padding: 9px 14px;
+}
+
+@media (max-width: 1180px) {
+	.editor-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.editor-side {
+		display: grid;
+		gap: 16px;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.editor-side > * {
+		min-width: 0;
+	}
+
+	.media-tools-panel,
+	.settings-grid.balanced {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.media-filter-panel,
+	.media-upload-panel {
+		grid-template-columns: minmax(0, 1fr) minmax(112px, auto);
+	}
+}
+
+@media (max-width: 980px) {
+	.editor-side {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.admin-page .admin-table {
+		display: block;
+		overflow-x: auto;
+		padding-bottom: 4px;
+		scrollbar-color: rgba(251, 152, 192, 0.42) transparent;
+		scrollbar-width: thin;
+	}
+
+	.admin-page .admin-table th,
+	.admin-page .admin-table td {
+		min-width: 112px;
+	}
+
+	.admin-page .admin-table th:first-child,
+	.admin-page .admin-table td:first-child {
+		min-width: 220px;
+	}
+
+	.admin-page .admin-table td.table-actions {
+		min-width: 132px;
+	}
 }
 
 @media (max-width: 820px) {
@@ -3967,6 +4042,23 @@ button:disabled {
 		font-size: 19px;
 	}
 
+	.field-with-action,
+	.cover-actions {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.editor-tools {
+		align-items: stretch;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.editor-tools .soft-tool {
+		justify-self: stretch;
+		min-width: 0;
+		width: 100%;
+	}
+
 	.admin-global-actions {
 		justify-content: space-between;
 	}
@@ -4072,6 +4164,11 @@ button:disabled {
 	.media-filter-panel,
 	.curated-media-actions {
 		display: block;
+	}
+
+	.media-upload-panel input,
+	.media-filter-panel input {
+		width: 100%;
 	}
 
 	.media-upload-panel button,
