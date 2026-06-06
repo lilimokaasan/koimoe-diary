@@ -188,10 +188,12 @@
 		if (instant) {
 			userMenu.classList.add("is-positioning");
 		}
-		userMenuIndicator.style.width = item.offsetWidth + "px";
-		userMenuIndicator.style.height = item.offsetHeight + "px";
-		userMenuIndicator.style.setProperty("--user-menu-x", item.offsetLeft + "px");
-		userMenuIndicator.style.setProperty("--user-menu-y", item.offsetTop + "px");
+		var menuRect = userMenu.getBoundingClientRect();
+		var itemRect = item.getBoundingClientRect();
+		userMenuIndicator.style.width = itemRect.width + "px";
+		userMenuIndicator.style.height = itemRect.height + "px";
+		userMenuIndicator.style.setProperty("--user-menu-x", itemRect.left - menuRect.left + "px");
+		userMenuIndicator.style.setProperty("--user-menu-y", itemRect.top - menuRect.top + "px");
 		userMenu.classList.add("is-ready");
 		if (instant) {
 			window.requestAnimationFrame(function () {
