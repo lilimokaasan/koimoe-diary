@@ -6,6 +6,9 @@
 	var liveSearchPanel = search && search.querySelector("[data-live-search-results]");
 	var userEntry = document.querySelector(".user-entry");
 	var userToggle = userEntry && userEntry.querySelector(".js-toggle-user-menu");
+	var userMenu = userEntry && userEntry.querySelector("[data-user-menu]");
+	var userMenuIndicator = null;
+	var userMenuItems = userMenu ? Array.prototype.slice.call(userMenu.querySelectorAll("a, button")) : [];
 	var mobileNavToggle = document.querySelector("[data-mobile-nav-toggle]");
 	var mobileNav = document.querySelector("[data-mobile-nav]");
 	var progressBar = document.querySelector("#bar, .scrollbar-progress");
@@ -163,8 +166,52 @@
 			return;
 		}
 		userEntry.classList.remove("is-open");
+		if (userMenu) {
+			userMenu.classList.remove("is-ready");
+		}
 		userToggle && userToggle.setAttribute("aria-expanded", "false");
 	}
+
+	if (userMenu && !userMenu.querySelector(".user-entry__menu-indicator")) {
+		userMenuIndicator = document.createElement("span");
+		userMenuIndicator.className = "user-entry__menu-indicator";
+		userMenuIndicator.setAttribute("aria-hidden", "true");
+		userMenu.insertBefore(userMenuIndicator, userMenu.firstChild);
+	} else if (userMenu) {
+		userMenuIndicator = userMenu.querySelector(".user-entry__menu-indicator");
+	}
+
+	function moveUserMenuIndicator(item, instant) {
+		if (!userMenu || !userMenuIndicator || !item) {
+			return;
+		}
+		if (instant) {
+			userMenu.classList.add("is-positioning");
+		}
+		userMenuIndicator.style.width = item.offsetWidth + "px";
+		userMenuIndicator.style.height = item.offsetHeight + "px";
+		userMenuIndicator.style.setProperty("--user-menu-x", item.offsetLeft + "px");
+		userMenuIndicator.style.setProperty("--user-menu-y", item.offsetTop + "px");
+		userMenu.classList.add("is-ready");
+		if (instant) {
+			window.requestAnimationFrame(function () {
+				userMenu.classList.remove("is-positioning");
+			});
+		}
+	}
+
+	userMenuItems.forEach(function (item) {
+		item.addEventListener("mouseenter", function () {
+			moveUserMenuIndicator(item);
+		});
+		item.addEventListener("focus", function () {
+			moveUserMenuIndicator(item);
+		});
+	});
+
+	userMenu && userMenu.addEventListener("mouseleave", function () {
+		userMenu.classList.remove("is-ready");
+	});
 
 	searchButtons.forEach(function (button) {
 		button.addEventListener("click", function () {
