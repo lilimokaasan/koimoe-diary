@@ -1,214 +1,1040 @@
-﻿[
-    {
-        "slug":  "asakusa-temple-sakura",
-        "title":  "Traditional Japanese temple with blooming cherry blossoms",
-        "author":  "LUHAN YANG",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/HBbitoH1HnU",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\asakusa-temple-sakura.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\asakusa-temple-sakura.jpg"
-    },
-    {
-        "slug":  "kiyomizu-sakura-dusk",
-        "title":  "Japanese temple with cherry blossoms at dusk",
-        "author":  "Marco Vockner",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/9hTzmtAAUS4",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\kiyomizu-sakura-dusk.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\kiyomizu-sakura-dusk.jpg"
-    },
-    {
-        "slug":  "sakura-blue-linus-belanger",
-        "title":  "Pink cherry blossoms bloom against a blue sky",
-        "author":  "Linus Belanger",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/_zLalCFcDcU",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-linus-belanger.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-linus-belanger.jpg"
-    },
-    {
-        "slug":  "sakura-blue-mak",
-        "title":  "Pink cherry blossom tree under blue sky",
-        "author":  "MAK",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/RlxP6WGmfP0",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-mak.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-mak.jpg"
-    },
-    {
-        "slug":  "sakura-blue-sky-david-schultz",
-        "title":  "Pink cherry blossom tree under blue sky",
-        "author":  "David Schultz",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/FMt4JRqsbiU",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-sky-david-schultz.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-sky-david-schultz.jpg"
-    },
-    {
-        "slug":  "sakura-blurred-blue-razvan",
-        "title":  "Delicate pink cherry blossoms against a blurred blue sky",
-        "author":  "Razvan Constantinescu",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/DvKqIbcD0o4",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blurred-blue-razvan.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blurred-blue-razvan.jpg"
-    },
-    {
-        "slug":  "sakura-bright-blue-yoko-saito",
-        "title":  "Pink cherry blossoms against a bright blue sky",
-        "author":  "Yoko Saito",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/R7-zEMV4QpA",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-bright-blue-yoko-saito.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-bright-blue-yoko-saito.jpg"
-    },
-    {
-        "slug":  "sakura-close-debora",
-        "title":  "Close-up of vibrant pink cherry blossoms against a blue sky",
-        "author":  "Débora Silva",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/4-bW8wHPGw4",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-close-debora.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-close-debora.jpg"
-    },
-    {
-        "slug":  "sakura-clouds-ja-kubislav",
-        "title":  "Pink cherry blossom tree under blue sky and white clouds",
-        "author":  "Ja Kubislav",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/9gUhbFn63TM",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-clouds-ja-kubislav.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-clouds-ja-kubislav.jpg"
-    },
-    {
-        "slug":  "sakura-kyoto-raymond",
-        "title":  "Pink cherry blossoms bloom against a clear blue sky in Kyoto",
-        "author":  "Raymond Yeung",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/nTrzQkMJ1iM",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-kyoto-raymond.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-kyoto-raymond.jpg"
-    },
-    {
-        "slug":  "sakura-macro-akshat",
-        "title":  "Pink cherry blossoms bloom against a blue sky",
-        "author":  "Akshat Sharma",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/eVT9fzyNGhw",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-macro-akshat.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-macro-akshat.jpg"
-    },
-    {
-        "slug":  "sakura-vibrant-dmytro",
-        "title":  "Vibrant pink cherry blossoms against a blue sky",
-        "author":  "Dmytro Yarish",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/u354cWIlTU8",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-vibrant-dmytro.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-vibrant-dmytro.jpg"
-    },
-    {
-        "slug":  "sakura-zen-patrick-shaun",
-        "title":  "Pink cherry blossoms against a bright blue sky",
-        "author":  "Patrick Shaun",
-        "license":  "Unsplash License",
-        "source_page":  "https://unsplash.com/photos/ZmLX5MJjXsU",
-        "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-zen-patrick-shaun.jpg",
-        "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-zen-patrick-shaun.jpg"
-    },
-    {
-        "value":  [
-                      {
-                          "slug":  "fuji-pagoda-sakura-01",
-                          "title":  "Pagoda with Mount Fuji and cherry blossoms",
-                          "author":  "Fabio Montello",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/Y0A9rXbn4x0",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-sakura-01.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-sakura-01.jpg"
-                      },
-                      {
-                          "slug":  "fuji-pagoda-sakura-02",
-                          "title":  "Pagoda with Mount Fuji in the background",
-                          "author":  "Sebastian Dugudae",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/Qsfbl-9YzIQ",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-sakura-02.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-sakura-02.jpg"
-                      },
-                      {
-                          "slug":  "fuji-pagoda-sakura-03",
-                          "title":  "Mount Fuji behind a traditional Japanese pagoda",
-                          "author":  "PJH",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/GBs7apr5row",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-sakura-03.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-sakura-03.jpg"
-                      },
-                      {
-                          "slug":  "himeji-castle-sakura",
-                          "title":  "Himeji Castle with cherry blossoms",
-                          "author":  "Caspar Wai",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/kN5_bLdhuAc",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\himeji-castle-sakura.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\himeji-castle-sakura.jpg"
-                      },
-                      {
-                          "slug":  "kyoto-castle-sakura",
-                          "title":  "Cherry blossoms frame a Japanese castle",
-                          "author":  "Syadza Salsabyla",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/QF5EzrWaQi4",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\kyoto-castle-sakura.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\kyoto-castle-sakura.jpg"
-                      },
-                      {
-                          "slug":  "white-castle-sakura",
-                          "title":  "White Japanese castle with cherry blossoms",
-                          "author":  "Seval Torun",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/4tmZjxLDDcY",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\white-castle-sakura.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\white-castle-sakura.jpg"
-                      },
-                      {
-                          "slug":  "sakura-street-soft",
-                          "title":  "Cherry blossoms over a Japanese street",
-                          "author":  "Q",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/-h0Aa1PqFRo",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-street-soft.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-street-soft.jpg"
-                      },
-                      {
-                          "slug":  "sakura-blue-sky",
-                          "title":  "Pink flowers against a blue sky",
-                          "author":  "Unsplash contributor",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/8LK3YidCCdI",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-sky.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-sky.jpg"
-                      },
-                      {
-                          "slug":  "sakura-branch-pastel",
-                          "title":  "Soft cherry blossoms against sky",
-                          "author":  "Unsplash contributor",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/kER3PBtugj0",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-branch-pastel.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-branch-pastel.jpg"
-                      },
-                      {
-                          "slug":  "fuji-pagoda-classic",
-                          "title":  "Pagoda with Mount Fuji in the background",
-                          "author":  "Matheo Joubert",
-                          "license":  "Unsplash License",
-                          "source_page":  "https://unsplash.com/photos/jONTTGFE_3g",
-                          "original_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-classic.jpg",
-                          "square_file":  "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-classic.jpg"
-                      }
-                  ],
-        "Count":  10
-    }
+[
+  {
+    "slug": "asakusa-temple-sakura",
+    "title": "Traditional Japanese temple with blooming cherry blossoms",
+    "author": "LUHAN YANG",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/HBbitoH1HnU",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\asakusa-temple-sakura.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\asakusa-temple-sakura.jpg"
+  },
+  {
+    "slug": "commons-00-3019-japanische-bl-tenkirsche-prunus-serrulata",
+    "title": "File:.00 3019 Japanische Blütenkirsche (Prunus serrulata).jpg",
+    "author": "W. Bulach",
+    "license": "CC BY-SA 4.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:.00_3019_Japanische_Blütenkirsche_(Prunus_serrulata).jpg",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\commons-00-3019-japanische-bl-tenkirsche-prunus-serrulata.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\commons-00-3019-japanische-bl-tenkirsche-prunus-serrulata.jpg",
+    "credit": "Own work",
+    "description": "Blossom of the \"Prunus\" (Prunus serrulata). The tree, which grows up to 8 meters tall, is part of the thousands of years old cherry blossom festival \"Hanami\" in Japan.",
+    "source": "Wikimedia Commons",
+    "category": "Category:Prunus in flower"
+  },
+  {
+    "slug": "commons-090-366-it-s-5-o-clock-somewhere-25889382170",
+    "title": "File:090 366 - It's 5 o'clock somewhere (25889382170).jpg",
+    "author": "thelittleone417",
+    "license": "CC BY-SA 2.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:090_366_-_It's_5_o'clock_somewhere_(25889382170).jpg",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\commons-090-366-it-s-5-o-clock-somewhere-25889382170.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\commons-090-366-it-s-5-o-clock-somewhere-25889382170.jpg",
+    "credit": "090 | 366 - It's 5 o'clock somewhere",
+    "description": "090 | 366 - It's 5 o'clock somewhere",
+    "source": "Wikimedia Commons",
+    "category": "Category:Prunus in flower"
+  },
+  {
+    "slug": "commons-2015-04-10-16-45-03-japanese-cherry-in-bloom-on-ches",
+    "title": "File:2015-04-10 16 45 03 Japanese Cherry in bloom on Cheshire Court in Sterling, Virginia.jpg",
+    "author": "Famartin",
+    "license": "CC BY-SA 4.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:2015-04-10_16_45_03_Japanese_Cherry_in_bloom_on_Cheshire_Court_in_Sterling,_Virginia.jpg",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\commons-2015-04-10-16-45-03-japanese-cherry-in-bloom-on-ches.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\commons-2015-04-10-16-45-03-japanese-cherry-in-bloom-on-ches.jpg",
+    "credit": "Own work",
+    "description": "Japanese Cherry in bloom on Cheshire Court in Sterling, Virginia",
+    "source": "Wikimedia Commons",
+    "category": "Category:Prunus in flower"
+  },
+  {
+    "slug": "commons-a-temple-on-the-other-side-of-the-valley-6988358034",
+    "title": "File:A temple on the other side of the valley (6988358034).jpg",
+    "author": "KimonBerlin",
+    "license": "CC BY-SA 2.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:A_temple_on_the_other_side_of_the_valley_(6988358034).jpg",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\commons-a-temple-on-the-other-side-of-the-valley-6988358034.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\commons-a-temple-on-the-other-side-of-the-valley-6988358034.jpg",
+    "credit": "https://www.flickr.com/photos/kimon/6988358034/",
+    "description": "A temple on the other side of the valley",
+    "source": "Wikimedia Commons",
+    "category": "Category:Cherry blossoms at Yoshinoyama"
+  },
+  {
+    "slug": "commons-outside-the-train-station-6988345836",
+    "title": "File:Outside the train station (6988345836).jpg",
+    "author": "KimonBerlin",
+    "license": "CC BY-SA 2.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Outside_the_train_station_(6988345836).jpg",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\commons-outside-the-train-station-6988345836.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\commons-outside-the-train-station-6988345836.jpg",
+    "credit": "https://www.flickr.com/photos/kimon/6988345836/",
+    "description": "Plenty of cherry trees already!",
+    "source": "Wikimedia Commons",
+    "category": "Category:Cherry blossoms at Yoshinoyama"
+  },
+  {
+    "slug": "fuji-pagoda-classic",
+    "title": "fuji-pagoda-classic",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-classic.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-classic.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "fuji-pagoda-sakura-01",
+    "title": "fuji-pagoda-sakura-01",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-sakura-01.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-sakura-01.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "fuji-pagoda-sakura-02",
+    "title": "fuji-pagoda-sakura-02",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-sakura-02.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-sakura-02.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "fuji-pagoda-sakura-03",
+    "title": "fuji-pagoda-sakura-03",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\fuji-pagoda-sakura-03.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\fuji-pagoda-sakura-03.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "himeji-castle-sakura",
+    "title": "himeji-castle-sakura",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\himeji-castle-sakura.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\himeji-castle-sakura.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "kiyomizu-sakura-dusk",
+    "title": "Japanese temple with cherry blossoms at dusk",
+    "author": "Marco Vockner",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/9hTzmtAAUS4",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\kiyomizu-sakura-dusk.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\kiyomizu-sakura-dusk.jpg"
+  },
+  {
+    "slug": "kyoto-castle-sakura",
+    "title": "kyoto-castle-sakura",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\kyoto-castle-sakura.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\kyoto-castle-sakura.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherry-blossoms-1004",
+    "title": "loremflickr-cherry-blossoms-1004",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherry-blossoms-1004.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherry-blossoms-1004.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherry-blossoms-1016",
+    "title": "loremflickr-cherry-blossoms-1016",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherry-blossoms-1016.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherry-blossoms-1016.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherry-blossoms-1040",
+    "title": "loremflickr-cherry-blossoms-1040",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherry-blossoms-1040.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherry-blossoms-1040.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherry-blossoms-1052",
+    "title": "loremflickr-cherry-blossoms-1052",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherry-blossoms-1052.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherry-blossoms-1052.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-1009",
+    "title": "loremflickr-cherryblossom-1009",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-1009.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-1009.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-1021",
+    "title": "loremflickr-cherryblossom-1021",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-1021.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-1021.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-1033",
+    "title": "loremflickr-cherryblossom-1033",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-1033.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-1033.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-1045",
+    "title": "loremflickr-cherryblossom-1045",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-1045.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-1045.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-1057",
+    "title": "loremflickr-cherryblossom-1057",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-1057.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-1057.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-japan-1011",
+    "title": "loremflickr-cherryblossom-japan-1011",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-japan-1011.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-japan-1011.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-japan-1023",
+    "title": "loremflickr-cherryblossom-japan-1023",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-japan-1023.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-japan-1023.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-japan-1035",
+    "title": "loremflickr-cherryblossom-japan-1035",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-japan-1035.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-japan-1035.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-japan-1047",
+    "title": "loremflickr-cherryblossom-japan-1047",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-japan-1047.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-japan-1047.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-japan-1059",
+    "title": "loremflickr-cherryblossom-japan-1059",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-japan-1059.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-japan-1059.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-cherryblossom-japan-1071",
+    "title": "loremflickr-cherryblossom-japan-1071",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-cherryblossom-japan-1071.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-cherryblossom-japan-1071.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-clean-cherry-blossoms-3001",
+    "title": "Keyword image: cherry,blossoms",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/cherry,blossoms?lock=3001",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-cherry-blossoms-3001.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-cherry-blossoms-3001.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54548752710_c17c210347_k_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `cherry,blossoms` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "cherry,blossoms"
+  },
+  {
+    "slug": "loremflickr-clean-cherry-blossoms-3008",
+    "title": "Keyword image: cherry,blossoms",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/cherry,blossoms?lock=3008",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-cherry-blossoms-3008.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-cherry-blossoms-3008.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54489434086_9a2f876932_k_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `cherry,blossoms` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "cherry,blossoms"
+  },
+  {
+    "slug": "loremflickr-clean-cherryblossom-japan-3003",
+    "title": "Keyword image: cherryblossom,japan",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/cherryblossom,japan?lock=3003",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-cherryblossom-japan-3003.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-cherryblossom-japan-3003.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54533995799_5934b6159d_k_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `cherryblossom,japan` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "cherryblossom,japan"
+  },
+  {
+    "slug": "loremflickr-clean-cherryblossom-japan-3010",
+    "title": "Keyword image: cherryblossom,japan",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/cherryblossom,japan?lock=3010",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-cherryblossom-japan-3010.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-cherryblossom-japan-3010.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54487791307_eb26061b6d_k_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `cherryblossom,japan` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "cherryblossom,japan"
+  },
+  {
+    "slug": "loremflickr-clean-japan-sakura-3006",
+    "title": "Keyword image: japan,sakura",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/japan,sakura?lock=3006",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-japan-sakura-3006.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-japan-sakura-3006.jpg",
+    "credit": "https://loremflickr.com/cache/resized/7801_46950776401_5c86dd430c_h_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `japan,sakura` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "japan,sakura"
+  },
+  {
+    "slug": "loremflickr-clean-pink-blossom-3005",
+    "title": "Keyword image: pink,blossom",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/pink,blossom?lock=3005",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-pink-blossom-3005.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-pink-blossom-3005.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54550670606_0b2bd64fbe_k_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `pink,blossom` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "pink,blossom"
+  },
+  {
+    "slug": "loremflickr-clean-pink-blossom-3012",
+    "title": "Keyword image: pink,blossom",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/pink,blossom?lock=3012",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-pink-blossom-3012.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-pink-blossom-3012.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54489888728_ce37bbf33d_h_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `pink,blossom` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "pink,blossom"
+  },
+  {
+    "slug": "loremflickr-clean-pink-flowers-3002",
+    "title": "Keyword image: pink,flowers",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/pink,flowers?lock=3002",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-pink-flowers-3002.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-pink-flowers-3002.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54337691981_c308ccb852_h_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `pink,flowers` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "pink,flowers"
+  },
+  {
+    "slug": "loremflickr-clean-pink-flowers-3009",
+    "title": "Keyword image: pink,flowers",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/pink,flowers?lock=3009",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-pink-flowers-3009.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-pink-flowers-3009.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54268835544_96672e3335_h_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `pink,flowers` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "pink,flowers"
+  },
+  {
+    "slug": "loremflickr-clean-sakura-tree-3004",
+    "title": "Keyword image: sakura,tree",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/sakura,tree?lock=3004",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-sakura-tree-3004.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-sakura-tree-3004.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54485804346_25adaa9ccf_k_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `sakura,tree` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "sakura,tree"
+  },
+  {
+    "slug": "loremflickr-clean-spring-flowers-3000",
+    "title": "Keyword image: spring,flowers",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/spring,flowers?lock=3000",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-spring-flowers-3000.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-spring-flowers-3000.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54283715459_954dd047bb_h_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `spring,flowers` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "spring,flowers"
+  },
+  {
+    "slug": "loremflickr-clean-spring-flowers-3007",
+    "title": "Keyword image: spring,flowers",
+    "author": "",
+    "license": "Source-dependent Flickr image via LoremFlickr",
+    "source_page": "https://loremflickr.com/1200/1200/spring,flowers?lock=3007",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-clean-spring-flowers-3007.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-clean-spring-flowers-3007.jpg",
+    "credit": "https://loremflickr.com/cache/resized/65535_54041472231_16830b1603_k_1200_1200_nofilter.jpg",
+    "description": "Fetched by keyword query `spring,flowers` for KoiMoe sakura image curation.",
+    "source": "LoremFlickr / Flickr keyword image",
+    "category": "spring,flowers"
+  },
+  {
+    "slug": "loremflickr-flowering-tree-1005",
+    "title": "loremflickr-flowering-tree-1005",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-flowering-tree-1005.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-flowering-tree-1005.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-flowering-tree-1017",
+    "title": "loremflickr-flowering-tree-1017",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-flowering-tree-1017.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-flowering-tree-1017.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japan-sakura-1010",
+    "title": "loremflickr-japan-sakura-1010",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japan-sakura-1010.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japan-sakura-1010.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japan-sakura-1022",
+    "title": "loremflickr-japan-sakura-1022",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japan-sakura-1022.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japan-sakura-1022.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japan-sakura-1034",
+    "title": "loremflickr-japan-sakura-1034",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japan-sakura-1034.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japan-sakura-1034.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japan-sakura-1058",
+    "title": "loremflickr-japan-sakura-1058",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japan-sakura-1058.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japan-sakura-1058.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japan-sakura-1070",
+    "title": "loremflickr-japan-sakura-1070",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japan-sakura-1070.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japan-sakura-1070.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japanese-garden-1002",
+    "title": "loremflickr-japanese-garden-1002",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japanese-garden-1002.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japanese-garden-1002.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japanese-garden-1014",
+    "title": "loremflickr-japanese-garden-1014",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japanese-garden-1014.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japanese-garden-1014.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japanese-garden-1026",
+    "title": "loremflickr-japanese-garden-1026",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japanese-garden-1026.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japanese-garden-1026.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japanese-garden-1038",
+    "title": "loremflickr-japanese-garden-1038",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japanese-garden-1038.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japanese-garden-1038.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japanese-garden-1050",
+    "title": "loremflickr-japanese-garden-1050",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japanese-garden-1050.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japanese-garden-1050.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japanese-garden-1062",
+    "title": "loremflickr-japanese-garden-1062",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japanese-garden-1062.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japanese-garden-1062.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-japanese-garden-1074",
+    "title": "loremflickr-japanese-garden-1074",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-japanese-garden-1074.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-japanese-garden-1074.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-blossom-1006",
+    "title": "loremflickr-pink-blossom-1006",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-blossom-1006.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-blossom-1006.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-blossom-1018",
+    "title": "loremflickr-pink-blossom-1018",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-blossom-1018.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-blossom-1018.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-blossom-1030",
+    "title": "loremflickr-pink-blossom-1030",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-blossom-1030.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-blossom-1030.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-blossom-1042",
+    "title": "loremflickr-pink-blossom-1042",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-blossom-1042.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-blossom-1042.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-blossom-1054",
+    "title": "loremflickr-pink-blossom-1054",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-blossom-1054.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-blossom-1054.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-blossom-1066",
+    "title": "loremflickr-pink-blossom-1066",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-blossom-1066.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-blossom-1066.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-flowers-1000",
+    "title": "loremflickr-pink-flowers-1000",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-flowers-1000.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-flowers-1000.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-flowers-1012",
+    "title": "loremflickr-pink-flowers-1012",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-flowers-1012.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-flowers-1012.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-flowers-1024",
+    "title": "loremflickr-pink-flowers-1024",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-flowers-1024.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-flowers-1024.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-flowers-1036",
+    "title": "loremflickr-pink-flowers-1036",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-flowers-1036.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-flowers-1036.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-flowers-1060",
+    "title": "loremflickr-pink-flowers-1060",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-flowers-1060.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-flowers-1060.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-pink-flowers-1072",
+    "title": "loremflickr-pink-flowers-1072",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-pink-flowers-1072.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-pink-flowers-1072.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-1008",
+    "title": "loremflickr-sakura-1008",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-1008.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-1008.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-1032",
+    "title": "loremflickr-sakura-1032",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-1032.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-1032.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-1044",
+    "title": "loremflickr-sakura-1044",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-1044.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-1044.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-1056",
+    "title": "loremflickr-sakura-1056",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-1056.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-1056.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-tree-1003",
+    "title": "loremflickr-sakura-tree-1003",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-tree-1003.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-tree-1003.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-tree-1015",
+    "title": "loremflickr-sakura-tree-1015",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-tree-1015.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-tree-1015.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-tree-1027",
+    "title": "loremflickr-sakura-tree-1027",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-tree-1027.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-tree-1027.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-tree-1039",
+    "title": "loremflickr-sakura-tree-1039",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-tree-1039.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-tree-1039.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-tree-1051",
+    "title": "loremflickr-sakura-tree-1051",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-tree-1051.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-tree-1051.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-tree-1063",
+    "title": "loremflickr-sakura-tree-1063",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-tree-1063.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-tree-1063.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-sakura-tree-1075",
+    "title": "loremflickr-sakura-tree-1075",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-sakura-tree-1075.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-sakura-tree-1075.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-flowers-1013",
+    "title": "loremflickr-spring-flowers-1013",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-flowers-1013.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-flowers-1013.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-flowers-1025",
+    "title": "loremflickr-spring-flowers-1025",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-flowers-1025.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-flowers-1025.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-flowers-1037",
+    "title": "loremflickr-spring-flowers-1037",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-flowers-1037.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-flowers-1037.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-flowers-1049",
+    "title": "loremflickr-spring-flowers-1049",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-flowers-1049.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-flowers-1049.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-flowers-1061",
+    "title": "loremflickr-spring-flowers-1061",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-flowers-1061.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-flowers-1061.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-flowers-1073",
+    "title": "loremflickr-spring-flowers-1073",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-flowers-1073.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-flowers-1073.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-japan-1007",
+    "title": "loremflickr-spring-japan-1007",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-japan-1007.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-japan-1007.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "loremflickr-spring-japan-1019",
+    "title": "loremflickr-spring-japan-1019",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\loremflickr-spring-japan-1019.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\loremflickr-spring-japan-1019.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "sakura-blue-linus-belanger",
+    "title": "Pink cherry blossoms bloom against a blue sky",
+    "author": "Linus Belanger",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/_zLalCFcDcU",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-linus-belanger.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-linus-belanger.jpg"
+  },
+  {
+    "slug": "sakura-blue-mak",
+    "title": "Pink cherry blossom tree under blue sky",
+    "author": "MAK",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/RlxP6WGmfP0",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-mak.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-mak.jpg"
+  },
+  {
+    "slug": "sakura-blue-sky",
+    "title": "sakura-blue-sky",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-sky.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-sky.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "sakura-blue-sky-david-schultz",
+    "title": "Pink cherry blossom tree under blue sky",
+    "author": "David Schultz",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/FMt4JRqsbiU",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blue-sky-david-schultz.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blue-sky-david-schultz.jpg"
+  },
+  {
+    "slug": "sakura-blurred-blue-razvan",
+    "title": "Delicate pink cherry blossoms against a blurred blue sky",
+    "author": "Razvan Constantinescu",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/DvKqIbcD0o4",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-blurred-blue-razvan.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-blurred-blue-razvan.jpg"
+  },
+  {
+    "slug": "sakura-branch-pastel",
+    "title": "sakura-branch-pastel",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-branch-pastel.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-branch-pastel.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "sakura-bright-blue-yoko-saito",
+    "title": "Pink cherry blossoms against a bright blue sky",
+    "author": "Yoko Saito",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/R7-zEMV4QpA",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-bright-blue-yoko-saito.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-bright-blue-yoko-saito.jpg"
+  },
+  {
+    "slug": "sakura-close-debora",
+    "title": "Close-up of vibrant pink cherry blossoms against a blue sky",
+    "author": "Débora Silva",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/4-bW8wHPGw4",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-close-debora.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-close-debora.jpg"
+  },
+  {
+    "slug": "sakura-clouds-ja-kubislav",
+    "title": "Pink cherry blossom tree under blue sky and white clouds",
+    "author": "Ja Kubislav",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/9gUhbFn63TM",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-clouds-ja-kubislav.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-clouds-ja-kubislav.jpg"
+  },
+  {
+    "slug": "sakura-kyoto-raymond",
+    "title": "Pink cherry blossoms bloom against a clear blue sky in Kyoto",
+    "author": "Raymond Yeung",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/nTrzQkMJ1iM",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-kyoto-raymond.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-kyoto-raymond.jpg"
+  },
+  {
+    "slug": "sakura-macro-akshat",
+    "title": "Pink cherry blossoms bloom against a blue sky",
+    "author": "Akshat Sharma",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/eVT9fzyNGhw",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-macro-akshat.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-macro-akshat.jpg"
+  },
+  {
+    "slug": "sakura-street-soft",
+    "title": "sakura-street-soft",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-street-soft.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-street-soft.jpg",
+    "source": "Local curated image"
+  },
+  {
+    "slug": "sakura-vibrant-dmytro",
+    "title": "Vibrant pink cherry blossoms against a blue sky",
+    "author": "Dmytro Yarish",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/u354cWIlTU8",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-vibrant-dmytro.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-vibrant-dmytro.jpg"
+  },
+  {
+    "slug": "sakura-zen-patrick-shaun",
+    "title": "Pink cherry blossoms against a bright blue sky",
+    "author": "Patrick Shaun",
+    "license": "Unsplash License",
+    "source_page": "https://unsplash.com/photos/ZmLX5MJjXsU",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\sakura-zen-patrick-shaun.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\sakura-zen-patrick-shaun.jpg"
+  },
+  {
+    "slug": "white-castle-sakura",
+    "title": "white-castle-sakura",
+    "author": "",
+    "license": "",
+    "source_page": "",
+    "original_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\originals\\white-castle-sakura.jpg",
+    "square_file": "D:\\codex\\sakurairo-go\\web\\static\\curated-sakura-images\\square\\white-castle-sakura.jpg",
+    "source": "Local curated image"
+  }
 ]
