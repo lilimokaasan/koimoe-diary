@@ -56,7 +56,6 @@
 		<section class="admin-panel">
 			<div class="panel-title">
 				<h1>Media</h1>
-				<a class="button" href="/admin/posts/new">New Post</a>
 			</div>
 			{{if .Message}}<div class="admin-alert success">{{if eq .Message "deleted"}}Deleted.{{else if eq .Message "saved"}}Saved.{{else}}Uploaded.{{end}}</div>{{end}}
 			{{if .Error}}<div class="admin-alert error">{{.Error}}</div>{{end}}
