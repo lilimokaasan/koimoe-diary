@@ -1767,6 +1767,25 @@ button.primary:hover,
 	vertical-align: top;
 }
 
+.admin-table .admin-table-primary {
+	align-items: center;
+	color: #5f5662;
+	display: inline-flex;
+	font-size: 13px;
+	font-weight: 520;
+	line-height: 1.35;
+	margin-top: 0;
+	min-height: 36px;
+	vertical-align: top;
+}
+
+.admin-table .admin-table-description {
+	align-items: flex-start;
+	line-height: 1.55;
+	max-width: 54ch;
+	white-space: normal;
+}
+
 .table-actions {
 	align-items: center;
 	display: flex;
@@ -3584,6 +3603,10 @@ button:disabled {
 	color: #9c929f;
 	font-size: 11px;
 	line-height: 1.55;
+	margin-top: 4px;
+}
+
+.admin-posts-table .post-status-cell .status {
 	margin-top: 4px;
 }
 

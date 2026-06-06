@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-post-action-cell">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-admin-table-align">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -65,10 +65,10 @@
 					{{range .Categories}}
 					<tr>
 						<td><a href="/admin/categories/{{.ID}}/edit">{{.Name}}</a></td>
-						<td><span>{{.Slug}}</span></td>
-						<td>{{.PostCount}}</td>
-						<td>{{if .CoverImage}}<span>set</span>{{else}}<span>none</span>{{end}}</td>
-						<td>{{.Description}}</td>
+						<td><span class="admin-table-primary">{{.Slug}}</span></td>
+						<td><span class="admin-table-primary">{{.PostCount}}</span></td>
+						<td>{{if .CoverImage}}<span class="admin-table-primary">set</span>{{else}}<span class="admin-table-primary">none</span>{{end}}</td>
+						<td><span class="admin-table-primary admin-table-description">{{.Description}}</span></td>
 						<td class="table-actions">
 							<a class="table-action-button" href="/category/{{.Slug}}" target="_blank" rel="noopener noreferrer">View</a>
 							<form method="post" action="/admin/categories/{{.ID}}/delete"><button class="table-action-button danger" type="submit">Delete</button></form>
@@ -91,8 +91,8 @@
 					{{range .Tags}}
 					<tr>
 						<td><a href="/admin/tags/{{.ID}}/edit">{{.Name}}</a></td>
-						<td><span>{{.Slug}}</span></td>
-						<td>{{.PostCount}}</td>
+						<td><span class="admin-table-primary">{{.Slug}}</span></td>
+						<td><span class="admin-table-primary">{{.PostCount}}</span></td>
 						<td class="table-actions">
 							<a class="table-action-button" href="/tag/{{.Slug}}" target="_blank" rel="noopener noreferrer">View</a>
 							<form method="post" action="/admin/tags/{{.ID}}/delete"><button class="table-action-button danger" type="submit">Delete</button></form>
@@ -110,6 +110,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260606-post-action-cell"></script>
+	<script src="/static/admin.js?v=20260606-admin-table-align"></script>
 </body>
 </html>

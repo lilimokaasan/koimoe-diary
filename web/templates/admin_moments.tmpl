@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-post-action-cell">
+	<link rel="stylesheet" href="/static/admin.css?v=20260606-admin-table-align">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -65,9 +65,9 @@
 					{{range .Moments}}
 					<tr>
 						<td><a href="/admin/moments/{{.ID}}/edit">{{.Content}}</a></td>
-						<td>{{.Author}}</td>
+						<td><span class="admin-table-primary">{{.Author}}</span></td>
 						<td><span class="status {{.Status}}">{{.Status}}</span></td>
-						<td>{{.CreatedAt.Format "2006-01-02 15:04"}}</td>
+						<td><span class="admin-table-primary">{{.CreatedAt.Format "2006-01-02 15:04"}}</span></td>
 						<td class="table-actions">
 							<a class="table-action-button" href="/moments" target="_blank" rel="noopener noreferrer">View</a>
 							<form method="post" action="/admin/moments/{{.ID}}/delete"><button class="table-action-button danger" type="submit">Delete</button></form>
@@ -85,6 +85,6 @@
 			document.write('<script src="/static/theme/js/smooth-scroll.js?v=20260519-scroll-atmosphere"><\/script>');
 		}
 	</script>
-	<script src="/static/admin.js?v=20260606-post-action-cell"></script>
+	<script src="/static/admin.js?v=20260606-admin-table-align"></script>
 </body>
 </html>
