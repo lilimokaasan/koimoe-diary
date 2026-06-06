@@ -979,7 +979,7 @@
 		var form = document.querySelector("#comment-bulk-form");
 		if (!form || form.dataset.bulkBound === "1") return;
 		form.dataset.bulkBound = "1";
-		var selectAll = form.querySelector("[data-comment-select-all]");
+		var selectAll = document.querySelector("[data-comment-select-all]");
 		var action = form.querySelector("select[name='bulk_action']");
 
 		function items() {
