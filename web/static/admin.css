@@ -1180,9 +1180,9 @@ label > .admin-soft-select,
 
 .comment-bulk-bar .admin-soft-select,
 .media-bulk-bar .admin-soft-select {
-	flex: 0 1 220px;
+	flex: 0 1 248px;
 	margin-top: 0;
-	width: min(220px, 100%);
+	width: min(248px, 100%);
 }
 
 .admin-soft-select-trigger {
@@ -2382,7 +2382,6 @@ button.primary:hover,
 	flex: 0 0 auto;
 	font-size: 13px;
 	gap: 8px;
-	margin-right: auto;
 	white-space: nowrap;
 }
 
@@ -2731,11 +2730,31 @@ button:active,
 	transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
+.comment-bulk-bar,
+.media-bulk-bar {
+	align-items: center;
+}
+
+.comment-bulk-bar > *,
+.media-bulk-bar > * {
+	flex-shrink: 0;
+}
+
+.comment-bulk-bar .admin-soft-select-trigger,
+.media-bulk-bar .admin-soft-select-trigger {
+	border-radius: 7px;
+	font-size: 14px;
+	font-weight: 560;
+	min-height: 48px;
+	padding: 11px 15px 11px 17px;
+}
+
 .comment-bulk-bar select {
 	max-width: 220px;
 }
 
 .comment-select-all,
+.media-select-all,
 .comment-admin-check {
 	align-items: center;
 	color: var(--muted);
@@ -2744,14 +2763,44 @@ button:active,
 	gap: 8px;
 }
 
-.comment-select-all {
+.comment-select-all,
+.media-select-all {
+	align-self: stretch;
+	border-radius: 7px;
 	flex: 0 0 auto;
+	min-height: 48px;
+	padding: 0 4px;
 	white-space: nowrap;
 }
 
 .comment-select-all input,
+.media-select-all input,
 .comment-admin-check input {
 	margin: 0;
+}
+
+.bulk-apply-button {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 247, 251, 0.72)),
+		linear-gradient(135deg, rgba(251, 152, 192, 0.12), rgba(255, 224, 238, 0.2));
+	border-color: rgba(226, 190, 209, 0.76);
+	box-shadow: 0 10px 22px rgba(126, 64, 98, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+	color: #5a4f5d;
+	font-weight: 680;
+	letter-spacing: 0;
+	min-height: 48px;
+	padding: 0 22px;
+}
+
+.bulk-apply-button:hover,
+.bulk-apply-button:focus {
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 244, 250, 0.78)),
+		linear-gradient(135deg, rgba(251, 152, 192, 0.18), rgba(255, 216, 234, 0.28));
+	border-color: rgba(251, 152, 192, 0.36);
+	box-shadow: 0 14px 28px rgba(251, 152, 192, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+	color: #df6fa4;
+	outline: none;
 }
 
 .comment-admin-card {
