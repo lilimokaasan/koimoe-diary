@@ -4198,9 +4198,15 @@ button:disabled {
 	.admin-datetime-popover {
 		gap: 12px;
 		grid-template-columns: 1fr;
-		left: 0;
+		left: 50%;
 		right: auto;
-		width: min(360px, calc(100vw - 28px));
+		transform: translateX(-50%) translateY(-4px) scale(0.99);
+		transform-origin: top center;
+		width: min(340px, calc(100vw - 32px));
+	}
+
+	.admin-datetime-picker.is-open .admin-datetime-popover {
+		transform: translateX(-50%) translateY(0) scale(1);
 	}
 
 	.admin-datetime-time {
