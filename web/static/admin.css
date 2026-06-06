@@ -2641,10 +2641,10 @@ input[type="file"]:focus::file-selector-button {
 	flex: 0 0 auto;
 	font-size: 13px;
 	font-weight: 600;
-	gap: 5px;
+	gap: 8px;
 	isolation: isolate;
 	min-width: 0;
-	padding: 9px 16px;
+	padding: 8px 16px;
 	text-decoration: none;
 	position: relative;
 	transition: background-color 0.46s ease, border-color 0.46s ease, box-shadow 0.46s ease, color 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
@@ -2673,6 +2673,7 @@ input[type="file"]:focus::file-selector-button {
 
 .comment-filter-tabs span,
 .post-filter-tabs span {
+	display: inline-flex;
 	line-height: 1.2;
 }
 
@@ -2685,10 +2686,11 @@ input[type="file"]:focus::file-selector-button {
 	display: inline-flex;
 	font-size: 12px;
 	justify-content: center;
-	line-height: 1.1;
-	min-width: 0;
-	padding: 0 1px;
-	transition: background-color 0.46s ease, box-shadow 0.46s ease, color 0.4s ease, min-width 0.46s ease, padding 0.46s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+	line-height: 1;
+	min-height: 24px;
+	min-width: 24px;
+	padding: 0 8px;
+	transition: background-color 0.46s ease, box-shadow 0.46s ease, color 0.4s ease;
 }
 
 .comment-filter-tabs a:hover,
@@ -2731,9 +2733,6 @@ button:active,
 .post-filter-tabs a.is-active strong {
 	background: rgba(255, 255, 255, 0.9);
 	box-shadow: 0 6px 14px rgba(251, 152, 192, 0.1);
-	min-width: 24px;
-	padding: 3px 8px;
-	transform: translateY(-1px);
 }
 
 .comment-bulk-bar {
