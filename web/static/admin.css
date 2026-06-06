@@ -1615,11 +1615,14 @@ textarea {
 button,
 .button {
 	align-items: center;
-	background: rgba(255, 255, 255, 0.88);
-	border: 1px solid rgba(205, 181, 194, 0.8);
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 247, 251, 0.72)),
+		linear-gradient(135deg, rgba(251, 152, 192, 0.12), rgba(255, 224, 238, 0.2));
+	border: 1px solid rgba(226, 190, 209, 0.72);
 	border-radius: 8px;
 	box-sizing: border-box;
-	color: var(--ink);
+	box-shadow: 0 10px 22px rgba(126, 64, 98, 0.055), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+	color: #5a4f5d;
 	cursor: pointer;
 	display: inline-flex;
 	font: inherit;
@@ -1635,7 +1638,12 @@ button,
 
 button:hover,
 .button:hover {
-	box-shadow: 0 8px 18px rgba(124, 78, 102, 0.12);
+	background:
+		linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 244, 250, 0.78)),
+		linear-gradient(135deg, rgba(251, 152, 192, 0.18), rgba(255, 216, 234, 0.28));
+	border-color: rgba(251, 152, 192, 0.36);
+	box-shadow: 0 14px 28px rgba(251, 152, 192, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+	color: #df6fa4;
 	transform: translateY(-1px);
 }
 
