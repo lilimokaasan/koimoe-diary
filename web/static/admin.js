@@ -158,6 +158,7 @@
 		if (!currentTabs || !nextTabs) return;
 		Array.prototype.slice.call(currentTabs.querySelectorAll("a")).forEach(function (link) {
 			link.classList.remove("is-active");
+			link.classList.remove("is-switching");
 			link.removeAttribute("aria-current");
 		});
 		Array.prototype.slice.call(nextTabs.querySelectorAll("a")).forEach(function (nextLink) {
@@ -171,6 +172,14 @@
 				match.classList.add("is-active");
 				match.setAttribute("aria-current", "page");
 			}
+		});
+	}
+
+	function markFilterSwitch(link, selector) {
+		var tabs = link && link.closest(selector);
+		if (!tabs) return;
+		Array.prototype.slice.call(tabs.querySelectorAll("a")).forEach(function (item) {
+			item.classList.toggle("is-switching", item === link);
 		});
 	}
 
@@ -355,6 +364,7 @@
 			event.preventDefault();
 			event.stopPropagation();
 			if (sameUrlAsCurrent(link.href)) return;
+			markFilterSwitch(link, ".post-filter-tabs");
 			loadPostFilter(link.href);
 		}, true);
 	}
@@ -368,6 +378,7 @@
 			event.preventDefault();
 			event.stopPropagation();
 			if (sameUrlAsCurrent(link.href)) return;
+			markFilterSwitch(link, ".comment-filter-tabs");
 			loadCommentFilter(link.href);
 		}, true);
 	}
