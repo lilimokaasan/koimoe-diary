@@ -543,10 +543,12 @@
 			wrapper.appendChild(popover);
 			input.insertAdjacentElement("afterend", wrapper);
 
-			function commit() {
+			function commit(emitEvents) {
 				input.value = toInputValue(selected);
-				input.dispatchEvent(new Event("input", { bubbles: true }));
-				input.dispatchEvent(new Event("change", { bubbles: true }));
+				if (emitEvents) {
+					input.dispatchEvent(new Event("input", { bubbles: true }));
+					input.dispatchEvent(new Event("change", { bubbles: true }));
+				}
 				triggerText.textContent = toDisplayValue(selected);
 			}
 
@@ -623,7 +625,7 @@
 							selected = new Date(picked.getFullYear(), picked.getMonth(), picked.getDate(), selected.getHours(), selected.getMinutes());
 							viewYear = selected.getFullYear();
 							viewMonth = selected.getMonth();
-							commit();
+							commit(true);
 							render();
 						};
 					}(date));
@@ -641,7 +643,7 @@
 					selected = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
 					viewYear = selected.getFullYear();
 					viewMonth = selected.getMonth();
-					commit();
+					commit(true);
 					render();
 				});
 				var doneButton = document.createElement("button");
@@ -672,7 +674,7 @@
 					button.addEventListener("click", function (picked) {
 						return function () {
 							setter(picked);
-							commit();
+							commit(true);
 							render();
 						};
 					}(value));
@@ -720,9 +722,9 @@
 				selected = parseValue(input.value);
 				viewYear = selected.getFullYear();
 				viewMonth = selected.getMonth();
-				commit();
+				commit(false);
 			});
-			commit();
+			commit(false);
 		});
 	}
 
