@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260607-media-select-all-row">
+	<link rel="stylesheet" href="/static/admin.css?v=20260607-admin-responsive-cards">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -72,12 +72,12 @@
 					<tbody data-admin-post-rows>
 						{{range .Posts}}
 						<tr>
-							<td class="post-title-cell">
+							<td class="post-title-cell" data-label="Title">
 								<a href="/admin/posts/{{.ID}}/edit">{{.Title}}</a>
 								{{if .IsPinned}}<span class="admin-table-badge">Pinned</span>{{end}}
 								<span>{{.Slug}}</span>
 							</td>
-							<td class="post-status-cell">
+							<td class="post-status-cell" data-label="Status">
 								{{if and (eq .Status "published") (isFuture .PublishedAt)}}
 								<span class="status scheduled">scheduled</span>
 								{{else}}
@@ -85,9 +85,9 @@
 								{{end}}
 								<span>{{.PublishedAt.Format "2006-01-02 15:04"}}</span>
 							</td>
-							<td class="post-category-cell"><span class="admin-table-primary">{{.Category.Name}}</span></td>
-							<td class="post-updated-cell"><span class="admin-table-primary">{{since .UpdatedAt}}</span></td>
-							<td class="table-actions post-open-cell">
+							<td class="post-category-cell" data-label="Category"><span class="admin-table-primary">{{.Category.Name}}</span></td>
+							<td class="post-updated-cell" data-label="Updated"><span class="admin-table-primary">{{since .UpdatedAt}}</span></td>
+							<td class="table-actions post-open-cell" data-label="Actions">
 								<div class="post-open-actions">
 								{{if and (eq .Status "published") (not (isFuture .PublishedAt))}}
 								<a class="table-action-button" href="/post/{{.Slug}}" target="_blank">Open</a>

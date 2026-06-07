@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260607-media-select-all-row">
+	<link rel="stylesheet" href="/static/admin.css?v=20260607-admin-responsive-cards">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -64,11 +64,11 @@
 				<tbody>
 					{{range .Moments}}
 					<tr>
-						<td><a href="/admin/moments/{{.ID}}/edit">{{.Content}}</a></td>
-						<td><span class="admin-table-primary">{{.Author}}</span></td>
-						<td><span class="status {{.Status}}">{{.Status}}</span></td>
-						<td><span class="admin-table-primary">{{.CreatedAt.Format "2006-01-02 15:04"}}</span></td>
-						<td class="table-actions">
+						<td data-label="Content"><a href="/admin/moments/{{.ID}}/edit">{{.Content}}</a></td>
+						<td data-label="Author"><span class="admin-table-primary">{{.Author}}</span></td>
+						<td data-label="Status"><span class="status {{.Status}}">{{.Status}}</span></td>
+						<td data-label="Created"><span class="admin-table-primary">{{.CreatedAt.Format "2006-01-02 15:04"}}</span></td>
+						<td class="table-actions" data-label="Actions">
 							<a class="table-action-button" href="/moments" target="_blank" rel="noopener noreferrer">View</a>
 							<form method="post" action="/admin/moments/{{.ID}}/delete"><button class="table-action-button danger" type="submit">Delete</button></form>
 						</td>
