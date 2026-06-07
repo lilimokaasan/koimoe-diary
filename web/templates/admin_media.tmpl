@@ -6,7 +6,7 @@
 	<title>{{.Title}}</title>
 	<link rel="icon" href="/favicon.png?v=20260518-transparent" type="image/png">
 	<link rel="shortcut icon" href="/favicon.ico?v=20260518-transparent">
-	<link rel="stylesheet" href="/static/admin.css?v=20260606-layout-motion-pass2">
+	<link rel="stylesheet" href="/static/admin.css?v=20260607-media-select-all-row">
 </head>
 <body class="admin-page">
 	<header class="admin-topbar">
@@ -79,13 +79,13 @@
 					<span class="media-count">{{len .MediaAssets}} files</span>
 				</div>
 				<form id="media-bulk-form" class="media-bulk-bar" method="post" action="/admin/media/bulk">
-					<label class="media-select-all"><input type="checkbox" data-media-select-all> Select all</label>
 					<select name="bulk_action" aria-label="Bulk action">
 						<option value="">Bulk action</option>
 						<option value="delete">Delete selected</option>
 					</select>
 					<button class="bulk-apply-button" type="submit">Apply</button>
 				</form>
+				<label class="media-select-all media-list-select-all"><input type="checkbox" data-media-select-all> Select all</label>
 				<div class="curated-media-grid">
 					{{range .MediaAssets}}
 					<article class="curated-media-card">
