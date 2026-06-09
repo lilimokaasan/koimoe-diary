@@ -87,16 +87,16 @@ body.admin-page .admin-shell {
 
 body.admin-is-leaving .admin-hero,
 body.admin-is-leaving .admin-shell {
-	opacity: 0.46;
+	opacity: 0;
 	pointer-events: none;
-	transform: translateY(5px);
+	transform: translateY(8px);
 }
 
 body.admin-is-entering .admin-hero,
 body.admin-is-entering .admin-shell {
-	opacity: 0.5;
+	opacity: 0;
 	pointer-events: none;
-	transform: translateY(5px);
+	transform: translateY(8px);
 }
 
 body.admin-is-loading::before {
